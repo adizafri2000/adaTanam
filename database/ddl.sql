@@ -80,6 +80,7 @@ create table if not exists testing.order
     pickup timestamp not null,
     is_completed boolean not null,
     completed_timestamp timestamp,
+    status varchar(15) not null,
     rating int,
     review varchar(100)
 );
