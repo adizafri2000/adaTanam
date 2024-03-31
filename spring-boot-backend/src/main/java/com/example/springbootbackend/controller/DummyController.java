@@ -1,4 +1,4 @@
-package com.example.springbootbackend.controllers;
+package com.example.springbootbackend.controller;
 
 import com.example.springbootbackend.dto.DummyDTO;
 import org.springframework.http.HttpStatus;
@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
 @RestController
