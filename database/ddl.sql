@@ -62,7 +62,8 @@ create table if not exists staging.cart_item
     produce integer not null references staging.produce,
     quantity int not null,
     created_at  timestamp default now(),
-    updated_at  timestamp default now()
+    updated_at  timestamp default now(),
+    primary key (cart, produce)
 );
 
 -- order table
