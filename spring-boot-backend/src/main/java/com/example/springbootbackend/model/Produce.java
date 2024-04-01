@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "produce", schema = "staging")
+@Table(name = "produce")
 @Data
 public class Produce {
     @Id

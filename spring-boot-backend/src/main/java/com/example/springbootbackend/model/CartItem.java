@@ -6,7 +6,7 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "cart_item", schema = "staging")
+@Table(name = "cart_item")
 @IdClass(CartItemKey.class)
 @Data
 public class CartItem {

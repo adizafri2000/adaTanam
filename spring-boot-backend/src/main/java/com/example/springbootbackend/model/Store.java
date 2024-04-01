@@ -7,7 +7,7 @@ import org.springframework.data.geo.Point;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "store", schema = "staging")
+@Table(name = "store")
 @Data
 public class Store {
     @Id

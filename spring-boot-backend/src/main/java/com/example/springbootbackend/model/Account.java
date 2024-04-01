@@ -3,20 +3,18 @@ package com.example.springbootbackend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
 
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "account")
 @Data
-//@DynamicInsert
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(name = "password_hash", nullable = false)

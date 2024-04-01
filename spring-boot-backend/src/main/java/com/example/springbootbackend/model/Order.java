@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "order", schema = "staging")
+@Table(name = "order")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

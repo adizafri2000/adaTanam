@@ -4,7 +4,7 @@ create schema if not exists staging;
 create table if not exists staging.account
 (
     id            serial primary key,
-    email         varchar(50)  not null,
+    email         varchar(50)  not null unique,
     password_hash varchar(100) not null,
     name          varchar(70),
     phone         varchar(11),
