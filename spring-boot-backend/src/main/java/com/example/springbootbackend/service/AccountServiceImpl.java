@@ -1,7 +1,8 @@
 package com.example.springbootbackend.service;
 
-import com.example.springbootbackend.dto.AccountLoginDTO;
+import com.example.springbootbackend.dto.account.AccountLoginDTO;
 import com.example.springbootbackend.exception.DuplicateUniqueResourceException;
+import com.example.springbootbackend.exception.InvalidCredentialsException;
 import com.example.springbootbackend.exception.ResourceNotFoundException;
 import com.example.springbootbackend.model.Account;
 import com.example.springbootbackend.repository.AccountRepository;
@@ -13,10 +14,13 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
 public class AccountServiceImpl implements AccountService{
+
+    // TODO Read https://medium.com/spring-boot/spring-boot-3-spring-security-6-jwt-authentication-authorization-98702d6313a5
 
     private static final Logger log = Logger.getLogger(AccountServiceImpl.class.getName());
 
@@ -80,17 +84,14 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public String loginAccount(AccountLoginDTO accountLoginDTO) {
-        Account account = accountRepository.findByEmail(accountLoginDTO.email())
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found with email " + accountLoginDTO.email()));
-        if (account != null && passwordEncoder.matches(accountLoginDTO.password(), account.getPasswordHash())) {
-            // If the account exists and the password matches, generate and return a token
-            // The implementation of this will depend on your chosen method of authentication
-            // For example, if you're using JWT, you would generate a JWT here and return it
-            return generateToken(account);
-        } else {
-            // If the account doesn't exist or the password doesn't match, return null
-            return null;
+        Optional<Account> optionalAccount = accountRepository.findByEmail(accountLoginDTO.email());
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            if (passwordEncoder.matches(accountLoginDTO.password(), account.getPasswordHash())) {
+                return generateToken(account);
+            }
         }
+        throw new InvalidCredentialsException("Invalid email or password");
     }
 
     private String generateToken(Account account) {

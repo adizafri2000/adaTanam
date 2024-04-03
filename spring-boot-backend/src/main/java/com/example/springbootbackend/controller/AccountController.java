@@ -1,8 +1,8 @@
 package com.example.springbootbackend.controller;
 
-import com.example.springbootbackend.dto.AccountGetDTO;
-import com.example.springbootbackend.dto.AccountLoginDTO;
-import com.example.springbootbackend.dto.AccountPostDTO;
+import com.example.springbootbackend.dto.account.AccountGetDTO;
+import com.example.springbootbackend.dto.account.AccountLoginDTO;
+import com.example.springbootbackend.dto.account.AccountPostDTO;
 import com.example.springbootbackend.mapper.AccountMapper;
 import com.example.springbootbackend.model.Account;
 import com.example.springbootbackend.service.AccountService;
@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @RestController
@@ -48,6 +50,7 @@ public class AccountController {
     @PostMapping("/signup")
     public ResponseEntity<?> createAccount(@RequestBody AccountPostDTO accountPostDTO) {
         log.info("Handling POST /api/accounts/signup request");
+        log.info("AccountPostDTO: " + accountPostDTO);
         Account account = accountMapper.toEntity(accountPostDTO);
         AccountGetDTO dto = accountMapper.toGetDTO(accountService.createAccount(account));
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
@@ -59,11 +62,9 @@ public class AccountController {
     public ResponseEntity<?> loginAccount(@RequestBody AccountLoginDTO accountLoginDTO) {
         log.info("Handling POST /api/accounts/login request");
         String token = accountService.loginAccount(accountLoginDTO);
-//        if (token != null) {
-            return new ResponseEntity<>(token, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
-//        }
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

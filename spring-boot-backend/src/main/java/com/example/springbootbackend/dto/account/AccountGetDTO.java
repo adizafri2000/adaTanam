@@ -1,4 +1,4 @@
-package com.example.springbootbackend.dto;
+package com.example.springbootbackend.dto.account;
 
 public record AccountGetDTO(
         Integer id,

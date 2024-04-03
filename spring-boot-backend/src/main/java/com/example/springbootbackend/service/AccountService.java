@@ -1,6 +1,6 @@
 package com.example.springbootbackend.service;
 
-import com.example.springbootbackend.dto.AccountLoginDTO;
+import com.example.springbootbackend.dto.account.AccountLoginDTO;
 import com.example.springbootbackend.model.Account;
 import org.springframework.stereotype.Service;
 
