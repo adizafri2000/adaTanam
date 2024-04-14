@@ -10,11 +10,11 @@ const API_URL = process.env.API_URL
 export default defineConfig({
   plugins: [react()],
   server: {
-    proxy: {
-      '/': {
-        target: `${API_URL}`,
-        changeOrigin: true,
-      },
-    }
+    // proxy: {
+    //   '/': {
+    //     target: `${API_URL}`,
+    //     changeOrigin: true,
+    //   },
+    // }
   },
 })
