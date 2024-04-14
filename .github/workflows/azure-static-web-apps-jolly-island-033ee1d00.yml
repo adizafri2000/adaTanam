@@ -16,9 +16,9 @@ jobs:
     name: Build and Deploy Job
     steps:
       - name: Test dummy
-        run: echo $DUMMY
+        run: echo $VITE_DUMMY
         env:
-          DUMMY: ${{ secrets.DUMMY }}
+          VITE_DUMMY: ${{ secrets.VITE_DUMMY }}
       - uses: actions/checkout@v3
         with:
           submodules: true
@@ -38,8 +38,8 @@ jobs:
           output_location: "/dist" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
         env:
-          API_URL: ${{ secrets.API_URL }}
-          DUMMY: 'yeetbah'
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_DUMMY: 'yeetbah'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -53,5 +53,5 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_JOLLY_ISLAND_033EE1D00 }}
           action: "close"
         env:
-          API_URL: ${{ secrets.API_URL }}
-          DUMMY: 'yeetbah'
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_DUMMY: 'yeetbah'
