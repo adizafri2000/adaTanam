@@ -1,6 +1,6 @@
 import axios from 'axios'
 // const host = import.meta.env.API_URL
-const host = process.env.API_URL
+const host = process.env.API_URL || 'you-suck'
 const baseUrl = `${host}/accounts`
 
 let token = null
