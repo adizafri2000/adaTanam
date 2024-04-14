@@ -8,6 +8,7 @@ import com.example.springbootbackend.model.Account;
 import com.example.springbootbackend.repository.AccountRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.sentry.Sentry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -91,6 +92,7 @@ public class AccountServiceImpl implements AccountService{
                 return generateToken(account);
             }
         }
+        Sentry.captureMessage("Invalid email or password");
         throw new InvalidCredentialsException("Invalid email or password");
     }
 

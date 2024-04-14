@@ -7,6 +7,7 @@ import com.example.springbootbackend.mapper.AccountMapper;
 import com.example.springbootbackend.model.Account;
 import com.example.springbootbackend.service.AccountService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +17,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 @RestController
-@RequestMapping("/api/accounts")
+@RequestMapping(path = "/accounts")
 public class AccountController {
-
-    public static final String ACCOUNTS = "/api/accounts";
 
     private static final Logger log = Logger.getLogger(AccountController.class.getName());
     private final AccountService accountService;
@@ -30,15 +29,17 @@ public class AccountController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<AccountGetDTO>> getAccounts() {
+    public ResponseEntity<?> getAccounts() {
         log.info("Handling GET /api/accounts request");
         List<AccountGetDTO> dtoList = accountService.getAccounts().stream()
                 .map(accountMapper::toGetDTO)
                 .toList();
-        return new ResponseEntity<>(dtoList, HttpStatus.OK);
+        Map<String, List<AccountGetDTO>> listResponse = new HashMap<>();
+        listResponse.put("accounts", dtoList);
+        return new ResponseEntity<>(listResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<?> getAccountById(@PathVariable Integer id) {
         log.info("Handling GET /api/accounts/" + id + " request");
         Account account = accountService.getAccountById(id);
