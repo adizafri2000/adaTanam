@@ -6,7 +6,7 @@ dotenv.config()
 
 //const IP = process.env.VM_IP;
 // const API_URL = process.env.API_URL
-const API_URL = import.meta.env.API_URL
+const API_URL = import.meta.env.VITE_API_URL
 
 export default defineConfig({
   plugins: [react()],
