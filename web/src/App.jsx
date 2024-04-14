@@ -7,7 +7,7 @@ import loginService from './services/login.jsx'
 // import AccountForm from './components/AccountForm.jsx'
 
 const App = () => {
-    const dummy = process.env.DUMMY | '0'
+    const dummy = import.meta.env.VITE_DUMMY | '0'
     console.log(`dummy: ${dummy}`)
     // account and metadata in forms
     const [accounts, setAccounts] = useState([])
