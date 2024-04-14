@@ -5,13 +5,14 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const IP = process.env.VITE_VM_IP;
+const API_URL = processs.env.VITE_API_URL
 
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': {
-        target: `http://${IP}`,
+      '/': {
+        target: `https://${API_URL}`,
         changeOrigin: true,
       },
     }
