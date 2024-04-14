@@ -1,6 +1,6 @@
 import axios from 'axios'
-const host = import.meta.env.VITE_API_URL
-const baseUrl = `https://${host}/accounts`
+const host = import.meta.env.API_URL
+const baseUrl = `${host}/accounts`
 
 let token = null
 
