@@ -1,5 +1,5 @@
 import axios from 'axios'
-const host = process.env.API_URL
+const host = import.meta.env.VITE_API_URL
 const baseUrl = `${host}/accounts/login`
 //const baseUrl = '/accounts/login'
 
