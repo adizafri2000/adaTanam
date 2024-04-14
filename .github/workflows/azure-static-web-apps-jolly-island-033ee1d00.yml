@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
+      - name: Test dummy
+        run: echo ${{ secrets.dummy }}
       - uses: actions/checkout@v3
         with:
           submodules: true
@@ -24,6 +26,7 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         env:
           API_URL: ${{ secrets.API_URL }}
+          DUMMY: ${{ secrets.DUMMY }}
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_JOLLY_ISLAND_033EE1D00 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
