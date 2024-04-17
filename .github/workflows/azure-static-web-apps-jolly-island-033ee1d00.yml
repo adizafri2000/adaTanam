@@ -15,10 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - name: Test dummy
-        run: echo $VITE_DUMMY
-        env:
-          VITE_DUMMY: ${{ secrets.VITE_DUMMY }}
       - uses: actions/checkout@v3
         with:
           submodules: true
@@ -39,7 +35,6 @@ jobs:
           ###### End of Repository/Build Configurations ######
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_DUMMY: 'yeetbah'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

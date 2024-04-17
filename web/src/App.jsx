@@ -1,35 +1,36 @@
 import { useState, useEffect, useRef } from 'react'
 import Account from './components/Account.jsx'
 import Notification from './components/Notification'
-import accountService from './services/accounts.jsx'
-import loginService from './services/login.jsx'
-// import Togglable from './components/Togglable.jsx'
+import accountService from './services/accounts/accounts.jsx'
+import loginService from './services/accounts/login.jsx'
+import LoginForm from "./components/LoginForm.jsx";
+import SignUpForm from "./components/SignUpForm.jsx";
+// import Toggleable from './components/Toggleable.jsx'
 // import AccountForm from './components/AccountForm.jsx'
 
 const App = () => {
-    const dummy = import.meta.env.VITE_DUMMY | '0'
-    console.log(`dummy: ${dummy}`)
     // account and metadata in forms
     const [accounts, setAccounts] = useState([])
 
-    // notification
+    // notification & visuals
     const [messageColour, setMessageColour] = useState('green')
     const [notificationMessage, setNotificationMessage] = useState(null)
     const successColour = 'green'
     const failedColour = 'red'
+    const [visibleForm, setVisibleForm] = useState(null);
 
     // auth
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
 
-    // const accountFormRef = useRef()
+    const accountFormRef = useRef()
 
-    useEffect( () => {
-        accountService.getAll().then(accounts =>
-            setAccounts( accounts.sort((a,b) => a.likes-b.likes) )
-        )
-    }, [])
+    // useEffect( () => {
+    //     accountService.getAll().then(accounts =>
+    //         setAccounts( accounts.sort((a,b) => a.likes-b.likes) )
+    //     )
+    // }, [])
 
     // check for any user login tokens stored in browser local storage
     useEffect(() => {
@@ -45,10 +46,12 @@ const App = () => {
         event.preventDefault()
 
         try {
-            const user = await loginService.login({
-                email: username,
+            const loginData = {
+                email: email,
                 password: password,
-            })
+            }
+            const userToken = await loginService.login(loginData)
+            const user = {email, ...userToken}
             // // save user login token to local storage
             window.localStorage.setItem(
                 'loggedaccountappUser', JSON.stringify(user)
@@ -57,56 +60,30 @@ const App = () => {
             // // set user token for account services esp. account creation
             accountService.setToken(user.token)
 
+            console.log('logged in user: ', user)
             setUser(user)
-            setUsername('')
+            setEmail('')
             setPassword('')
         } catch (exception) {
             setMessageColour(failedColour)
-            setNotificationMessage('wrong username or password')
+            setNotificationMessage('wrong email or password')
             setTimeout(() => {
                 setNotificationMessage(null)
             }, 5000)
         }
     }
 
-    const loginForm = () => (
-        <div>
-            <h2>Log in to application</h2>
-            <form onSubmit={handleLogin}>
-                <div>
-                    username
-                    <input
-                        type="text"
-                        value={username}
-                        name="Username"
-                        onChange={({ target }) => setUsername(target.value)}
-                    />
-                </div>
-                <div>
-                    password
-                    <input
-                        type="password"
-                        value={password}
-                        name="Password"
-                        onChange={({ target }) => setPassword(target.value)}
-                    />
-                </div>
-                <button type="submit">login</button>
-            </form>
-        </div>
-    )
+    const addAccount = async (accountObject) => {
+        accountFormRef.current.toggleVisibility()
 
-    // const addAccount = async (accountObject) => {
-    //     accountFormRef.current.toggleVisibility()
-    //
-    //     const response = await accountService.create(accountObject)
-    //     setAccounts(accounts.concat(response))
-    //     setMessageColour(successColour)
-    //     setNotificationMessage(`a new account ${response.title} by ${response.author} is added`)
-    //     setTimeout(() => {
-    //         setNotificationMessage(null)
-    //     }, 5000)
-    // }
+        const response = await accountService.create(accountObject)
+        setAccounts(accounts.concat(response))
+        setMessageColour(successColour)
+        setNotificationMessage(`a new account ${response.title} by ${response.author} is added`)
+        setTimeout(() => {
+            setNotificationMessage(null)
+        }, 5000)
+    }
 
     const likeAccount = async (id) => {
         const account = accounts.find(b => b.id===id)
@@ -120,11 +97,11 @@ const App = () => {
         setAccounts(accounts.filter(account => account.id !== id))
     }
 
-    // const accountForm = () => (
-    //     <Togglable buttonLabel='New Account' ref={accountFormRef}>
-    //         <AccountForm createAccount={addAccount}/>
-    //     </Togglable>
-    // )
+    const accountForm = () => (
+        <Togglable buttonLabel='New Account' ref={accountFormRef}>
+            <AccountForm createAccount={addAccount}/>
+        </Togglable>
+    )
 
     const logoutHandler = () => {
         window.localStorage.removeItem('loggedaccountappUser')
@@ -138,27 +115,72 @@ const App = () => {
         // window.location.reload()
     }
 
+    const toggleLoginForm = () => {
+        if (visibleForm === 'login') {
+            setVisibleForm(null);
+        } else {
+            setVisibleForm('login');
+        }
+    };
+
+    const toggleSignUpForm = () => {
+        if (visibleForm === 'signup') {
+            setVisibleForm(null);
+        } else {
+            setVisibleForm('signup');
+        }
+    };
+
+    const formDivStyle = {
+        border: '1px solid black',
+        padding: '5px',
+        marginBottom: '5px'
+    }
+
+    const onSuccessfulSignUp = (message) => {
+        setVisibleForm(null);
+        setNotificationMessage(message);
+        setMessageColour(successColour);
+        setTimeout(() => {
+            setNotificationMessage(null);
+        }, 5000);
+    }
+
     return (
         <div>
-            <h2>Accounts</h2>
+            <h2>Sample CRUD verification</h2>
 
-            { (notificationMessage) && <Notification message={notificationMessage} color={messageColour} /> }
+            {notificationMessage && <Notification message={notificationMessage} color={messageColour} />}
 
-            {/*if user state is null (no user logged in), display login form*/}
-            {!user && loginForm()}
+            {!user && (
+                <>
+                    <button onClick={toggleLoginForm}>Login to app</button>
+                    <button onClick={toggleSignUpForm}>Sign up for new account</button>
+                </>
+            )}
+
+            {!user && visibleForm === 'login' && <LoginForm style={formDivStyle} handleLogin={handleLogin} email={email} password={password} setPassword={setPassword} setEmail={setEmail}/>}
+
+            {!user && visibleForm === 'signup' && <SignUpForm style={formDivStyle} onSuccessfulSignUp={onSuccessfulSignUp}/>}
+
+            {/*{ (notificationMessage) && <Notification message={notificationMessage} color={messageColour} /> }*/}
+
+            {/*/!*if user state is null (no user logged in), display login form*!/*/}
+            {/*{!user && <LoginForm handleLogin={handleLogin} email={email} password={password} setPassword={setPassword} setEmail={setEmail}/>}*/}
 
             {/*if a user has logged in (user state not null), display name and create new account form*/}
             {user && <div>
-                <p>{user.name} logged in</p>
+                <p>{user.email} logged in</p>
                 <button onClick={logoutHandler}>logout</button>
             </div>
             }
 
-            {/*{user && accountForm()}*/}
-            {user && accounts.map(account =>
-                // <Account key={account.id} account={account} updateAccount={likeAccount} deleteAccount={deleteAccount} username={user.username} name={user.name}/>
-                <Account key={account.id} account={account} updateAccount={likeAccount} deleteAccount={deleteAccount} username={user.username} name={user.name}/>
-            )}
+            {/*/!*{user && accountForm()}*!/*/}
+            {/*{user && accounts.map(account =>*/}
+            {/*    // <Account key={account.id} account={account} updateAccount={likeAccount} deleteAccount={deleteAccount} email={user.email} name={user.name}/>*/}
+            {/*    <Account key={account.id} account={account} updateAccount={likeAccount} deleteAccount={deleteAccount} email={user.email} name={user.name}/>*/}
+            {/*)}*/}
+
         </div>
     )
 }
