@@ -1,19 +1,17 @@
 package com.example.springbootbackend.service;
 
+import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.account.AccountLoginDTO;
 import com.example.springbootbackend.exception.DuplicateUniqueResourceException;
 import com.example.springbootbackend.exception.InvalidCredentialsException;
 import com.example.springbootbackend.exception.ResourceNotFoundException;
 import com.example.springbootbackend.model.Account;
 import com.example.springbootbackend.repository.AccountRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.sentry.Sentry;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -26,11 +24,12 @@ public class AccountServiceImpl implements AccountService{
     private static final Logger log = Logger.getLogger(AccountServiceImpl.class.getName());
 
     private final AccountRepository accountRepository;
-
+    private final TokenService tokenService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public AccountServiceImpl(AccountRepository accountRepository, BCryptPasswordEncoder passwordEncoder) {
+    public AccountServiceImpl(AccountRepository accountRepository, TokenService tokenService, BCryptPasswordEncoder passwordEncoder) {
         this.accountRepository = accountRepository;
+        this.tokenService = tokenService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -61,9 +60,14 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public Account updateAccount(Integer id, Account accountDetails) {
+    public Account updateAccount(Integer id, Account accountDetails, String token) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found with id " + id));
+
+        String email = tokenService.getEmailFromToken(token);
+        if (!account.getEmail().equals(email)) {
+            throw new AccessDeniedException("You do not have permission to update this account");
+        }
 
         log.info("Updating account with id: " + id + " to: " + accountDetails);
         account.setEmail(accountDetails.getEmail());
@@ -79,7 +83,15 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public void deleteAccount(Integer id) {
+    public void deleteAccount(Integer id, String token) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id " + id));
+
+        String email = tokenService.getEmailFromToken(token);
+        if (!account.getEmail().equals(email)) {
+            throw new AccessDeniedException("You do not have permission to delete this account");
+        }
+
         accountRepository.deleteById(id);
     }
 
@@ -89,22 +101,11 @@ public class AccountServiceImpl implements AccountService{
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
             if (passwordEncoder.matches(accountLoginDTO.password(), account.getPasswordHash())) {
-                return generateToken(account);
+                return tokenService.generateToken(account);
             }
         }
-        Sentry.captureMessage("Invalid email or password");
         throw new InvalidCredentialsException("Invalid email or password");
     }
 
-    private String generateToken(Account account) {
-        int jwtExpirationInMs = 60000; // 1 minute in m/s
-        String jwtSecret = "yourSecretKey"; // Replace with your own secret key
 
-        return Jwts.builder()
-                .setSubject(account.getEmail())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationInMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
-    }
 }
