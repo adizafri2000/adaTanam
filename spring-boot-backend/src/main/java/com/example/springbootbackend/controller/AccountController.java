@@ -2,12 +2,11 @@ package com.example.springbootbackend.controller;
 
 import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.RequestErrorDTO;
-import com.example.springbootbackend.dto.account.AccountGetDTO;
+import com.example.springbootbackend.dto.account.AccountResponseDTO;
 import com.example.springbootbackend.dto.account.AccountLoginDTO;
-import com.example.springbootbackend.dto.account.AccountPostDTO;
-import com.example.springbootbackend.mapper.AccountMapper;
-import com.example.springbootbackend.model.Account;
-import com.example.springbootbackend.service.AccountService;
+import com.example.springbootbackend.dto.account.AccountRequestDTO;
+import com.example.springbootbackend.service.account.AccountService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +14,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(path = "/accounts")
+@Slf4j
 public class AccountController {
 
-    private static final Logger log = Logger.getLogger(AccountController.class.getName());
+    //private final Logger log = LoggerFactory.getLogger(AccountController.class);//Logger.getLogger(AccountController.class.getName());
     private final AccountService accountService;
-    private final AccountMapper accountMapper = AccountMapper.INSTANCE;
     private final TokenService tokenService;
 
     public AccountController(AccountService accountService, TokenService tokenService) {
@@ -34,32 +32,24 @@ public class AccountController {
     @GetMapping("")
     public ResponseEntity<?> getAccounts() {
         log.info("Handling GET /api/accounts request");
-        List<AccountGetDTO> dtoList = accountService.getAccounts().stream()
-                .map(accountMapper::toGetDTO)
-                .toList();
-        Map<String, List<AccountGetDTO>> listResponse = new HashMap<>();
+        List<AccountResponseDTO> dtoList = accountService.getAccounts();
+        Map<String, List<AccountResponseDTO>> listResponse = new HashMap<>();
         listResponse.put("accounts", dtoList);
         return new ResponseEntity<>(listResponse, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<?> getAccountById(@PathVariable Integer id) {
-        log.info("Handling GET /api/accounts/" + id + " request");
-        Account account = accountService.getAccountById(id);
-        AccountGetDTO dto = accountMapper.toGetDTO(account);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+    public AccountResponseDTO getAccountById(@PathVariable Integer id) {
+        log.info("Handling GET /api/accounts/{} request", id);
+        return accountService.getAccountById(id);
     }
 
     // User account sign up/registration endpoint
     @PostMapping("/signup")
-    public ResponseEntity<?> createAccount(@RequestBody AccountPostDTO accountPostDTO) {
+    public ResponseEntity<?> createAccount(@RequestBody AccountRequestDTO accountRequestDTO) {
         log.info("Handling POST /api/accounts/signup request");
-        log.info("AccountPostDTO: " + accountPostDTO);
-        Account account = accountMapper.toEntity(accountPostDTO);
-        AccountGetDTO dto = accountMapper.toGetDTO(accountService.createAccount(account));
-        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+        return new ResponseEntity<>(accountService.createAccount(accountRequestDTO), HttpStatus.CREATED);
     }
-
 
     // User account login endpoint
     @PostMapping("/login")
@@ -72,21 +62,18 @@ public class AccountController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable Integer id, @RequestBody AccountPostDTO accountPostDTO, @RequestHeader("Authorization") String token){
-        log.info("Handling PUT /api/accounts/" + id + " request");
+    public ResponseEntity<?> updateAccount(@PathVariable Integer id, @RequestBody AccountRequestDTO accountRequestDTO, @RequestHeader("Authorization") String token){
+        log.info("Handling PUT /api/accounts/{} request", id);
         if (!tokenService.validateToken(token)) {
             RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-
-        Account account = accountMapper.toEntity(accountPostDTO);
-        AccountGetDTO dto = accountMapper.toGetDTO(accountService.updateAccount(id, account, token));
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(accountService.updateAccount(id, accountRequestDTO, token), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
-        log.info("Handling DELETE /api/accounts/" + id + " request");
+        log.info("Handling DELETE /api/accounts/{} request", id);
         if (!tokenService.validateToken(token)) {
             RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);

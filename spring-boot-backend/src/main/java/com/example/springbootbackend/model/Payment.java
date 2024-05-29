@@ -14,9 +14,9 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "order", nullable = false)
-    private Order order;
+//    @ManyToOne
+//    @JoinColumn(name = "order", nullable = false)
+    private Integer order;
 
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;

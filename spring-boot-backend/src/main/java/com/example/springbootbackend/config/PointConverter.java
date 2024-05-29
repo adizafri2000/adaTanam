@@ -1,27 +1,27 @@
 package com.example.springbootbackend.config;
 
 import org.postgresql.geometric.PGpoint;
-import org.springframework.data.geo.Point;
 
-import jakarta.persistence.Converter;
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-public class PointConverter implements AttributeConverter<Point, PGpoint> {
+public class PointConverter implements AttributeConverter<PGpoint, String> {
 
     @Override
-    public PGpoint convertToDatabaseColumn(Point attribute) {
+    public String convertToDatabaseColumn(PGpoint attribute) {
         if (attribute == null) {
             return null;
         }
-        return new PGpoint(attribute.getX(), attribute.getY());
+        return attribute.toString();
     }
 
     @Override
-    public Point convertToEntityAttribute(PGpoint dbData) {
+    public PGpoint convertToEntityAttribute(String dbData) {
         if (dbData == null) {
             return null;
         }
-        return new Point(dbData.x, dbData.y);
+        String[] coordinates = dbData.replace("(", "").replace(")", "").split(",");
+        return new PGpoint(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]));
     }
 }

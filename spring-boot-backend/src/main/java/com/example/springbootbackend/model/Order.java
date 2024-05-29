@@ -11,17 +11,17 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "account", nullable = false)
-    private Account account;
+//    @ManyToOne
+//    @JoinColumn(name = "account", nullable = false)
+    private Integer account;
 
-    @ManyToOne
-    @JoinColumn(name = "store", nullable = false)
-    private Store store;
+//    @ManyToOne
+//    @JoinColumn(name = "store", nullable = false)
+    private Integer store;
 
-    @OneToOne
-    @JoinColumn(name = "cart", nullable = false)
-    private Cart cart;
+//    @OneToOne
+//    @JoinColumn(name = "cart", nullable = false)
+    private Integer cart;
 
     @Column(name = "order_timestamp", nullable = false)
     private Timestamp orderTimestamp;
