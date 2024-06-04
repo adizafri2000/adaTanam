@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/carts")
 @Slf4j
 public class CartController {
     private final CartService cartService;
@@ -26,25 +26,25 @@ public class CartController {
 
     @GetMapping("")
     public List<CartResponseDTO> getAllCarts(){
-        log.info("Handling GET /cart request");
+        log.info("Handling GET /carts request");
         return cartService.getCarts();
     }
 
     @GetMapping("/{id}")
     public CartResponseDTO getCartById(@PathVariable int id) {
-        log.info("Handling GET /cart/{} request", id);
+        log.info("Handling GET /carts/{} request", id);
         return cartService.getCartById(id);
     }
 
     @PostMapping("")
     public ResponseEntity<?> createCart(@RequestBody CartRequestDTO cart) {
-        log.info("Handling POST /cart request");
+        log.info("Handling POST /carts request");
         return new ResponseEntity<>(cartService.createCart(cart), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCart(@PathVariable int id, @RequestBody CartRequestDTO cart, @RequestHeader("Authorization") String token) {
-        log.info("Handling PUT /cart/{} request", id);
+        log.info("Handling PUT /carts/{} request", id);
         if (!tokenService.validateToken(token)) {
             RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
@@ -54,7 +54,7 @@ public class CartController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCart(@PathVariable int id, @RequestHeader("Authorization") String token) {
-        log.info("Handling DELETE /cart/{} request", id);
+        log.info("Handling DELETE /carts/{} request", id);
         if (!tokenService.validateToken(token)) {
             RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);

@@ -1,9 +1,16 @@
 package com.example.springbootbackend.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.sql.Timestamp;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Entity
 @Table(name = "order")
 public class Order {
@@ -11,16 +18,10 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "account", nullable = false)
     private Integer account;
 
-//    @ManyToOne
-//    @JoinColumn(name = "store", nullable = false)
     private Integer store;
 
-//    @OneToOne
-//    @JoinColumn(name = "cart", nullable = false)
     private Integer cart;
 
     @Column(name = "order_timestamp", nullable = false)
@@ -41,6 +42,21 @@ public class Order {
     private Integer rating;
     private String review;
 
+    @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
+
+    @Column(name = "updated_at", insertable = false, updatable = false)
     private Timestamp updatedAt;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account", nullable = false, insertable = false, updatable = false)
+    private Account orderAccount;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store", nullable = false, insertable = false, updatable = false)
+    private Store orderStore;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart", nullable = false, insertable = false, updatable = false)
+    private Cart orderCart;
 }
