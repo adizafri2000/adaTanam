@@ -1,11 +1,11 @@
 package com.example.springbootbackend.service.produce;
 
-import com.example.springbootbackend.dto.produce.ProduceRequestDTO;
-import com.example.springbootbackend.dto.produce.ProduceResponseDTO;
-import com.example.springbootbackend.model.Produce;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.example.springbootbackend.dto.produce.ProduceRequestDTO;
+import com.example.springbootbackend.dto.produce.ProduceResponseDTO;
 
 @Service
 public interface ProduceService {

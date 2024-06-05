@@ -1,20 +1,20 @@
 package com.example.springbootbackend.service.produce;
 
+import java.sql.Timestamp;
+import java.util.List;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
+
 import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.produce.ProduceRequestDTO;
 import com.example.springbootbackend.dto.produce.ProduceResponseDTO;
 import com.example.springbootbackend.exception.ResourceNotFoundException;
 import com.example.springbootbackend.mapper.ProduceMapper;
-import com.example.springbootbackend.mapper.StoreMapper;
 import com.example.springbootbackend.model.Produce;
 import com.example.springbootbackend.repository.ProduceRepository;
-import com.example.springbootbackend.repository.StoreRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
