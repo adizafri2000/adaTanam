@@ -7,6 +7,10 @@ import LoginForm from "./components/LoginForm.jsx";
 import SignUpForm from "./components/SignUpForm.jsx";
 // import Toggleable from './components/Toggleable.jsx'
 // import AccountForm from './components/AccountForm.jsx'
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/LoginPage.jsx'
+import Navbar from './components/Navbar.jsx'
 
 const App = () => {
     // account and metadata in forms
@@ -23,6 +27,29 @@ const App = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
+
+    const theme = createTheme({
+        palette: {
+          primary: {
+            main: '#4CAF50',
+          },
+          secondary: {
+            main: '#FF9800',
+          },
+          error: {
+            main: '#f44336',
+          },
+          warning: {
+            main: '#ff9800',
+          },
+          info: {
+            main: '#2196f3',
+          },
+          success: {
+            main: '#4caf50',
+          },
+        },
+      });
 
     const accountFormRef = useRef()
 
@@ -146,42 +173,59 @@ const App = () => {
         }, 5000);
     }
 
-    return (
+    const oldTest = () => (
         <div>
-            <h2>Sample CRUD verification</h2>
+                <h2>Sample CRUD verification</h2>
 
-            {notificationMessage && <Notification message={notificationMessage} color={messageColour} />}
+                {notificationMessage && <Notification message={notificationMessage} color={messageColour} />}
 
-            {!user && (
-                <>
-                    <button onClick={toggleLoginForm}>Login to app</button>
-                    <button onClick={toggleSignUpForm}>Sign up for new account</button>
-                </>
-            )}
+                {!user && (
+                    <>
+                        <button onClick={toggleLoginForm}>Login to app</button>
+                        <button onClick={toggleSignUpForm}>Sign up for new account</button>
+                    </>
+                )}
 
-            {!user && visibleForm === 'login' && <LoginForm style={formDivStyle} handleLogin={handleLogin} email={email} password={password} setPassword={setPassword} setEmail={setEmail}/>}
+                {!user && visibleForm === 'login' && <LoginForm style={formDivStyle} handleLogin={handleLogin} email={email} password={password} setPassword={setPassword} setEmail={setEmail}/>}
 
-            {!user && visibleForm === 'signup' && <SignUpForm style={formDivStyle} onSuccessfulSignUp={onSuccessfulSignUp}/>}
+                {!user && visibleForm === 'signup' && <SignUpForm style={formDivStyle} onSuccessfulSignUp={onSuccessfulSignUp}/>}
 
-            {/*{ (notificationMessage) && <Notification message={notificationMessage} color={messageColour} /> }*/}
+                {/*{ (notificationMessage) && <Notification message={notificationMessage} color={messageColour} /> }*/}
 
-            {/*/!*if user state is null (no user logged in), display login form*!/*/}
-            {/*{!user && <LoginForm handleLogin={handleLogin} email={email} password={password} setPassword={setPassword} setEmail={setEmail}/>}*/}
+                {/*/!*if user state is null (no user logged in), display login form*!/*/}
+                {/*{!user && <LoginForm handleLogin={handleLogin} email={email} password={password} setPassword={setPassword} setEmail={setEmail}/>}*/}
 
-            {/*if a user has logged in (user state not null), display name and create new account form*/}
-            {user && <div>
-                <p>{user.email} logged in</p>
-                <button onClick={logoutHandler}>logout</button>
+                {/*if a user has logged in (user state not null), display name and create new account form*/}
+                {user && <div>
+                    <p>{user.email} logged in</p>
+                    <button onClick={logoutHandler}>logout</button>
+                </div>
+                }
+
+                {/*/!*{user && accountForm()}*!/*/}
+                {/*{user && accounts.map(account =>*/}
+                {/*    // <Account key={account.id} account={account} updateAccount={likeAccount} deleteAccount={deleteAccount} email={user.email} name={user.name}/>*/}
+                {/*    <Account key={account.id} account={account} updateAccount={likeAccount} deleteAccount={deleteAccount} email={user.email} name={user.name}/>*/}
+                {/*)}*/}
+
             </div>
-            }
+    )
 
-            {/*/!*{user && accountForm()}*!/*/}
-            {/*{user && accounts.map(account =>*/}
-            {/*    // <Account key={account.id} account={account} updateAccount={likeAccount} deleteAccount={deleteAccount} email={user.email} name={user.name}/>*/}
-            {/*    <Account key={account.id} account={account} updateAccount={likeAccount} deleteAccount={deleteAccount} email={user.email} name={user.name}/>*/}
-            {/*)}*/}
+    const SignupPage = () => <div>Signup Page</div>;
+    const HomePage = () => <div>Home Page</div>;
 
-        </div>
+    return (
+        <ThemeProvider theme={theme}>
+            <Router>
+                <Navbar />
+                <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/" element={<HomePage />} />
+                </Routes>
+            </Router>
+        </ThemeProvider>
     )
 }
 
