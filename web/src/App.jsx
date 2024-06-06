@@ -11,6 +11,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx'
 import Navbar from './components/Navbar.jsx'
+import SignIn from "./components/SignIn.jsx";
 
 const App = () => {
     // account and metadata in forms
@@ -211,7 +212,7 @@ const App = () => {
             </div>
     )
 
-    const SignupPage = () => <div>Signup Page</div>;
+    const SignupPage = () => <SignIn/>;
     const HomePage = () => <div>Home Page</div>;
 
     return (

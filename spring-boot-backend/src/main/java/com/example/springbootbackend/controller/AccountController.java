@@ -20,7 +20,6 @@ import java.util.Map;
 @Slf4j
 public class AccountController {
 
-    //private final Logger log = LoggerFactory.getLogger(AccountController.class);//Logger.getLogger(AccountController.class.getName());
     private final AccountService accountService;
     private final TokenService tokenService;
 
