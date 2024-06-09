@@ -9,6 +9,10 @@ on:
       - dev
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: spring-boot-backend
+
 jobs:
   build:
     runs-on: ubuntu-latest
