@@ -22,12 +22,12 @@ jobs:
           java-version: '17'
 
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean install spring-boot-backend/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
-          name: java-app
+          name: spring-boot-backend
           path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
@@ -43,7 +43,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: java-app
+          name: spring-boot-backend
       
       - name: Login to Azure
         uses: azure/login@v1
