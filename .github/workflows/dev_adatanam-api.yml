@@ -21,8 +21,8 @@ jobs:
         with:
           java-version: '17'
 
-      - name: Verify location
-        run: ls && tree
+      - name: Change to working dir
+        run: cd spring-boot-app
 
       - name: Build with Maven
         run: mvn clean install
