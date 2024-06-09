@@ -21,8 +21,11 @@ jobs:
         with:
           java-version: '17'
 
+      - name: Verify location
+        run: pwd
+
       - name: Build with Maven
-        run: mvn clean install spring-boot-backend/
+        run: mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
