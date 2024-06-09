@@ -25,11 +25,8 @@ jobs:
         with:
           java-version: '17'
 
-      - name: Change to working dir
-        run: cd spring-boot-backend/ && ls
-
       - name: Build with Maven
-        run: ls && mvn clean install
+        run: mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
