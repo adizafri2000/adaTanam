@@ -1,7 +1,8 @@
 import {useState} from "react";
 import signUpService from "../services/accounts/signup";
+import CircularIndeterminate from "./CircularIndeterminate";
 
-const SignUpForm = ({style, onSuccessfulSignUp}) => {
+const SignUpForm = ({style}) => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -10,13 +11,25 @@ const SignUpForm = ({style, onSuccessfulSignUp}) => {
     const [bankNumber, setBankNumber] = useState('')
     const [bankName, setBankName] = useState('')
     const [type, setType] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
+
+    const clearForm = () => {
+        setEmail('')
+        setPassword('')
+        setName('')
+        setPhone('')
+        setBankNumber('')
+        setBankName('')
+        setType('')
+    }
 
     const handleSignUp = async (event) => {
+        setIsLoading(true)
         event.preventDefault()
 
         const data = {
             email,
-            passwordHash: password,
+            password,
             name,
             phone,
             bankNumber,
@@ -26,16 +39,22 @@ const SignUpForm = ({style, onSuccessfulSignUp}) => {
         }
 
         try {
+            console.log(data)
+            console.log('sending data to signup service')
             const response = await signUpService.signup(data);
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message);
-            }
             console.log('response:', response)
-            onSuccessfulSignUp('Signup successful!')
+            
+            if (response.status < 200 || response.status >= 300) {
+                console.log('response is not ok')
+                throw new Error(response.data.message);
+            }
+            setIsLoading(false)
+            window.alert('Signup successful!')
+            clearForm()
         } catch (error) {
-            console.log(error)
-            onSuccessfulSignUp(error.message || 'Signup failed. Please try again.')
+            setIsLoading(false)
+            console.log(error.response)
+            window.alert(error.response.data.message || 'Signup failed. Please try again.')
         }
     }
 
@@ -122,6 +141,7 @@ const SignUpForm = ({style, onSuccessfulSignUp}) => {
                 </div>
                 <button type='submit'>Sign up</button>
             </form>
+            {isLoading && <CircularIndeterminate/>}
         </div>
     )
 }

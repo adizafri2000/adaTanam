@@ -10,8 +10,33 @@ import SignUpForm from "./components/SignUpForm.jsx";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx'
-import Navbar from './components/Navbar.jsx'
+import Navbar from './layouts/Navbar.jsx'
 import SignIn from "./components/SignIn.jsx";
+import produceService from "./services/produce";
+import SignUpPage from "./pages/SignUpPage.jsx";
+import { CssBaseline } from '@mui/material'
+
+const HomePage = () => {
+    const [produceList, setProduceList] = useState([]);
+    const [isButtonClicked, setIsButtonClicked] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleClick = async () => {
+        setIsButtonClicked(true);
+        setIsLoading(true);
+        const result = await produceService.getAll();
+        setProduceList(result);
+        setIsLoading(false);
+    };
+
+    return (
+        <>
+            <div>Home Page (this is edited on dev after PR to main and should not appear yet on prod)</div>
+            <button onClick={handleClick}>Load Produce</button>
+            {isLoading ? <div>Loading...</div> : isButtonClicked && produceList.map(produce => <div key={produce.id}>{produce.name}</div>)}
+        </>
+    );
+};
 
 const App = () => {
     // account and metadata in forms
@@ -30,6 +55,16 @@ const App = () => {
     const [user, setUser] = useState(null)
 
     const theme = createTheme({
+        components: {
+            MuiCssBaseline: {
+              styleOverrides: {
+                body: {
+                  margin: 0,
+                  padding: 0,
+                },
+              },
+            },
+        },
         palette: {
           primary: {
             main: '#4CAF50',
@@ -213,15 +248,26 @@ const App = () => {
     )
 
     const SignupPage = () => <SignIn/>;
-    const HomePage = () => <div>Home Page (this is edited on dev after PR to main and should not appear yet on prod)</div>;
+    const HomePage2 = () => {
+        const produceList = produceService.getAll();
+        console.log(produceList);
+        return (
+            <>
+                <div>Home Page (this is edited on dev after PR to main and should not appear yet on prod)</div>;
+                {produceList.map(produce => <div key={produce.id}>{produce.name}</div>)}
+            </>
+        )
+    
+    }
 
     return (
         <ThemeProvider theme={theme}>
+            <CssBaseline />
             <Router>
                 <Navbar />
                 <Routes>
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/" element={<HomePage />} />
                 </Routes>

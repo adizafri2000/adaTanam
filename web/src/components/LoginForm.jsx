@@ -1,13 +1,16 @@
 import React from 'react';
 import { TextField, Button, Box, Typography, useTheme } from '@mui/material';
+import loginService from '../services/accounts/login';
 
 const LoginForm = ({ handleLogin, email, setEmail, password, setPassword }) => {
     const theme = useTheme();
 
+    const loginHandler = () => true;
+
     return (
         <Box
             component="form"
-            onSubmit={handleLogin}
+            onSubmit={loginHandler}
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
