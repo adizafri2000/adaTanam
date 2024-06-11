@@ -1,6 +1,6 @@
 package com.example.springbootbackend.dto.account;
 
-public record AccountGetDTO(
+public record AccountResponseDTO(
         Integer id,
         String email,
         String name,

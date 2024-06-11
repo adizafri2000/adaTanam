@@ -4,6 +4,7 @@ import com.example.springbootbackend.model.Account;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -11,9 +12,11 @@ import java.util.Date;
 @Service
 public class TokenServiceImpl implements TokenService {
 
-    private static final int jwtExpirationInMs = 60000*2; // 1*2 minute in m/s
-    // TODO replace secret key
-    private static final String jwtSecret = "yourSecretKey"; // Replace with your own secret key
+    @Value("${security.jwt.secret-key}")
+    private String jwtSecret;
+
+    @Value("${security.jwt.expiration-time}")
+    private int jwtExpirationInMs;
 
     @Override
     public boolean validateToken(String token) {
@@ -32,7 +35,8 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public String generateToken(Account account) {
         // use Bearer tokens
-        return "Bearer " + Jwts.builder()
+//        return "Bearer " + Jwts.builder()
+        return Jwts.builder()
                 .setSubject(account.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationInMs))

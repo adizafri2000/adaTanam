@@ -1,8 +1,8 @@
 package com.example.springbootbackend.dto.account;
 
-public record AccountPostDTO(
+public record AccountRequestDTO(
         String email,
-        String passwordHash,
+        String password,
         String name,
         String phone,
         String bankNumber,
