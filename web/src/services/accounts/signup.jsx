@@ -4,7 +4,7 @@ const baseUrl = `${host}/accounts/signup`
 
 const signup = async data => {
     const response = await axios.post(baseUrl, data)
-    return response.data
+    return response
 }
 
 export default { signup }

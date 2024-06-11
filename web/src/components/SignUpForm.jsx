@@ -39,13 +39,12 @@ const SignUpForm = ({style}) => {
         }
 
         try {
-            console.log(data)
-            console.log('sending data to signup service')
             const response = await signUpService.signup(data);
-            console.log('response:', response)
+            // console.log('response: ', response);
+            // console.log('response status:', response.status)
             
             if (response.status < 200 || response.status >= 300) {
-                console.log('response is not ok')
+                // console.log('response is not ok')
                 throw new Error(response.data.message);
             }
             setIsLoading(false)
