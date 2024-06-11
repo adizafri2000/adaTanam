@@ -213,7 +213,7 @@ const App = () => {
     )
 
     const SignupPage = () => <SignIn/>;
-    const HomePage = () => <div>Home Page</div>;
+    const HomePage = () => <div>Home Page (this is edited on dev after PR to main and should not appear yet on prod)</div>;
 
     return (
         <ThemeProvider theme={theme}>
