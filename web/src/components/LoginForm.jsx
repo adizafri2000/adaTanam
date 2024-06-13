@@ -18,10 +18,10 @@ const LoginForm = ({ handleLogin, email, setEmail, password, setPassword }) => {
                 margin: '0 auto',
                 gap: '20px',
                 marginTop: '100px',
-                backgroundColor: '#FFFFFF', // white background
+                backgroundColor: '#FFFFFF',
             }}
         >
-            <Typography variant="h4" component="h2">
+            <Typography variant="h4" component="h2" align='center'>
                 Log in to adaTanam
             </Typography>
             <TextField
@@ -46,6 +46,8 @@ const LoginForm = ({ handleLogin, email, setEmail, password, setPassword }) => {
                 sx={{
                     backgroundColor: theme.palette.primary.main, // primary color for button
                     color: '#FFFFFF', // white color for button text
+                    padding: '10px 20px', // Adjust padding to make the button design decent
+                    borderRadius: '10px', // Adjust border radius for a softer look
                 }}
             >
                 Login

@@ -7,7 +7,6 @@ const Layout = () => {
   return (
     <div>
       {/* <Navbar /> */}
-<h1>ligma</h1>
       <NavbarNew />
       <Outlet />
     </div>
