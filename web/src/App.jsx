@@ -1,13 +1,12 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage.jsx'
-import Navbar from './layouts/Navbar.jsx'
 import SignUpPage from "./pages/SignUpPage.jsx";
 import { CssBaseline } from '@mui/material'
 import HomePage from './pages/HomePage.jsx';
 import { green, brown, yellow } from '@mui/material/colors';
 import Layout from './layouts/Layout.jsx';
-
+import { UserProvider } from './contexts/UserContext';
 
 const App = () => {
 
@@ -52,21 +51,23 @@ const App = () => {
     }
 
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Router>
-                <Routes>
-                  <Route element={<Layout />}>
-                    <Route index element={<HomePage/>} />
-                    <Route path="login" element={<LoginPage />} />
-                    <Route path="signup" element={<SignUpPage />} />
-                    {/* <Route path="/home" element={<HomePage/>} />
-                    <Route path="/" element={<HomePage />} /> */}
-                    <Route path='*' element={<NotFound/>}/>
-                  </Route>
-                </Routes>
-            </Router>
-        </ThemeProvider>
+        <UserProvider>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Router>
+                    <Routes>
+                      <Route element={<Layout />}>
+                        <Route index element={<HomePage/>} />
+                        <Route path="login" element={<LoginPage />} />
+                        <Route path="signup" element={<SignUpPage />} />
+                        {/* <Route path="/home" element={<HomePage/>} />
+                        <Route path="/" element={<HomePage />} /> */}
+                        <Route path='*' element={<NotFound/>}/>
+                      </Route>
+                    </Routes>
+                </Router>
+            </ThemeProvider>
+        </UserProvider>
     )
   
 }

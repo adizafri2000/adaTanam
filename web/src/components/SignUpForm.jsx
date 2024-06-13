@@ -1,5 +1,5 @@
 import {useState} from "react";
-import signUpService from "../services/accounts/signup";
+import auth from "../services/auth";
 import CircularIndeterminate from "./CircularIndeterminate";
 import { useNavigate } from "react-router-dom";
 
@@ -41,7 +41,7 @@ const SignUpForm = ({style}) => {
         }
 
         try {
-            const response = await signUpService.signup(data);
+            const response = await auth.signup(data);
             
             if (response.status < 200 || response.status >= 300) {
                 throw new Error(response.data.message);
@@ -52,8 +52,8 @@ const SignUpForm = ({style}) => {
             navigate("/")
         } catch (error) {
             setIsLoading(false)
-            console.log(error.response)
-            window.alert(error.response.data.message || 'Signup failed. Please try again.')
+            console.log(error)
+            window.alert(error || 'Signup failed. Please try again.')
         }
     }
 

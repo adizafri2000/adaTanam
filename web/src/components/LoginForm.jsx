@@ -1,11 +1,43 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import { TextField, Button, Box, Typography, useTheme } from '@mui/material';
-import loginService from '../services/accounts/login';
+import auth from '../services/auth';
+// import loginService from '../services/accounts/login'
+import UserContext from "../contexts/UserContext.jsx";
+import { useNavigate } from 'react-router-dom';
 
-const LoginForm = ({ handleLogin, email, setEmail, password, setPassword }) => {
+const LoginForm = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const theme = useTheme();
+    const { login } = useContext(UserContext);
+    const navigate = useNavigate();
 
-    const loginHandler = () => true;
+    const loginHandler = async (event) => {
+        event.preventDefault();
+        try {
+            console.log('accessing API')
+            const response = await auth.login({
+                email,
+                password,
+            });
+            console.log('response: ', response)
+            if (response.status !== 200) {
+                throw new Error(response);
+            }
+            const user = {
+                email,
+                name: response.data.accountName,
+                id: response.data.accountId,
+                token: response.data.token
+            }
+            console.log('logged in user: ', user);
+            login(user.email, user.name, user.id, user.token)
+            navigate('/')
+        } catch (error) {
+            console.log(error)
+            alert(error);
+        }
+    }
 
     return (
         <Box
