@@ -6,6 +6,7 @@ import SignUpPage from "./pages/SignUpPage.jsx";
 import { CssBaseline } from '@mui/material'
 import HomePage from './pages/HomePage.jsx';
 import { green, brown, yellow } from '@mui/material/colors';
+import Layout from './layouts/Layout.jsx';
 
 
 const App = () => {
@@ -46,20 +47,28 @@ const App = () => {
         },
       });
 
+    const NotFound = () => {
+      return <div>Not found</div>
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <Router>
-                <Navbar />
                 <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignUpPage />} />
-                <Route path="/home" element={<HomePage/>} />
-                <Route path="/" element={<HomePage />} />
+                  <Route element={<Layout />}>
+                    <Route index element={<HomePage/>} />
+                    <Route path="login" element={<LoginPage />} />
+                    <Route path="signup" element={<SignUpPage />} />
+                    {/* <Route path="/home" element={<HomePage/>} />
+                    <Route path="/" element={<HomePage />} /> */}
+                    <Route path='*' element={<NotFound/>}/>
+                  </Route>
                 </Routes>
             </Router>
         </ThemeProvider>
     )
+  
 }
 
 export default App

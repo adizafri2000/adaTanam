@@ -1,6 +1,7 @@
 import {useState} from "react";
 import signUpService from "../services/accounts/signup";
 import CircularIndeterminate from "./CircularIndeterminate";
+import { useNavigate } from "react-router-dom";
 
 const SignUpForm = ({style}) => {
 
@@ -12,6 +13,7 @@ const SignUpForm = ({style}) => {
     const [bankName, setBankName] = useState('')
     const [type, setType] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate();
 
     const clearForm = () => {
         setEmail('')
@@ -50,6 +52,7 @@ const SignUpForm = ({style}) => {
             setIsLoading(false)
             window.alert('Signup successful!')
             clearForm()
+            navigate("/")
         } catch (error) {
             setIsLoading(false)
             console.log(error.response)
