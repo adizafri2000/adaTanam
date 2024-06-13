@@ -11,6 +11,7 @@ import java.util.List;
 public interface AccountService {
     List<AccountResponseDTO> getAccounts();
     AccountResponseDTO getAccountById(Integer id);
+    AccountResponseDTO getAccountByEmail(String email);
     AccountResponseDTO createAccount(AccountRequestDTO accountRequestDTO);
     AccountResponseDTO updateAccount(Integer id, AccountRequestDTO accountRequestDTO, String token);
     void deleteAccount(Integer id, String token);

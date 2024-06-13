@@ -51,6 +51,13 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
+    public AccountResponseDTO getAccountByEmail(String email) {
+        return accountRepository.findByEmail(email)
+                .map(accountMapper::toResponseDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with email " + email));
+    }
+
+    @Override
     public AccountResponseDTO createAccount(AccountRequestDTO account) {
         log.info("Creating account: {}", account);
         Account newAccount = accountMapper.toEntity(account);
