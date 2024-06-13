@@ -5,7 +5,7 @@ import Navbar from './layouts/Navbar.jsx'
 import SignUpPage from "./pages/SignUpPage.jsx";
 import { CssBaseline } from '@mui/material'
 import HomePage from './pages/HomePage.jsx';
-import { green } from '@mui/material/colors';
+import { green, brown, yellow } from '@mui/material/colors';
 
 
 const App = () => {
@@ -23,10 +23,13 @@ const App = () => {
         },
         palette: {
           primary: {
-            main: green[200],//'#4CAF50',
+            main: green[500],//'#4CAF50',
           },
           secondary: {
-            main: '#FF9800',
+            main: brown[400],
+          },
+          accent: {
+            main: yellow[400],
           },
           error: {
             main: '#f44336',
