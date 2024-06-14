@@ -2,7 +2,6 @@ package com.example.springbootbackend.auth;
 
 import com.example.springbootbackend.dto.RequestErrorDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,12 +13,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        if (path.equals("/auth/login") || path.equals("/auth/signup")) {
+        if (path.equals("/auth/login") || path.equals("/auth/signup") || path.equals("auth/refresh")) {
             return true;
         }
 
@@ -66,22 +63,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //        filterChain.doFilter(request, response);
 //    }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        try {
-            String header = request.getHeader("Authorization");
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+//            throws ServletException, IOException {
+//        try {
+//            String header = request.getHeader("Authorization");
+//
+//            if (header == null || !header.startsWith("Bearer ")) {
+//                throw new ServletException("Missing or invalid Authorization header");
+//            }
+//
+//            filterChain.doFilter(request, response);
+//        } catch (ServletException e) {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.setContentType("application/json");
+//
+//            objectMapper.writeValue(response.getWriter(), new RequestErrorDTO("401", e.getMessage()));
+//        }
+//    }
+@Override
+protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+        throws ServletException, IOException {
+    String path = request.getRequestURI();
+    if (!path.equals("/auth/login") && !path.equals("/auth/signup") && !path.equals("/auth/refresh")) {
+        String header = request.getHeader("Authorization");
 
-            if (header == null || !header.startsWith("Bearer ")) {
-                throw new ServletException("Missing or invalid Authorization header");
-            }
-
-            filterChain.doFilter(request, response);
-        } catch (ServletException e) {
+        if (header == null || !header.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
-
-            objectMapper.writeValue(response.getWriter(), new RequestErrorDTO("401", e.getMessage()));
+            objectMapper.writeValue(response.getWriter(), new RequestErrorDTO("401", "Missing or invalid Authorization header"));
+            return;
         }
     }
+
+    filterChain.doFilter(request, response);
+}
 }

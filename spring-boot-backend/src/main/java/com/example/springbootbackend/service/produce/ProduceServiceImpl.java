@@ -45,12 +45,6 @@ public class ProduceServiceImpl implements ProduceService {
     public ProduceResponseDTO createProduce(ProduceRequestDTO produce) {
         log.info("Creating produce: {}", produce);
         Produce newProduce = produceMapper.toEntity(produce);
-        if (newProduce.getCreatedAt() == null) {
-            newProduce.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        }
-        if (newProduce.getUpdatedAt() == null) {
-            newProduce.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        }
         return produceMapper.toResponseDTO(produceRepository.save(newProduce));
     }
 
@@ -74,6 +68,7 @@ public class ProduceServiceImpl implements ProduceService {
         produceToUpdate.setSellingUnit(produce.sellingUnit());
         produceToUpdate.setDescription(produce.description());
         produceToUpdate.setStatus(produce.status());
+        produceToUpdate.setImage(produce.image());
 
         return produceMapper.toResponseDTO(produceRepository.save(produceToUpdate));
     }

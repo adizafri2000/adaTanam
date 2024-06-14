@@ -1,5 +1,7 @@
 package com.example.springbootbackend.auth;
 
+import com.example.springbootbackend.dto.account.AccountResponseDTO;
+import com.example.springbootbackend.mapper.AccountMapper;
 import com.example.springbootbackend.model.Account;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -8,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -17,6 +21,9 @@ public class TokenServiceImpl implements TokenService {
 
     @Value("${security.jwt.expiration-time}")
     private int jwtExpirationInMs;
+
+    @Value("${security.jwt.refresh-expiration-time}")
+    private int jwtRefreshExpirationInMs;
 
     @Override
     public boolean validateToken(String token) {
@@ -33,15 +40,47 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public String generateToken(Account account) {
-        // use Bearer tokens
-//        return "Bearer " + Jwts.builder()
-        return Jwts.builder()
+    public Map<String, String> generateTokens(Account account) {
+        String accessToken = Jwts.builder()
                 .setSubject(account.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationInMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
+
+        String refreshToken = Jwts.builder()
+                .setSubject(account.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtRefreshExpirationInMs)) // jwtRefreshExpirationInMs should be longer than jwtExpirationInMs
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        return tokens;
+    }
+
+    @Override
+    public Map<String, String> generateTokens(AccountResponseDTO accountResponseDTO) {
+        String accessToken = Jwts.builder()
+                .setSubject(accountResponseDTO.email())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationInMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+
+        String refreshToken = Jwts.builder()
+                .setSubject(accountResponseDTO.email())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtRefreshExpirationInMs)) // jwtRefreshExpirationInMs should be longer than jwtExpirationInMs
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        return tokens;
     }
 
     @Override

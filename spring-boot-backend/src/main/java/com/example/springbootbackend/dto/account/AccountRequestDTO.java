@@ -5,6 +5,7 @@ public record AccountRequestDTO(
         String password,
         String name,
         String phone,
+        String image,
         String bankNumber,
         String bankName,
         String type,
