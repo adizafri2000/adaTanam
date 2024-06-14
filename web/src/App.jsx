@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage.jsx';
 import { green, brown, yellow } from '@mui/material/colors';
 import Layout from './layouts/Layout.jsx';
 import { UserProvider } from './contexts/UserContext';
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 const App = () => {
 
@@ -60,8 +61,7 @@ const App = () => {
                         <Route index element={<HomePage/>} />
                         <Route path="login" element={<LoginPage />} />
                         <Route path="signup" element={<SignUpPage />} />
-                        {/* <Route path="/home" element={<HomePage/>} />
-                        <Route path="/" element={<HomePage />} /> */}
+                        <Route path="profile" element={<ProfilePage />} />
                         <Route path='*' element={<NotFound/>}/>
                       </Route>
                     </Routes>

@@ -1,15 +1,9 @@
-import axios from 'axios'
-
-const host = import.meta.env.VITE_API_URL
-
-// Create an axios instance with default settings
-const instance = axios.create({
-    baseURL: `${host}/auth`,
-});
+import api from './api.jsx'
+const baseURL = '/auth'
 
 const login = async credentials => {
     try {
-        return await instance.post('/login', credentials);
+        return await api.post(`${baseURL}/login`, credentials);
     } catch (error) {
         throw error.response.data.message;
     }
@@ -17,7 +11,20 @@ const login = async credentials => {
 
 const signup = async data => {
     try {
-        return await instance.post('/signup', data);
+        const formData = new FormData();
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        formData.append('account', blob, 'account.json');
+
+        const config = {
+            method: 'post',
+            url: `${baseURL}/signup`,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            data : formData
+        };
+
+        return await api(config);
     } catch (error) {
         console.error('Error signing up:', error);
         throw error.response.data.message;

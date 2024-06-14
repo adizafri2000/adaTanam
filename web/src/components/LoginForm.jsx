@@ -1,7 +1,6 @@
 import React, {useContext, useState} from 'react';
 import { TextField, Button, Box, Typography, useTheme } from '@mui/material';
 import auth from '../services/auth';
-// import loginService from '../services/accounts/login'
 import UserContext from "../contexts/UserContext.jsx";
 import { useNavigate } from 'react-router-dom';
 
@@ -25,13 +24,14 @@ const LoginForm = () => {
                 throw new Error(response);
             }
             const user = {
-                email,
+                email: response.data.email,
                 name: response.data.accountName,
                 id: response.data.accountId,
-                token: response.data.token
+                accessToken: response.data.accessToken,
+                refreshToken: response.data.refreshToken
             }
             console.log('logged in user: ', user);
-            login(user.email, user.name, user.id, user.token)
+            login(user.email, user.name, user.id, user.accessToken, user.refreshToken);
             navigate('/')
         } catch (error) {
             console.log(error)

@@ -19,8 +19,8 @@ const HomePage = () => {
     };
 
     useEffect(() => {
-        console.log('User: ', user);
-    }, []);
+        console.log('Homepage debug, User: ', user);
+    }, [user]);
 
     return (
         <>
