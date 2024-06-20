@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import UserContext from "../contexts/UserContext.jsx";
 import { useNavigate } from 'react-router-dom';
-import storeService from '../services/store';  // Assumed to be the service for store-related API calls
-import produceService from '../services/produce';  // Assumed to be the service for produce-related API calls
+import storeService from '../services/store';  // Service for store-related API calls
+import produceService from '../services/produce';  // Service for produce-related API calls
 import CircularProgress from '@mui/material/CircularProgress';
 
 const StorePage = () => {
@@ -13,37 +13,40 @@ const StorePage = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        console.log('beginning useEffect')
         const fetchStoreAndProduce = async () => {
             try {
                 if (!user) {
                     navigate('/login');
+                    console.log('end useEffect no user')
                     return;
                 }
 
-                console.log('store page debug, user: ',user)
+                console.log('store page debug, user: ', user);
 
                 if (user.type === 'Farmer') {
-                    var response = await storeService.getByFarmer(user.id);
-                    console.log('API debug: ', response)
-                    const store = response.data;
-                    setStore(store);
-                    console.log('store page debug, store: ',store)
+                    const response = await storeService.getByFarmer(user.id);
+                    console.log('API debug: ', response);
+                    const storeData = response.data;
+                    setStore(storeData);
+                    console.log('store page debug, store: ', storeData);
 
-                    response = await produceService.getByStore(store.id);
-                    console.log('API debug: ', response)
-                    const produceList = response.data
-                    setProduceList(produceList);
-                    console.log('store page debug, produce: ',produce)
+                    const produceResponse = await produceService.getByStore(storeData.id);
+                    console.log('API debug: ', produceResponse);
+                    const produceListData = produceResponse.data;
+                    setProduceList(produceListData);
+                    console.log('store page debug, produce: ', produceListData);
                 }
             } catch (error) {
                 console.error("Error fetching store or produce:", error);
             } finally {
                 setIsLoading(false);
+                console.log('end useEffect normal route')
             }
         };
 
         fetchStoreAndProduce();
-    }, [user]);
+    }, []);
 
     if (isLoading) {
         return <CircularProgress />;
@@ -53,6 +56,7 @@ const StorePage = () => {
         return <p>Access Denied. Only Farmers can access this page.</p>;
     }
 
+    console.log('reaching return')
     return (
         <div>
             <h2>{user.name}'s Store</h2>

@@ -8,9 +8,11 @@ export const UserProvider = ({ children }) => {
 
     // Load user from local storage
     useEffect(() => {
+        console.log('fetching user from local storage')
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             setUser(JSON.parse(storedUser));
+            console.log('logged in user found in local storage: ', storedUser)
         }
     }, []);
 
