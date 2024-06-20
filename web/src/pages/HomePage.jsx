@@ -13,8 +13,8 @@ const HomePage = () => {
     const handleClick = async () => {
         setIsButtonClicked(true);
         setIsLoading(true);
-        const result = await produceService.getAll();
-        setProduceList(result);
+        const result = await produceService.getAll();console.log('debug homepage: ', result);
+        setProduceList(result.data);
         setIsLoading(false);
     };
 

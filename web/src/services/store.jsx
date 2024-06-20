@@ -1,5 +1,5 @@
 import api from './api.jsx';
-const baseUrl = `/produce`;
+const baseUrl = `/stores`;
 
 const getAll = async () => {
     try {
@@ -17,12 +17,12 @@ const getById = async (id) => {
     }
 };
 
-const getByStore = async (storeId) => {
+const getByFarmer = async (farmerId) => {
     try {
-        return await api.get(`${baseUrl}?storeId=${storeId}`);
+        return await api.get(`${baseUrl}?farmerId=${farmerId}`);
     } catch (error) {
         throw error.response.data.message;
     }
 };
 
-export default { getAll, getById, getByStore };
+export default { getAll, getById, getByFarmer };
