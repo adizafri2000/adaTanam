@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface ProduceRepository extends JpaRepository<Produce, Integer> {
 
-    List<Produce> findByStore(int storeId);
+    List<Produce> findByStore(Integer storeId);
 
 }
