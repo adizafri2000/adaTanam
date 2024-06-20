@@ -40,7 +40,7 @@ public class ProduceController {
         log.info("Handling GET /produce request");
         List<ProduceResponseDTO> produceList;
         if (storeId != null) {
-            produceList = produceService.getProducesByStoreId(storeId);
+            produceList = produceService.getProduceByStoreId(storeId);
         } else {
             produceList = produceService.getProduces();
         }
