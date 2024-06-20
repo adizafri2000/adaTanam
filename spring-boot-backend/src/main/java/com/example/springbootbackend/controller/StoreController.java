@@ -25,10 +25,23 @@ public class StoreController {
         this.tokenService = tokenService;
     }
 
-    @GetMapping(value = "")//, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<StoreResponseDTO> getStores() {
-        log.info("Handling GET /stores request");
-        return storeService.getStores();
+    // @GetMapping(value = "")
+    // public List<StoreResponseDTO> getStores() {
+    //     log.info("Handling GET /stores request");
+    //     return storeService.getStores();
+    // }
+
+    @GetMapping
+    public ResponseEntity<?> getStores(@RequestParam(required = false) Integer farmerId) {
+        log.info("Handling GET /stores request with farmerId: {}", farmerId);
+
+        if (farmerId != null) {
+            StoreResponseDTO store = storeService.getStoreByFarmer(farmerId);
+            return new ResponseEntity<>(store, HttpStatus.OK);
+        } else {
+            List<StoreResponseDTO> stores = storeService.getStores();
+            return new ResponseEntity<>(stores, HttpStatus.OK);
+        }
     }
 
     @GetMapping(value = "/{id}")

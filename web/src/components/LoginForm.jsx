@@ -24,14 +24,15 @@ const LoginForm = () => {
                 throw new Error(response);
             }
             const user = {
-                email: response.data.email,
+                email: email,
                 name: response.data.accountName,
+                type: response.data.accountType,
                 id: response.data.accountId,
                 accessToken: response.data.accessToken,
                 refreshToken: response.data.refreshToken
             }
             console.log('logged in user: ', user);
-            login(user.email, user.name, user.id, user.accessToken, user.refreshToken);
+            login(user.email, user.name, user.type, user.id, user.accessToken, user.refreshToken);
             navigate('/')
         } catch (error) {
             console.log(error)

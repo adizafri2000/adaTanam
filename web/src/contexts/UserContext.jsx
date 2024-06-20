@@ -14,8 +14,8 @@ export const UserProvider = ({ children }) => {
         }
     }, []);
 
-    const login = (email, name, id, accessToken, refreshToken) => {
-        const user = { email, name, id, accessToken, refreshToken };
+    const login = (email, name, type, id, accessToken, refreshToken) => {
+        const user = { email, name, type, id, accessToken, refreshToken };
         setUser(user);
         localStorage.setItem('user', JSON.stringify(user));
     };
@@ -41,6 +41,7 @@ export const UserProvider = ({ children }) => {
             const updatedUser = { ...user, accessToken, refreshToken };
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));
+            console.log('Token refreshed successfully');
         } catch (error) {
             console.error('Failed to refresh token', error);
         }
