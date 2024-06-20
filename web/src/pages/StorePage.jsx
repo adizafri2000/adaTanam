@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import storeService from '../services/store';  // Service for store-related API calls
 import produceService from '../services/produce';  // Service for produce-related API calls
 import CircularProgress from '@mui/material/CircularProgress';
+import ProduceCard from "../components/ProduceCard.jsx";
+import { Grid, Container, Button, Box, Typography } from '@mui/material';
 
 const StorePage = () => {
     const { user, loading: userContextLoading } = useContext(UserContext);
@@ -41,7 +43,6 @@ const StorePage = () => {
         }
     }, [userContextLoading, user, navigate]);
 
-
     if (userContextLoading || isLoading) {
         return <CircularProgress />;
     }
@@ -51,25 +52,20 @@ const StorePage = () => {
     }
 
     return (
-        <div>
-            <h2>{user.name}'s Store</h2>
+        <Container>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                <Typography variant="h4">{user.name}'s Store</Typography>
+                <Button variant="contained" onClick={() => navigate('/create-produce')}>Add New Produce</Button>
+            </Box>
             <h3>{store?.name}</h3>
-            <ul>
+            <Grid container spacing={3}>
                 {produceList.map(produce => (
-                    <li key={produce.id}>
-                        <h4>{produce.name}</h4>
-                        <p>Type: {produce.type}</p>
-                        <p>Stock: {produce.stock} {produce.sellingUnit}</p>
-                        <p>Unit Price: ${produce.unitPrice}</p>
-                        <p>Status: {produce.status}</p>
-                        {produce.description && <p>Description: {produce.description}</p>}
-                        {produce.image && <img src={produce.image} alt={produce.name} />}
-                        <p>Added on: {new Date(produce.createdAt).toLocaleDateString()}</p>
-                        <p>Last updated: {new Date(produce.updatedAt).toLocaleDateString()}</p>
-                    </li>
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={produce.id}>
+                        <ProduceCard produce={produce} />
+                    </Grid>
                 ))}
-            </ul>
-        </div>
+            </Grid>
+        </Container>
     );
 };
 

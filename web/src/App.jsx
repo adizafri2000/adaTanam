@@ -9,6 +9,7 @@ import Layout from './layouts/Layout.jsx';
 import { UserProvider } from './contexts/UserContext';
 import ProfilePage from "./pages/ProfilePage.jsx";
 import StorePage from "./pages/StorePage.jsx";
+import CreateProducePage from "./pages/CreateProducePage.jsx";
 
 const App = () => {
 
@@ -64,6 +65,7 @@ const App = () => {
                         <Route path="signup" element={<SignUpPage />} />
                         <Route path="profile" element={<ProfilePage />} />
                         <Route path="store" element={<StorePage />} />
+                        <Route path="store/create-produce" element={<CreateProducePage />} />
                         <Route path='*' element={<NotFound/>}/>
                       </Route>
                     </Routes>
