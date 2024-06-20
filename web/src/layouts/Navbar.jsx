@@ -81,7 +81,7 @@ const Navbar = () => {
           />
         </Search>
         <div style={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
-          <NavLink to="/" style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
+          <NavLink to="/store" style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
             Home
           </NavLink>
           <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>

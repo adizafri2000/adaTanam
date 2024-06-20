@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,10 +36,17 @@ public class ProduceController {
     }
 
     @GetMapping("")
-    public List<ProduceResponseDTO> getAllProduce(){
+    public ResponseEntity<List<ProduceResponseDTO>> getAllProduce(@RequestParam(required = false) Integer storeId) {
         log.info("Handling GET /produce request");
-        return produceService.getProduces();
+        List<ProduceResponseDTO> produceList;
+        if (storeId != null) {
+            produceList = produceService.getProducesByStoreId(storeId);
+        } else {
+            produceList = produceService.getProduces();
+        }
+        return ResponseEntity.ok(produceList);
     }
+
 
     @GetMapping("/{id}")
     public ProduceResponseDTO getProduceById(@PathVariable int id) {

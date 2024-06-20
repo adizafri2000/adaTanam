@@ -10,6 +10,7 @@ import com.example.springbootbackend.dto.produce.ProduceResponseDTO;
 @Service
 public interface ProduceService {
     List<ProduceResponseDTO> getProduces();
+    List<ProduceResponseDTO> getProduceByStore(Integer storeId);
     ProduceResponseDTO getProduceById(Integer id);
     ProduceResponseDTO createProduce(ProduceRequestDTO produce);
     ProduceResponseDTO updateProduce(Integer id, ProduceRequestDTO produce, String token);
