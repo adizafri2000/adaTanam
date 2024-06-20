@@ -9,4 +9,8 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Optional<Account> findByEmail(String email);
+
+    // return boolean if account.type is equal to 'Farmer' based on given id
+    boolean existsByIdAndType(Integer id, String type);
+
 }

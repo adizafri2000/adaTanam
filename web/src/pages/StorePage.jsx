@@ -6,49 +6,43 @@ import produceService from '../services/produce';  // Service for produce-relate
 import CircularProgress from '@mui/material/CircularProgress';
 
 const StorePage = () => {
-    const { user } = useContext(UserContext);
+    const { user, loading: userContextLoading } = useContext(UserContext);
     const navigate = useNavigate();
     const [store, setStore] = useState(null);
     const [produceList, setProduceList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        console.log('beginning useEffect')
         const fetchStoreAndProduce = async () => {
+            if (!user) {
+                navigate('/login');
+                return;
+            }
+
             try {
-                if (!user) {
-                    navigate('/login');
-                    console.log('end useEffect no user')
-                    return;
-                }
-
-                console.log('store page debug, user: ', user);
-
                 if (user.type === 'Farmer') {
                     const response = await storeService.getByFarmer(user.id);
-                    console.log('API debug: ', response);
                     const storeData = response.data;
                     setStore(storeData);
-                    console.log('store page debug, store: ', storeData);
 
                     const produceResponse = await produceService.getByStore(storeData.id);
-                    console.log('API debug: ', produceResponse);
                     const produceListData = produceResponse.data;
                     setProduceList(produceListData);
-                    console.log('store page debug, produce: ', produceListData);
                 }
             } catch (error) {
                 console.error("Error fetching store or produce:", error);
             } finally {
                 setIsLoading(false);
-                console.log('end useEffect normal route')
             }
         };
 
-        fetchStoreAndProduce();
-    }, []);
+        if (!userContextLoading) {
+            fetchStoreAndProduce();
+        }
+    }, [userContextLoading, user, navigate]);
 
-    if (isLoading) {
+
+    if (userContextLoading || isLoading) {
         return <CircularProgress />;
     }
 
@@ -56,7 +50,6 @@ const StorePage = () => {
         return <p>Access Denied. Only Farmers can access this page.</p>;
     }
 
-    console.log('reaching return')
     return (
         <div>
             <h2>{user.name}'s Store</h2>

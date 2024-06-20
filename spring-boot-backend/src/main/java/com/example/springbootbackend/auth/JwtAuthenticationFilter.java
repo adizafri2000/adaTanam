@@ -81,21 +81,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //            objectMapper.writeValue(response.getWriter(), new RequestErrorDTO("401", e.getMessage()));
 //        }
 //    }
-@Override
-protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-        throws ServletException, IOException {
-    String path = request.getRequestURI();
-    if (!path.equals("/auth/login") && !path.equals("/auth/signup") && !path.equals("/auth/refresh")) {
-        String header = request.getHeader("Authorization");
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        String path = request.getRequestURI();
+        if (!path.equals("/auth/login") && !path.equals("/auth/signup") && !path.equals("/auth/refresh")) {
+            String header = request.getHeader("Authorization");
 
-        if (header == null || !header.startsWith("Bearer ")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            objectMapper.writeValue(response.getWriter(), new RequestErrorDTO("401", "Missing or invalid Authorization header"));
-            return;
+            if (header == null || !header.startsWith("Bearer ")) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                objectMapper.writeValue(response.getWriter(), new RequestErrorDTO("401", "Missing or invalid Authorization header"));
+                return;
+            }
         }
-    }
 
-    filterChain.doFilter(request, response);
-}
+        filterChain.doFilter(request, response);
+    }
 }

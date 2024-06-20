@@ -5,16 +5,24 @@ const UserContext = React.createContext(null);
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     // Load user from local storage
     useEffect(() => {
-        console.log('fetching user from local storage')
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-            console.log('logged in user found in local storage: ', storedUser)
+        console.log('beginning useEffect for userContext')
+        const fetchUserData = async () => {
+            console.log('fetching user from local storage')
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                setUser(JSON.parse(storedUser));
+                console.log('logged in user found in local storage: ', storedUser)
+            }
+            setLoading(false);
         }
+        fetchUserData();
     }, []);
+
+
 
     const login = (email, name, type, id, accessToken, refreshToken) => {
         const user = { email, name, type, id, accessToken, refreshToken };
@@ -50,7 +58,7 @@ export const UserProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, login, logout, isAuthenticated, refreshToken }}>
+        <UserContext.Provider value={{ user, login, logout, isAuthenticated, refreshToken, loading }}>
             {children}
         </UserContext.Provider>
     );
