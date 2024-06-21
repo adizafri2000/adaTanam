@@ -1,38 +1,31 @@
 import axios from 'axios';
-import UserContext from '../contexts/UserContext.jsx';
 
 const host = import.meta.env.VITE_API_URL
+let refreshToken = null;
 
 const api = axios.create({
     baseURL: host,
 });
 
-// Add a request interceptor
-api.interceptors.request.use(
-    config => {
-        if (config.headers && config.headers.Authorization) {
-            config.headers.Authorization = `Bearer ${config.headers.Authorization}`;
-        }
-        return config;
-    },
-    error => Promise.reject(error)
-);
-
-// Add a response interceptor
 api.interceptors.response.use(
     response => response,
     async error => {
-        console.log('api.jsx error: ', error)
+        console.log('api interceptor encountered error: ', error);
         const originalRequest = error.config;
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.response.status === 401 && !originalRequest._retry && originalRequest.method !== 'get') {
+            console.log('refreshing token');
             originalRequest._retry = true;
-            const { refreshToken } = UserContext;
             const newToken = await refreshToken();
+            console.log('new token: ', newToken);
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
             return api(originalRequest);
         }
         return Promise.reject(error);
     }
 );
+
+export const setRefreshToken = (tokenRefreshFunction) => {
+    refreshToken = tokenRefreshFunction;
+};
 
 export default api;

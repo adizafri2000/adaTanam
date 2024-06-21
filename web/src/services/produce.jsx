@@ -1,15 +1,28 @@
 import api from './api.jsx';
+// import { useContext } from 'react';
+// import UserContext from '../contexts/UserContext.jsx';
+
 const baseURL = `/produce`;
 
+// const useApi = () => {
+//     const { refreshToken } = useContext(UserContext);
+//     return api(refreshToken);
+// };
+
 const getAll = async () => {
+    // const apiInstance = api();
+
     try {
         return await api.get(`${baseURL}`);
     } catch (error) {
+        console.log('Error fetching produce:', error);
         throw error.response.data;
     }
 };
 
 const getById = async (id) => {
+    // const apiInstance = api();
+
     try {
         return await api.get(`${baseURL}/${id}`);
     } catch (error) {
@@ -18,6 +31,8 @@ const getById = async (id) => {
 };
 
 const getByStore = async (storeId) => {
+    // const apiInstance = api();
+
     try {
         return await api.get(`${baseURL}?storeId=${storeId}`);
     } catch (error) {
@@ -26,6 +41,7 @@ const getByStore = async (storeId) => {
 };
 
 const create = async (token, data, imageFile) => {
+
     try {
         const formData = new FormData();
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -36,7 +52,7 @@ const create = async (token, data, imageFile) => {
             url: `${baseURL}`,
             headers: {
                 'Content-Type': 'multipart/form-data',
-                'Authorization': token
+                'Authorization': `Bearer ${token}`
             },
             data : formData
         };

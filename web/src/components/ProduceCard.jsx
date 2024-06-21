@@ -21,7 +21,7 @@ const ProduceCard = ({ produce }) => {
                     Stock: {produce.stock} {produce.sellingUnit}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Unit Price: ${produce.unitPrice}
+                    Unit Price: RM{parseFloat(produce.unitPrice).toFixed(2)}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                     Status: {produce.status}
@@ -31,12 +31,12 @@ const ProduceCard = ({ produce }) => {
                         Description: {produce.description}
                     </Typography>
                 )}
-                <Typography variant="body2" color="text.secondary">
-                    Added on: {new Date(produce.createdAt).toLocaleDateString()}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Last updated: {new Date(produce.updatedAt).toLocaleDateString()}
-                </Typography>
+                {/*<Typography variant="body2" color="text.secondary">*/}
+                {/*    Added on: {new Date(produce.createdAt).toLocaleDateString()}*/}
+                {/*</Typography>*/}
+                {/*<Typography variant="body2" color="text.secondary">*/}
+                {/*    Last updated: {new Date(produce.updatedAt).toLocaleDateString()}*/}
+                {/*</Typography>*/}
             </CardContent>
         </Card>
     );

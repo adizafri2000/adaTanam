@@ -79,10 +79,13 @@ const CreateProduceForm = () => {
         console.log('about to create produce with data: ', data)
 
         try {
+            setIsLoading(true)
             await produceService.create(user.accessToken, data, imageFile);
             navigate('/store'); // Redirect to the store page
         } catch (error) {
             console.error('Error creating produce:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
