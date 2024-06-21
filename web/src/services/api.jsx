@@ -1,4 +1,5 @@
 import axios from 'axios';
+import UserContext from '../contexts/UserContext.jsx';
 
 const host = import.meta.env.VITE_API_URL
 
@@ -21,7 +22,15 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     response => response,
     async error => {
-        // Handle token refresh logic here if necessary
+        console.log('api.jsx error: ', error)
+        const originalRequest = error.config;
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            const { refreshToken } = UserContext;
+            const newToken = await refreshToken();
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return api(originalRequest);
+        }
         return Promise.reject(error);
     }
 );

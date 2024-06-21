@@ -25,26 +25,18 @@ const getByStore = async (storeId) => {
     }
 };
 
-const create = async (token, data) => {
-    // try {
-    //     return await api.post(`${baseURL}`, data, {
-    //         headers: {
-    //             Authorization: `Bearer ${token}`,
-    //         },
-    //     });
-    // } catch (error) {
-    //     throw error.response.data.message;
-    // }
+const create = async (token, data, imageFile) => {
     try {
         const formData = new FormData();
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
         formData.append('produce', blob, 'produce.json');
-
+        formData.append('image', imageFile);
         const config = {
             method: 'post',
             url: `${baseURL}`,
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
+                'Authorization': token
             },
             data : formData
         };
@@ -56,4 +48,4 @@ const create = async (token, data) => {
     }
 }
 
-export default { getAll, getById, getByStore };
+export default { getAll, getById, getByStore, create };

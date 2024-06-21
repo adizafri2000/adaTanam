@@ -30,6 +30,7 @@ export const UserProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        console.log('User Context, useEffect');
         const fetchUserData = async () => {
             const storedUser = localStorage.getItem('user');
             if (storedUser) {
@@ -60,6 +61,7 @@ export const UserProvider = ({ children }) => {
 
     const refreshToken = async () => {
         try {
+            console.log('User Context, refreshing token: ', { accessToken: user.accessToken, refreshToken: user.refreshToken})
             const response = await axios.post('/auth/refresh', {
                 accessToken: user.accessToken,
                 refreshToken: user.refreshToken,

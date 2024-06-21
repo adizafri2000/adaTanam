@@ -61,7 +61,7 @@ const CreateProduceForm = () => {
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         const data = {
@@ -72,12 +72,18 @@ const CreateProduceForm = () => {
             sellingUnit,
             description,
             status,
-            image: imageFile,
-            store
+            store,
+            image: ''
         };
 
-        console.log('Produce data:', data);
-        // TODO: Call the API to create the produce
+        console.log('about to create produce with data: ', data)
+
+        try {
+            await produceService.create(user.accessToken, data, imageFile);
+            navigate('/store'); // Redirect to the store page
+        } catch (error) {
+            console.error('Error creating produce:', error);
+        }
     };
 
     if (userContextLoading || isLoading) {
@@ -112,7 +118,7 @@ const CreateProduceForm = () => {
                 fullWidth
             />
             <FormControl fullWidth variant="outlined">
-                <InputLabel>Type</InputLabel>
+                <InputLabel required>Type</InputLabel>
                 <Select
                     label="Type"
                     value={type}
@@ -130,6 +136,7 @@ const CreateProduceForm = () => {
                 value={stock}
                 required={true}
                 onChange={({ target }) => setStock(target.value)}
+                inputProps={{ min: "0", step: "1" }} // Stock must be a positive integer
                 fullWidth
             />
             <Grid container spacing={2}>
@@ -140,13 +147,19 @@ const CreateProduceForm = () => {
                         type="number"
                         value={unitPrice}
                         required={true}
-                        onChange={({ target }) => setUnitPrice(target.value)}
+                        onChange={({ target }) => {
+                            // Unit Price must be a positive number with at most 2 decimal places
+                            if (/^\d*\.?\d{0,2}$/.test(target.value)) {
+                                setUnitPrice(target.value);
+                            }
+                        }}
+                        inputProps={{ min: "0", step: "0.01" }} // Unit Price must be a positive number
                         fullWidth
                     />
                 </Grid>
                 <Grid item xs={12} sm={4}>
                     <FormControl fullWidth variant="outlined">
-                        <InputLabel>Selling Unit</InputLabel>
+                        <InputLabel required>Selling Unit</InputLabel>
                         <Select
                             label="Selling Unit"
                             value={sellingUnit}
@@ -170,15 +183,20 @@ const CreateProduceForm = () => {
                 onChange={({ target }) => setDescription(target.value)}
                 fullWidth
             />
-            <TextField
-                label="Status"
-                variant="outlined"
-                value={status}
-                required={true}
-                onChange={({ target }) => setStatus(target.value)}
-                fullWidth
-            />
-            <label htmlFor="image-upload">Upload Produce Image:</label>
+            <FormControl fullWidth variant="outlined">
+                <InputLabel required>Status</InputLabel>
+                <Select
+                    label="Status"
+                    value={status}
+                    required={true}
+                    onChange={({ target }) => setStatus(target.value)}
+                >
+                    <MenuItem value="Available">Available</MenuItem>
+                    <MenuItem value="Out of stock">Out of stock</MenuItem>
+                    <MenuItem value="Pending harvest">Pending harvest</MenuItem>
+                </Select>
+            </FormControl>
+            <label htmlFor="image-upload">Upload Produce Image: *</label>
             <TextField
                 id="image-upload"
                 type="file"
@@ -186,6 +204,7 @@ const CreateProduceForm = () => {
                 accept="image/*"
                 onChange={handleFileChange}
                 fullWidth
+                required
             />
             {fileError && <p>{fileError}</p>}
             <Button

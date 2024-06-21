@@ -38,6 +38,10 @@ management:
         include: "*"
 server:
   port: ${APP_PORT}
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-docs
 security:
   jwt:
     secret-key: ${JWT_SECRET}
