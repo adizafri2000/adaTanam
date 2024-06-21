@@ -22,7 +22,7 @@ const StorePage = () => {
             }
 
             try {
-                if (user.type === 'Farmer') {
+                if (user.store) {
                     const response = await storeService.getByFarmer(user.id);
                     const storeData = response.data;
                     setStore(storeData);
@@ -30,6 +30,9 @@ const StorePage = () => {
                     const produceResponse = await produceService.getByStore(storeData.id);
                     const produceListData = produceResponse.data;
                     setProduceList(produceListData);
+                } else {
+                    console.log('User does not have a store')
+                    // Handle the case when user.store is null
                 }
             } catch (error) {
                 console.error("Error fetching store or produce:", error);
@@ -53,18 +56,24 @@ const StorePage = () => {
 
     return (
         <Container>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="h4">{user.name}'s Store</Typography>
-                <Button variant="contained" onClick={() => navigate('/create-produce')}>Add New Produce</Button>
-            </Box>
-            <h3>{store?.name}</h3>
-            <Grid container spacing={3}>
-                {produceList.map(produce => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={produce.id}>
-                        <ProduceCard produce={produce} />
+            {store ? (
+                <>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                        <Typography variant="h4">{user.name}'s Store</Typography>
+                        <Button variant="contained" onClick={() => navigate('/store/create-produce')}>Add New Produce</Button>
+                    </Box>
+                    <h3>{store?.name}</h3>
+                    <Grid container spacing={3}>
+                        {produceList.map(produce => (
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={produce.id}>
+                                <ProduceCard produce={produce} />
+                            </Grid>
+                        ))}
                     </Grid>
-                ))}
-            </Grid>
+                </>
+            ) : (
+                <Typography variant="h6">No store exists for user</Typography>
+            )}
         </Container>
     );
 };

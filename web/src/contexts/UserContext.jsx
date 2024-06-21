@@ -9,23 +9,33 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Load user from local storage
+    const setUserDetails = async (user) => {
+        try {
+            if (user.type === 'Farmer') {
+                const response = await storeService.getByFarmer(user.id);
+                setUser(prevUser => ({ ...prevUser, store: response.data.id }));
+            } else {
+                const response = await cartService.getByAccount(user.id);
+                setUser(prevUser => ({ ...prevUser, cart: response.data.id }));
+            }
+        } catch (error) {
+            if (error.status === 404) {
+                if (user.type === 'Farmer') {
+                    setUser(prevUser => ({ ...prevUser, store: null }));
+                } else {
+                    setUser(prevUser => ({ ...prevUser, cart: null }));
+                }
+            }
+        }
+    };
+
     useEffect(() => {
         const fetchUserData = async () => {
             const storedUser = localStorage.getItem('user');
             if (storedUser) {
                 const user = JSON.parse(storedUser);
                 setUser(user);
-
-                if (user.type === 'Farmer') {
-                    console.log('Farmer account detected, fetching store and putting into user context')
-                    const response = await storeService.getByFarmer(user.id);
-                    setUser(prevUser => ({ ...prevUser, store: response.data.id }));
-                } else {
-                    console.log('Consumer account detected, fetching cart and putting into user context')
-                    const response = await cartService.getByAccount(user.id);
-                    setUser(prevUser => ({ ...prevUser, cart: response.data.id }));
-                }
+                await setUserDetails(user);
             }
             setLoading(false);
         }
@@ -36,14 +46,7 @@ export const UserProvider = ({ children }) => {
         const user = { email, name, type, id, accessToken, refreshToken };
         setUser(user);
         localStorage.setItem('user', JSON.stringify(user));
-
-        if (type === 'farmer') {
-            const response = await storeService.getByFarmer(id);
-            setUser(prevUser => ({ ...prevUser, store: response.data.id }));
-        } else {
-            const response = await cartService.getByAccount(id);
-            setUser(prevUser => ({ ...prevUser, cart: response.data.id }));
-        }
+        await setUserDetails(user);
     };
 
     const logout = () => {

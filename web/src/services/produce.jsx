@@ -5,7 +5,7 @@ const getAll = async () => {
     try {
         return await api.get(`${baseURL}`);
     } catch (error) {
-        throw error.response.data.message;
+        throw error.response.data;
     }
 };
 
@@ -13,7 +13,7 @@ const getById = async (id) => {
     try {
         return await api.get(`${baseURL}/${id}`);
     } catch (error) {
-        throw error.response.data.message;
+        throw error.response.data;
     }
 };
 
@@ -21,7 +21,7 @@ const getByStore = async (storeId) => {
     try {
         return await api.get(`${baseURL}?storeId=${storeId}`);
     } catch (error) {
-        throw error.response.data.message;
+        throw error.response.data;
     }
 };
 
@@ -52,7 +52,7 @@ const create = async (token, data) => {
         return await api(config);
     } catch (error) {
         console.error('Error creating produce:', error);
-        throw error.response.data.message;
+        throw error.response.data;
     }
 }
 
