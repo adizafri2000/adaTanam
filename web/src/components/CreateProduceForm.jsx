@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import UserContext from '../contexts/UserContext.jsx';
 import { TextField, Button, Box, Typography, Select, MenuItem, FormControl, InputLabel, Grid } from '@mui/material';
 import CircularProgress from "@mui/material/CircularProgress";
-import storeService from "../services/store.jsx";
 import produceService from "../services/produce.jsx";
+import { toast } from 'react-toastify';
 
 const CreateProduceForm = () => {
     const { user, loading: userContextLoading } = useContext(UserContext);
@@ -19,6 +19,8 @@ const CreateProduceForm = () => {
     const [imageFile, setImageFile] = useState(null);
     const [fileError, setFileError] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [formValid, setFormValid] = useState(true); // Add this line
+
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -47,22 +49,39 @@ const CreateProduceForm = () => {
         }
     }, [userContextLoading, user, navigate])
 
+    useEffect(() => {
+        // Check if all mandatory fields are filled in
+        if (name && type && stock && unitPrice && sellingUnit && description && status && imageFile && !fileError) {
+            setFormValid(true);
+        } else {
+            setFormValid(false);
+        }
+    }, [name, type, stock, unitPrice, sellingUnit, description, status, imageFile, fileError]);
+
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
             if (!file.type.startsWith('image/')) {
                 setFileError('Invalid file type. Please select an image file.');
+                setFormValid(false); // Add this line
             } else if (file.size > 10 * 1024 * 1024) { // file size limit 10MB
                 setFileError('File size should not exceed 10MB');
+                setFormValid(false); // Add this line
             } else {
                 setFileError('');
                 setImageFile(file);
+                setFormValid(true); // Add this line
             }
         }
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        if (imageFile && !imageFile.type.startsWith('image/')) {
+            setFileError('Invalid file type. Please select an image file.');
+            return;
+        }
 
         const data = {
             name,
@@ -81,8 +100,10 @@ const CreateProduceForm = () => {
         try {
             setIsLoading(true)
             await produceService.create(user.accessToken, data, imageFile);
+            toast.success('Produce successfully created!');
             navigate('/store'); // Redirect to the store page
         } catch (error) {
+            toast.error('Error creating produce.');
             console.error('Error creating produce:', error);
         } finally {
             setIsLoading(false);
@@ -213,6 +234,7 @@ const CreateProduceForm = () => {
             <Button
                 variant="contained"
                 type="submit"
+                disabled={!formValid}
                 sx={{
                     marginTop: '20px',
                     backgroundColor: '#3f51b5',

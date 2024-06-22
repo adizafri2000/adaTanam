@@ -1,17 +1,7 @@
 import api from './api.jsx';
-// import { useContext } from 'react';
-// import UserContext from '../contexts/UserContext.jsx';
-
 const baseURL = `/produce`;
 
-// const useApi = () => {
-//     const { refreshToken } = useContext(UserContext);
-//     return api(refreshToken);
-// };
-
 const getAll = async () => {
-    // const apiInstance = api();
-
     try {
         return await api.get(`${baseURL}`);
     } catch (error) {
@@ -21,8 +11,6 @@ const getAll = async () => {
 };
 
 const getById = async (id) => {
-    // const apiInstance = api();
-
     try {
         return await api.get(`${baseURL}/${id}`);
     } catch (error) {
@@ -31,8 +19,6 @@ const getById = async (id) => {
 };
 
 const getByStore = async (storeId) => {
-    // const apiInstance = api();
-
     try {
         return await api.get(`${baseURL}?storeId=${storeId}`);
     } catch (error) {

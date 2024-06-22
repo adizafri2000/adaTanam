@@ -8,6 +8,7 @@ import Avatar from "@mui/material/Avatar";
 import { useState, useContext } from "react";
 import UserContext from "../contexts/UserContext.jsx";
 import { styled, useTheme } from '@mui/material/styles';
+import { toast } from 'react-toastify';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -62,6 +63,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     handleMenuClose();
+    toast.success('Logged out successfully')
     navigate("/");
   };
 

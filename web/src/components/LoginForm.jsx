@@ -3,16 +3,25 @@ import { TextField, Button, Box, Typography, useTheme } from '@mui/material';
 import auth from '../services/auth';
 import UserContext from "../contexts/UserContext.jsx";
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import CircularProgress from "@mui/material/CircularProgress";
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
     const theme = useTheme();
     const { login } = useContext(UserContext);
     const navigate = useNavigate();
 
+    const clearInput = () => {
+        setEmail('')
+        setPassword('')
+    }
+
     const loginHandler = async (event) => {
         event.preventDefault();
+        setLoading(true);
         try {
             console.log('accessing API')
             const response = await auth.login({
@@ -20,9 +29,6 @@ const LoginForm = () => {
                 password,
             });
             console.log('response: ', response)
-            if (response.status !== 200) {
-                throw new Error(response);
-            }
             const user = {
                 email: email,
                 name: response.data.accountName,
@@ -32,11 +38,15 @@ const LoginForm = () => {
                 refreshToken: response.data.refreshToken
             }
             console.log('logged in user: ', user);
-            login(user.email, user.name, user.type, user.id, user.accessToken, user.refreshToken);
+            await login(user.email, user.name, user.type, user.id, user.accessToken, user.refreshToken);
+            toast.success('Logged in successfully!');  // Add this line
             navigate('/')
         } catch (error) {
             console.log(error)
-            alert(error);
+            toast.error(error.message);
+            clearInput()
+        } finally {
+            setLoading(false); // Set loading to false when the request is complete
         }
     }
 
@@ -73,9 +83,10 @@ const LoginForm = () => {
                 value={password}
                 onChange={({ target }) => setPassword(target.value)}
             />
-            <Button 
-                variant="contained" 
+            <Button
+                variant="contained"
                 type="submit"
+                disabled={loading} // Disable the button when loading
                 sx={{
                     backgroundColor: theme.palette.primary.main, // primary color for button
                     color: '#FFFFFF', // white color for button text
@@ -83,7 +94,7 @@ const LoginForm = () => {
                     borderRadius: '10px', // Adjust border radius for a softer look
                 }}
             >
-                Login
+                {loading ? <CircularProgress size={24} /> : 'Login'}
             </Button>
         </Box>
     );

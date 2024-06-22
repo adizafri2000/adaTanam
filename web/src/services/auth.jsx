@@ -5,7 +5,8 @@ const login = async credentials => {
     try {
         return await api.post(`${baseURL}/login`, credentials);
     } catch (error) {
-        throw error.response.data.message;
+        console.log('error on login API: ', error)
+        throw error.response.data;
     }
 }
 
@@ -27,7 +28,7 @@ const signup = async data => {
         return await api(config);
     } catch (error) {
         console.error('Error signing up:', error);
-        throw error.response.data.message;
+        throw error.response.data;
     }
 }
 

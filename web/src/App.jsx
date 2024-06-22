@@ -10,6 +10,8 @@ import { UserProvider } from './contexts/UserContext';
 import ProfilePage from "./pages/ProfilePage.jsx";
 import StorePage from "./pages/StorePage.jsx";
 import CreateProducePage from "./pages/CreateProducePage.jsx";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
 
@@ -70,6 +72,7 @@ const App = () => {
                       </Route>
                     </Routes>
                 </Router>
+                <ToastContainer autoClose={1000} />
             </ThemeProvider>
         </UserProvider>
     )

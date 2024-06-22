@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import storeService from '../services/store.jsx';
 import cartService from '../services/cart.jsx';
-import { setRefreshToken } from '../services/api.jsx';
+import { setRefreshToken as setRefreshTokenInApi } from '../services/api.jsx';
+import {jwtDecode} from 'jwt-decode';
+const host = import.meta.env.VITE_API_URL
 
 const UserContext = React.createContext(null);
 
@@ -10,25 +12,36 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const setUserDetails = async (user) => {
+    const getExtraUserDetails = async (user) => {
+        const result = {}
         try {
             if (user.type === 'Farmer') {
                 console.log('farmer user detected')
                 const response = await storeService.getByFarmer(user.id);
-                setUser(prevUser => ({ ...prevUser, store: response.data.id }));
+                result.store = response.data.id ? response.data.id : null;
             } else {
                 console.log('non-farmer user detected')
                 const response = await cartService.getByAccount(user.id);
-                setUser(prevUser => ({ ...prevUser, cart: response.data.id }));
+                result.cart = response.data.id ? response.data.id : null;
             }
         } catch (error) {
             if (error.status === 404) {
                 if (user.type === 'Farmer') {
-                    setUser(prevUser => ({ ...prevUser, store: null }));
+                    result.store = null;
                 } else {
-                    setUser(prevUser => ({ ...prevUser, cart: null }));
+                    result.cart = null;
                 }
             }
+        }
+        return result;
+    };
+
+    const isTokenExpired = (token) => {
+        try {
+            const decoded = jwtDecode(token);
+            return decoded.exp < Date.now() / 1000;
+        } catch (err) {
+            return true; // If error occurs during decoding, consider the token as expired
         }
     };
 
@@ -37,28 +50,38 @@ export const UserProvider = ({ children }) => {
         const fetchUserData = async () => {
             const storedUser = localStorage.getItem('user');
             if (storedUser) {
-                const user = JSON.parse(storedUser);
-                setUser(user);
-                await setUserDetails(user);
+                const parsedUser = JSON.parse(storedUser);
+                setUser(parsedUser);
+
+                if (isTokenExpired(parsedUser.accessToken)) {
+                    console.log('Token is expired');
+                    try {
+                        await refreshAccessToken();
+                        console.log('Token refreshed successfully');
+                    } catch (error) {
+                        console.error('Failed to refresh token', error);
+                        setUser(null);
+                        localStorage.removeItem('user');
+                        window.location.href = '/login';
+                    }
+                } else {
+                    console.log('Token is valid');
+                }
             }
             setLoading(false);
         }
         fetchUserData();
     }, []);
 
-    // const login = async (email, name, type, id, accessToken, refreshToken) => {
-    //     const user = { email, name, type, id, accessToken, refreshToken };
-    //     setUser(user);
-    //     localStorage.setItem('user', JSON.stringify(user));
-    //     await setUserDetails(user);
-    // };
-
-    const login = async (email, name, type, id, accessToken, refreshTokenFunction) => {
-        const user = { email, name, type, id, accessToken, refreshToken: refreshTokenFunction };
-        setUser(user);
-        await setUserDetails(user);
-        localStorage.setItem('user', JSON.stringify(user));
-        setRefreshToken(refreshTokenFunction); // Set the refreshToken function in the api module
+    const login = async (email, name, type, id, accessToken, refreshToken) => {
+        const userDetails = {email, name, type, id, accessToken, refreshToken};
+        const extraDetails = await getExtraUserDetails(userDetails);
+        console.log('extraDetails: ', extraDetails)
+        const fullDetails = { ...userDetails, ...extraDetails }; // Merge userDetails and extraDetails
+        setUser(fullDetails);
+        console.log('setting user to context after login: ', fullDetails);
+        localStorage.setItem('user', JSON.stringify(fullDetails));
+        setRefreshTokenInApi(refreshAccessToken); // Set the refreshAccessToken function in the api module
     };
 
     const logout = () => {
@@ -70,10 +93,10 @@ export const UserProvider = ({ children }) => {
         return user !== null;
     };
 
-    const refreshToken = async () => {
+    const refreshAccessToken = async () => {
         try {
             console.log('User Context, refreshing token: ', { accessToken: user.accessToken, refreshToken: user.refreshToken})
-            const response = await axios.post('/auth/refresh', {
+            const response = await axios.post(`${host}/auth/refresh`, {
                 accessToken: user.accessToken,
                 refreshToken: user.refreshToken,
             });
@@ -90,7 +113,7 @@ export const UserProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, login, logout, isAuthenticated, refreshToken, loading }}>
+        <UserContext.Provider value={{ user, login, logout, isAuthenticated, refreshAccessToken, loading }}>
             {children}
         </UserContext.Provider>
     );
