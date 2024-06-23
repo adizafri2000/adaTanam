@@ -6,6 +6,7 @@ import produceService from '../services/produce';  // Service for produce-relate
 import CircularProgress from '@mui/material/CircularProgress';
 import ProduceCard from "../components/ProduceCard.jsx";
 import { Grid, Container, Button, Box, Typography } from '@mui/material';
+import {useUserCheck} from "../hooks/useUserCheck.jsx";
 
 const StorePage = () => {
     const { user, loading: userContextLoading } = useContext(UserContext);
@@ -14,35 +15,34 @@ const StorePage = () => {
     const [produceList, setProduceList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    useUserCheck();
+
     useEffect(() => {
-        const fetchStoreAndProduce = async () => {
-            if (!user) {
-                navigate('/login');
-                return;
-            }
+        if (user) {
+            const fetchStoreAndProduce = async () => {
+                try {
+                    if (user.store) {
+                        const response = await storeService.getByFarmer(user.id);
+                        const storeData = response.data;
+                        setStore(storeData);
 
-            try {
-                if (user.store) {
-                    const response = await storeService.getByFarmer(user.id);
-                    const storeData = response.data;
-                    setStore(storeData);
-
-                    const produceResponse = await produceService.getByStore(storeData.id);
-                    const produceListData = produceResponse.data;
-                    setProduceList(produceListData);
-                } else {
-                    console.log('User does not have a store')
-                    // Handle the case when user.store is null
+                        const produceResponse = await produceService.getByStore(storeData.id);
+                        const produceListData = produceResponse.data;
+                        setProduceList(produceListData);
+                    } else {
+                        console.log('User does not have a store')
+                        // Handle the case when user.store is null
+                    }
+                } catch (error) {
+                    console.error("Error fetching store or produce:", error);
+                } finally {
+                    setIsLoading(false);
                 }
-            } catch (error) {
-                console.error("Error fetching store or produce:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+            };
 
-        if (!userContextLoading) {
-            fetchStoreAndProduce();
+            if (!userContextLoading) {
+                fetchStoreAndProduce();
+            }
         }
     }, [userContextLoading, user, navigate]);
 

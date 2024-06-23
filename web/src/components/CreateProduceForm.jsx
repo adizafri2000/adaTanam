@@ -5,6 +5,7 @@ import { TextField, Button, Box, Typography, Select, MenuItem, FormControl, Inpu
 import CircularProgress from "@mui/material/CircularProgress";
 import produceService from "../services/produce.jsx";
 import { toast } from 'react-toastify';
+import {useFarmerCheck} from "../hooks/useFarmerCheck.jsx";
 
 const CreateProduceForm = () => {
     const { user, loading: userContextLoading } = useContext(UserContext);
@@ -23,29 +24,23 @@ const CreateProduceForm = () => {
 
     const navigate = useNavigate()
 
+    useFarmerCheck();
+
     useEffect(() => {
-        const fetchStoreFromContext = async () => {
-            if (!user) {
-                navigate('/login');
-                return;
-            }
-
-            try {
-                if (user.store) {
+        if(user.store){
+            const fetchStoreFromContext = async () => {
+                try {
                     setStore(user.store);
-                } else {
-                    console.log('User does not have a store')
-                    navigate('/login');
+                } catch (error) {
+                    console.error("Error fetching store or produce:", error);
+                } finally {
+                    setIsLoading(false);
                 }
-            } catch (error) {
-                console.error("Error fetching store or produce:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+            };
 
-        if (!userContextLoading) {
-            fetchStoreFromContext();
+            if (!userContextLoading) {
+                fetchStoreFromContext();
+            }
         }
     }, [userContextLoading, user, navigate])
 

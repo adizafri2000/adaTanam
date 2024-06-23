@@ -10,6 +10,7 @@ import { UserProvider } from './contexts/UserContext';
 import ProfilePage from "./pages/ProfilePage.jsx";
 import StorePage from "./pages/StorePage.jsx";
 import CreateProducePage from "./pages/CreateProducePage.jsx";
+import ProfileEditForm from './components/ProfileEditForm.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -61,15 +62,15 @@ const App = () => {
                 <CssBaseline />
                 <Router>
                     <Routes>
-                      <Route element={<Layout />}>
-                        <Route index element={<HomePage/>} />
-                        <Route path="login" element={<LoginPage />} />
-                        <Route path="signup" element={<SignUpPage />} />
-                        <Route path="profile" element={<ProfilePage />} />
-                        <Route path="store" element={<StorePage />} />
-                        <Route path="store/create-produce" element={<CreateProducePage />} />
-                        <Route path='*' element={<NotFound/>}/>
-                      </Route>
+                        <Route element={<Layout />}>
+                            <Route index element={<HomePage/>} />
+                            <Route path="login" element={<LoginPage />} />
+                            <Route path="signup" element={<SignUpPage />} />
+                            <Route path="profile" element={<ProfilePage />} />
+                            <Route path="store" element={<StorePage />} />
+                            <Route path="store/create-produce" element={<CreateProducePage />} />
+                            <Route path='*' element={<NotFound/>}/>
+                        </Route>
                     </Routes>
                 </Router>
                 <ToastContainer autoClose={1000} />

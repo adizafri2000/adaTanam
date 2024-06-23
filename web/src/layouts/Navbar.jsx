@@ -46,6 +46,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const navLinks = [
+  { name: 'Home', route: '/store' },
+  { name: 'Profile', route: '/profile' },
+];
+
+const dropdownLinks = [
+  { name: 'Profile', route: '/profile' },
+  { name: 'Logout', route: '/logout' },
+  { name: 'Store', route: '/store' },
+];
+
 const Navbar = () => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -60,7 +71,8 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = (event) => {
+    event.preventDefault(); // Prevent the default action
     logout();
     handleMenuClose();
     toast.success('Logged out successfully')
@@ -68,50 +80,53 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static" color="primary">
-      <Toolbar>
-        <NavLink to="/" end>
-          <img src={logo} alt="logo" style={{ marginRight: theme.spacing(2), width: '100px', height: '100px' }} />
-        </NavLink>
-        <Search>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
-            placeholder="Search…"
-            inputProps={{ 'aria-label': 'search' }}
-          />
-        </Search>
-        <div style={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
-          <NavLink to="/store" style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
-            Home
+      <AppBar position="static" color="primary">
+        <Toolbar>
+          <NavLink to="/" end>
+            <img src={logo} alt="logo" style={{ marginRight: theme.spacing(2), width: '100px', height: '100px' }} />
           </NavLink>
-          <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-            <Avatar style={{ marginRight: theme.spacing(1) }} />
-            {user && <Typography variant="body1" style={{ color: 'white' }}>{user.name}</Typography>}
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+            />
+          </Search>
+          <div style={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
+            {navLinks.map((link, index) => (
+                <NavLink key={index} to={link.route} style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
+                  {link.name}
+                </NavLink>
+            ))}
+            <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <Avatar style={{ marginRight: theme.spacing(1) }} />
+              {user && <Typography variant="body1" style={{ color: 'white' }}>{user.name}</Typography>}
+            </div>
           </div>
-        </div>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-        >
-          {user ? [
-            <NavLink to="/profile" style={{ color: 'black', textDecoration: 'none' }} key="profile">
-              <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            </NavLink>,
-            <MenuItem onClick={handleLogout} key="logout">Logout</MenuItem>
-          ] : [
-            <NavLink to="/login" style={{ color: 'black', textDecoration: 'none' }} key="login">
-              <MenuItem onClick={handleMenuClose}>Login</MenuItem>
-            </NavLink>,
-            <NavLink to="/signup" style={{ color: 'black', textDecoration: 'none' }} key="signup">
-              <MenuItem onClick={handleMenuClose}>Signup</MenuItem>
-            </NavLink>
-          ]}
-        </Menu>
-      </Toolbar>
-    </AppBar>
+          <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+          >
+            {user ? dropdownLinks.map((link, index) => (
+                <NavLink to={link.route} style={{ color: 'black', textDecoration: 'none' }} key={index}>
+                  <MenuItem onClick={link.route === '/logout' ? handleLogout : handleMenuClose}>
+                    {link.name}
+                  </MenuItem>
+                </NavLink>
+            )) : [
+              <NavLink to="/login" style={{ color: 'black', textDecoration: 'none' }} key="login">
+                <MenuItem onClick={handleMenuClose}>Login</MenuItem>
+              </NavLink>,
+              <NavLink to="/signup" style={{ color: 'black', textDecoration: 'none' }} key="signup">
+                <MenuItem onClick={handleMenuClose}>Signup</MenuItem>
+              </NavLink>
+            ]}
+          </Menu>
+        </Toolbar>
+      </AppBar>
   );
 };
 
