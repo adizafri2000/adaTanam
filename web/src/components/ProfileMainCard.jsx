@@ -4,6 +4,8 @@ import { styled } from '@mui/system';
 import accountService from '../services/account.jsx';
 import GridItem from '../layouts/GridItem';
 import CircularProgress from "@mui/material/CircularProgress";
+import {toast} from "react-toastify";
+import { useNavigate } from 'react-router-dom';
 
 const ImageContainer = styled('div')({
     width: 150,
@@ -17,8 +19,8 @@ const ImageContainer = styled('div')({
     marginRight: '20px',
 });
 
-const ProfileMainCard = ({ user }) => {
-    const currentUser = user;
+const ProfileMainCard = ({ user, userFromContext }) => {
+    const [currentUser, setCurrentUser] = useState(user);
     const [isEditing, setIsEditing] = useState(false);
     const [name, setName] = useState(currentUser.name);
     const [email, setEmail] = useState(currentUser.email);
@@ -32,6 +34,7 @@ const ProfileMainCard = ({ user }) => {
     const [fileError, setFileError] = useState('');
     const [formValid, setFormValid] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -79,29 +82,53 @@ const ProfileMainCard = ({ user }) => {
     }, []);
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        // event.preventDefault();
         setIsLoading(true);
 
         const data = {
             name,
-            password: 'password123',
             email,
             phone,
             bankNumber,
             bankName,
             type,
             isActive,
-            image: imageFile
+            image: imageFile ? '' : currentUser.image,
         };
 
         try {
             console.log('calling API to update account')
             console.log('data: ', data)
             console.log('image: ', imageFile)
-            await accountService.update(currentUser.id, data, currentUser.accessToken, imageFile);
+            const response = await accountService.update(currentUser.id, data, userFromContext.accessToken, imageFile);
+            const updatedUser = response.data
+            setCurrentUser(updatedUser)
+            /*
+            AccountResponseDTO{
+            id	[...]
+            email	[...]
+            name	[...]
+            phone	[...]
+            bankNumber	[...]
+            bankName	[...]
+            image	[...]
+            type	[...]
+            isActive	[...]
+            }
+            */
+            setEmail(updatedUser.email)
+            setName(updatedUser.name)
+            setBankName(updatedUser.bankName)
+            setPhone(updatedUser.phone)
+            setBankNumber(updatedUser.bankNumber)
+            setImageFile(updatedUser.image)
+            console.log('user updated to: ', updatedUser)
             setIsEditing(false);
+            toast.success('Account successfully updated')
+            navigate('/profile')
         } catch (error) {
             console.error('Failed to update user details:', error);
+            toast.error('Account update failed')
         } finally {
             setIsLoading(false);
         }
@@ -111,8 +138,8 @@ const ProfileMainCard = ({ user }) => {
         <Grid container spacing={2} direction="row" wrap="wrap" sx={{ padding: '10px', width: '100%' }}>
             <GridItem item xs={12} sm={6} md={4}>
                 <ImageContainer>
-                    {imageFile ? (
-                        <img src={URL.createObjectURL(imageFile)} alt="User" style={{ width: '100%', height: 'auto' }} />
+                    {currentUser.image ? (
+                        <img src={(currentUser.image)} alt="User" style={{ width: '100%', height: 'auto' }} />
                     ) : (
                         <Typography variant="body1">No Image</Typography>
                     )}

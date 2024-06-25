@@ -10,7 +10,7 @@ const getById = async (id) => {
     }
 };
 
-const update = async (id, data, token, imageFile) => {
+const updateOld = async (id, data, token, imageFile) => {
     try {
         const formData = new FormData();
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -25,12 +25,41 @@ const update = async (id, data, token, imageFile) => {
             },
             data: formData
         };
+        console.log('config setup: ', config)
         return await api(config);
     } catch (error) {
-        console.log('error updating acount: ', error)
+        console.log('error updating account: ', error)
         throw error.response.data;
     }
 }
+
+const update = async (id, data, token, imageFile) => {
+    try {
+        const formData = new FormData();
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        formData.append('account', blob);
+        if (imageFile) {
+            formData.append('image', imageFile);
+        }
+
+        const config = {
+            method: 'put',
+            url: `${baseUrl}/${id}`,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+            },
+            data: formData
+        };
+
+        console.log('config setup: ', config);
+        console.log('form data: ', formData);
+        return await api(config);
+    } catch (error) {
+        console.log('error updating account: ', error);
+        throw error.response.data;
+    }
+};
 
 
 export default {  getById, update };

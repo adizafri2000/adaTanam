@@ -40,12 +40,15 @@ const ProfilePage = () => {
     // If the user is not logged in, navigate to the login page
     if (userContextLoading || isLoading) {
         return <CircularProgress />;
+    } else{
+        console.log('profile page, user supposedly fetched from context: ', user)
+        console.log('profile page, currentUser supposedly fetched from context: ', currentUser)
     }
 
     return (
         <div>
             <h1>Profile Page</h1>
-            {user && <ProfileMainCard user={user} />}
+            {user && <ProfileMainCard user={user} userFromContext={currentUser} />}
         </div>
     );
 };

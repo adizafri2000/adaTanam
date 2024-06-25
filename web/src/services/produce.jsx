@@ -42,7 +42,7 @@ const create = async (token, data, imageFile) => {
             },
             data : formData
         };
-
+        console.log('config: ', config);
         return await api(config);
     } catch (error) {
         console.error('Error creating produce:', error);
