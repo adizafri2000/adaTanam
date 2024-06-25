@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AccountResponseDTO login(LoginRequestDTO loginRequestDTO) {
+    public TokenRefreshDTO login(LoginRequestDTO loginRequestDTO) {
         Optional<Account> optionalAccount = accountRepository.findByEmail(loginRequestDTO.email());
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
