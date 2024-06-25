@@ -1,9 +1,7 @@
 package com.example.springbootbackend.service.auth;
 
 import com.example.springbootbackend.dto.account.AccountResponseDTO;
-import com.example.springbootbackend.dto.auth.LoginRequestDTO;
-import com.example.springbootbackend.dto.auth.PasswordUpdateRequestDTO;
-import com.example.springbootbackend.dto.auth.SignupRequestDTO;
+import com.example.springbootbackend.dto.auth.*;
 import com.example.springbootbackend.exception.DuplicateUniqueResourceException;
 import com.example.springbootbackend.exception.InvalidCredentialsException;
 import com.example.springbootbackend.mapper.AccountMapper;
