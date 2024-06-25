@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import UserContext from "../contexts/UserContext.jsx";
 import { useNavigate } from 'react-router-dom';
-import storeService from '../services/store';  // Service for store-related API calls
-import produceService from '../services/produce';  // Service for produce-related API calls
+import storeService from '../services/store';
+import produceService from '../services/produce';
 import CircularProgress from '@mui/material/CircularProgress';
 import ProduceCard from "../components/ProduceCard.jsx";
 import { Grid, Container, Button, Box, Typography } from '@mui/material';
@@ -31,7 +31,6 @@ const StorePage = () => {
                         setProduceList(produceListData);
                     } else {
                         console.log('User does not have a store')
-                        // Handle the case when user.store is null
                     }
                 } catch (error) {
                     console.error("Error fetching store or produce:", error);
@@ -58,10 +57,11 @@ const StorePage = () => {
         <Container>
             {store ? (
                 <>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                        <Typography variant="h4">{user.name}'s Store</Typography>
-                        <Button variant="contained" onClick={() => navigate('/store/create-produce')}>Add New Produce</Button>
+                    <Box display="flex" justifyContent="flex-end" alignItems="center" mb={2}>
+                        <Button variant="contained" onClick={() => navigate('/store/create-produce')} sx={{ marginRight: '10px' }}>Add New Produce</Button>
+                        <Button variant="contained" onClick={() => navigate('/store/edit-store')}>Edit Store Details</Button>
                     </Box>
+                    <Typography variant="h4">{user.name}'s Store</Typography>
                     <h3>{store?.name}</h3>
                     <Grid container spacing={3}>
                         {produceList.map(produce => (
@@ -72,7 +72,10 @@ const StorePage = () => {
                     </Grid>
                 </>
             ) : (
-                <Typography variant="h6">No store exists for user</Typography>
+                <>
+                    <Typography variant="h6">No store exists for user</Typography>
+                    <Button variant="contained" onClick={() => navigate('/store/create-store')}>Create A Store</Button>
+                </>
             )}
         </Container>
     );

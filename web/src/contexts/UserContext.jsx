@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import storeService from '../services/store.jsx';
 import cartService from '../services/cart.jsx';
-import { setRefreshToken as setRefreshTokenInApi } from '../services/api.jsx';
+// import { setRefreshToken as setRefreshTokenInApi } from '../services/api.jsx';
 import {jwtDecode} from 'jwt-decode';
 const host = import.meta.env.VITE_API_URL
 
@@ -25,14 +25,16 @@ export const UserProvider = ({ children }) => {
                 result.cart = response.data.id ? response.data.id : null;
             }
         } catch (error) {
-            if (error.status === 404) {
+            console.log('getExtraUserDetails encountered error: ', error)
+            if (error.status === '404') {
+                console.log('User does not have a store or cart')
                 if (user.type === 'Farmer') {
                     result.store = null;
                 } else {
                     result.cart = null;
                 }
             }
-        }
+        }console.log('returning result: ', result)
         return result;
     };
 
@@ -52,6 +54,7 @@ export const UserProvider = ({ children }) => {
             if (storedUser) {
                 const parsedUser = JSON.parse(storedUser);
                 setUser(parsedUser);
+                console.log('parsed user from local storage: ', parsedUser)
 
                 if (isTokenExpired(parsedUser.accessToken)) {
                     console.log('Token is expired');
@@ -81,8 +84,15 @@ export const UserProvider = ({ children }) => {
         setUser(fullDetails);
         console.log('setting user to context after login: ', fullDetails);
         localStorage.setItem('user', JSON.stringify(fullDetails));
-        setRefreshTokenInApi(refreshAccessToken); // Set the refreshAccessToken function in the api module
+        // setRefreshTokenInApi(refreshAccessToken); // Set the refreshAccessToken function in the api module
     };
+
+    const updateUserDetails = async () => {
+        const extraDetails = await getExtraUserDetails(user);
+        const fullDetails = { ...user, ...extraDetails };
+        console.log('updating user in global context to: ', fullDetails);
+        setUser(fullDetails)
+    }
 
     const logout = () => {
         setUser(null);
@@ -107,13 +117,15 @@ export const UserProvider = ({ children }) => {
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));
             console.log('Token refreshed successfully');
+            return response.data;
         } catch (error) {
             console.error('Failed to refresh token', error);
+            throw error;
         }
     };
 
     return (
-        <UserContext.Provider value={{ user, login, logout, isAuthenticated, refreshAccessToken, loading }}>
+        <UserContext.Provider value={{ user, login, logout, isAuthenticated, refreshAccessToken, loading, getExtraUserDetails, updateUserDetails }}>
             {children}
         </UserContext.Provider>
     );

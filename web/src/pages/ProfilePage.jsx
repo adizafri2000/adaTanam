@@ -16,6 +16,7 @@ const ProfilePage = () => {
     useUserCheck();
 
     useEffect(() => {
+        console.log('profile page, useEffect in run')
         const fetchUserDetails = async () => {
             setIsLoading(true);
             try {
@@ -45,6 +46,7 @@ const ProfilePage = () => {
         console.log('profile page, currentUser supposedly fetched from context: ', currentUser)
     }
 
+    console.log('ProfilePage, rendering return')
     return (
         <div>
             <h1>Profile Page</h1>

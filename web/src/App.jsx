@@ -12,6 +12,7 @@ import StorePage from "./pages/StorePage.jsx";
 import CreateProducePage from "./pages/CreateProducePage.jsx";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CreateStorePage from "./pages/CreateStorePage.jsx";
 
 const App = () => {
 
@@ -69,6 +70,7 @@ const App = () => {
                             <Route path="signup" element={<SignUpPage />} />
                             <Route path="profile" element={<ProfilePage />} />
                             <Route path="store" element={<StorePage />} />
+                            <Route path="store/create-store" element={<CreateStorePage />} />
                             <Route path="store/create-produce" element={<CreateProducePage />} />
                             <Route path='*' element={<NotFound/>}/>
                         </Route>
