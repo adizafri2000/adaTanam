@@ -10,6 +10,7 @@ import com.example.springbootbackend.mapper.AccountMapper;
 import com.example.springbootbackend.model.Account;
 import com.example.springbootbackend.repository.AccountRepository;
 import com.example.springbootbackend.service.BlobStorageService;
+import com.example.springbootbackend.service.account.AccountService;
 import com.example.springbootbackend.auth.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
