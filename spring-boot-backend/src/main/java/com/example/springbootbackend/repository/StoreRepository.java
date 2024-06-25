@@ -11,8 +11,11 @@ import java.util.Optional;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Integer> {
+    // to find specific store via farmer ID
     Optional<Store> findByFarmer(Integer farmer);
 
+    // to find specific account via farmer ID
     @Query("SELECT a FROM Account a WHERE a.id = :farmer")
     Optional<Account> findAccountByFarmer(@Param("farmer") Integer farmer);
+
 }

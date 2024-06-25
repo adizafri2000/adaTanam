@@ -42,6 +42,13 @@ public class StoreServiceImpl implements StoreService{
     }
 
     @Override
+    public StoreResponseDTO getStoreByFarmer(Integer farmerId) {
+        log.info("Getting store with farmer id: {}", farmerId);
+        return storeRepository.findByFarmer(farmerId).map(storeMapper::toResponseDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Store not found for farmer with id " + farmerId));
+    }
+
+    @Override
     public StoreResponseDTO createStore(StoreRequestDTO store) {
         log.info("Creating store: {}", store);
         Store newStore = storeMapper.toEntity(store);

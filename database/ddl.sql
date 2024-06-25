@@ -12,6 +12,7 @@ create table if not exists staging.account
     bank_name     varchar(40),
     type          varchar(8)   not null,    -- admin, farmer, consumer
     is_active     boolean      not null,
+    image	text,
     created_at  timestamp default now(),
     updated_at  timestamp default now()
 );
@@ -40,6 +41,7 @@ create table if not exists staging.produce
     selling_unit varchar(10) not null,  -- kg, g, piece, bag, box
     description varchar(100),
     status varchar(20) not null,    -- available, out of stock, pending harvest
+    image text,
     store integer not null references staging.store,
     created_at  timestamp default now(),
     updated_at  timestamp default now()

@@ -12,6 +12,7 @@ public record ProduceResponseDTO(
         String sellingUnit,
         String description,
         String status,
+        String image,
         Integer store,
         Timestamp createdAt,
         Timestamp updatedAt

@@ -37,13 +37,18 @@ public class Produce {
     private String description;
     private String status;
 
+    private String image;
+
     private Integer store;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store", nullable = false, insertable = false, updatable = false)
     private Store produceStore;
 
+    @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
+
+    @Column(name = "updated_at", insertable = false, updatable = false)
     private Timestamp updatedAt;
 
     @Override

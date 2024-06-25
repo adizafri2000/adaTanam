@@ -1,8 +1,9 @@
 package com.example.springbootbackend.service.produce;
 
-import java.sql.Timestamp;
 import java.util.List;
 
+import com.example.springbootbackend.repository.AccountRepository;
+import com.example.springbootbackend.service.BlobStorageService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -15,23 +16,34 @@ import com.example.springbootbackend.model.Produce;
 import com.example.springbootbackend.repository.ProduceRepository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
 public class ProduceServiceImpl implements ProduceService {
     private final ProduceRepository produceRepository;
+    private final AccountRepository accountRepository;
     private final TokenService tokenService;
+    private final BlobStorageService blobStorageService;
     private final ProduceMapper produceMapper = ProduceMapper.INSTANCE;
 
-    public ProduceServiceImpl(ProduceRepository produceRepository, TokenService tokenService) {
+    public ProduceServiceImpl(ProduceRepository produceRepository, AccountRepository accountRepository, TokenService tokenService, BlobStorageService blobStorageService) {
         this.produceRepository = produceRepository;
+        this.accountRepository = accountRepository;
         this.tokenService = tokenService;
+        this.blobStorageService = blobStorageService;
     }
 
     @Override
     public List<ProduceResponseDTO> getProduces() {
         log.info("Getting all produce");
         return produceRepository.findAll().stream().map(produceMapper::toResponseDTO).toList();
+    }
+
+    @Override
+    public List<ProduceResponseDTO> getProduceByStore(Integer storeId) {
+        log.info("Getting produce for store: {}", storeId);
+        return produceRepository.findByStore(storeId).stream().map(produceMapper::toResponseDTO).toList();
     }
 
     @Override
@@ -42,20 +54,30 @@ public class ProduceServiceImpl implements ProduceService {
     }
 
     @Override
-    public ProduceResponseDTO createProduce(ProduceRequestDTO produce) {
+    public ProduceResponseDTO createProduce(ProduceRequestDTO produce, String token, MultipartFile image) {
         log.info("Creating produce: {}", produce);
-        Produce newProduce = produceMapper.toEntity(produce);
-        if (newProduce.getCreatedAt() == null) {
-            newProduce.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+        String email = tokenService.getEmailFromToken(token);
+        accountRepository.findByEmail(email).ifPresentOrElse(account -> {
+            // check if token owner is a farmer
+            if(!account.getType().equals("Farmer")) {
+                throw new AccessDeniedException("You do not have permission to create produce");
+            }
+        }, () -> {
+            throw new ResourceNotFoundException("Account not found with email " + email);
+        });
+
+        Produce newProduce = produceRepository.save(produceMapper.toEntity(produce));
+        if(image != null) {
+            String imageUrl = blobStorageService.uploadImage(image, newProduce.getId(), PRODUCE_FOLDER_NAME);
+            newProduce.setImage(imageUrl);
+            produceRepository.save(newProduce);
         }
-        if (newProduce.getUpdatedAt() == null) {
-            newProduce.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        }
-        return produceMapper.toResponseDTO(produceRepository.save(newProduce));
+        return produceMapper.toResponseDTO(newProduce);
     }
 
     @Override
-    public ProduceResponseDTO updateProduce(Integer id, ProduceRequestDTO produce, String token) {
+    public ProduceResponseDTO updateProduce(Integer id, ProduceRequestDTO produce, String token, MultipartFile image) {
         log.info("Updating produce with id: {}", id);
 
         Produce produceToUpdate = produceRepository.findById(id)
@@ -74,6 +96,12 @@ public class ProduceServiceImpl implements ProduceService {
         produceToUpdate.setSellingUnit(produce.sellingUnit());
         produceToUpdate.setDescription(produce.description());
         produceToUpdate.setStatus(produce.status());
+
+        if (image != null) {
+            String imageUrl = blobStorageService.uploadImage(image, produceToUpdate.getId(), PRODUCE_FOLDER_NAME);
+            produceToUpdate.setImage(imageUrl);
+        }
+        else log.info("No image to update");
 
         return produceMapper.toResponseDTO(produceRepository.save(produceToUpdate));
     }

@@ -10,6 +10,7 @@ public record ProduceRequestDTO(
         String sellingUnit,
         String description,
         String status,
+        String image,
         Integer store
 ) {
 }

@@ -16,6 +16,19 @@ spring:
         default_schema: staging
     show-sql: true
     database-platform: org.hibernate.dialect.postgis.PostgisDialect
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  cloud:
+    azure:
+      storage:
+        blob:
+          account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
+#          endpoint: ${AZURE_STORAGE_ACCOUNT_ENDPOINT}
+          account-key: ${AZURE_STORAGE_KEY}
+          connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
+          container-name:  ${AZURE_STORAGE_CONTAINER_NAME}
 management:
   server:
     port: ${ACTUATOR_PORT}
@@ -25,7 +38,12 @@ management:
         include: "*"
 server:
   port: ${APP_PORT}
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-docs
 security:
   jwt:
     secret-key: ${JWT_SECRET}
     expiration-time: ${JWT_EXPIRATION}
+    refresh-expiration-time: ${JWT_REFRESH_EXPIRATION}

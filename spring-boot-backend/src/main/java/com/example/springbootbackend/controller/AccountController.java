@@ -3,13 +3,14 @@ package com.example.springbootbackend.controller;
 import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.RequestErrorDTO;
 import com.example.springbootbackend.dto.account.AccountResponseDTO;
-import com.example.springbootbackend.dto.account.AccountLoginDTO;
 import com.example.springbootbackend.dto.account.AccountRequestDTO;
 import com.example.springbootbackend.service.account.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ public class AccountController {
 
     @GetMapping("")
     public ResponseEntity<?> getAccounts() {
-        log.info("Handling GET /api/accounts request");
+        log.info("Handling GET /accounts request");
         List<AccountResponseDTO> dtoList = accountService.getAccounts();
         Map<String, List<AccountResponseDTO>> listResponse = new HashMap<>();
         listResponse.put("accounts", dtoList);
@@ -39,40 +40,38 @@ public class AccountController {
 
     @GetMapping(path = "/{id}")
     public AccountResponseDTO getAccountById(@PathVariable Integer id) {
-        log.info("Handling GET /api/accounts/{} request", id);
+        log.info("Handling GET /accounts/{} request", id);
         return accountService.getAccountById(id);
     }
 
-    // User account sign up/registration endpoint
-    @PostMapping("/signup")
-    public ResponseEntity<?> createAccount(@RequestBody AccountRequestDTO accountRequestDTO) {
-        log.info("Handling POST /api/accounts/signup request");
-        return new ResponseEntity<>(accountService.createAccount(accountRequestDTO), HttpStatus.CREATED);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<?> updateAccount(@PathVariable Integer id, @RequestBody AccountRequestDTO accountRequestDTO, @RequestHeader("Authorization") String token){
+//        log.info("Handling PUT /accounts/{} request", id);
+//        if (!tokenService.validateToken(token)) {
+//            RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
+//            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+//        }
+//        return new ResponseEntity<>(accountService.updateAccount(id, accountRequestDTO, token), HttpStatus.OK);
+//    }
 
-    // User account login endpoint
-    @PostMapping("/login")
-    public ResponseEntity<?> loginAccount(@RequestBody AccountLoginDTO accountLoginDTO) {
-        log.info("Handling POST /api/accounts/login request");
-        String token = accountService.loginAccount(accountLoginDTO);
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateAccount(@PathVariable Integer id, @RequestBody AccountRequestDTO accountRequestDTO, @RequestHeader("Authorization") String token){
-        log.info("Handling PUT /api/accounts/{} request", id);
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateAccount(
+            @PathVariable Integer id,
+            @RequestPart("account") AccountRequestDTO accountRequestDTO,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestHeader("Authorization") String token
+    ) {
+        log.info("Handling PUT /accounts/{} request", id);
         if (!tokenService.validateToken(token)) {
             RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-        return new ResponseEntity<>(accountService.updateAccount(id, accountRequestDTO, token), HttpStatus.OK);
+        return new ResponseEntity<>(accountService.updateAccount(id, accountRequestDTO, token, image), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
-        log.info("Handling DELETE /api/accounts/{} request", id);
+        log.info("Handling DELETE /accounts/{} request", id);
         if (!tokenService.validateToken(token)) {
             RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);

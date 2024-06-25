@@ -20,7 +20,7 @@ import com.example.springbootbackend.service.cartitem.CartItemService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/cartitem")
+@RequestMapping("/cartitems")
 @Slf4j
 public class CartItemController {
     private final CartItemService cartItemService;

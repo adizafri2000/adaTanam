@@ -7,6 +7,7 @@ public record AccountResponseDTO(
         String phone,
         String bankNumber,
         String bankName,
+        String image,
         String type,
         Boolean isActive
 ) {}
