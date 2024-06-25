@@ -91,7 +91,7 @@ public class AccountServiceImpl implements AccountService{
 
         log.info("Updating account with id: {} to: {}", id, accountRequestDTO);
         account.setEmail(accountRequestDTO.email());
-        account.setPasswordHash(passwordEncoder.encode(accountRequestDTO.password()));
+        // account.setPasswordHash(passwordEncoder.encode(accountRequestDTO.password()));
         account.setName(accountRequestDTO.name());
         account.setPhone(accountRequestDTO.phone());
         account.setBankNumber(accountRequestDTO.bankNumber());

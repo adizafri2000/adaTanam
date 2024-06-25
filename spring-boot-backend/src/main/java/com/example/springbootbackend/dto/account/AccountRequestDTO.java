@@ -2,7 +2,6 @@ package com.example.springbootbackend.dto.account;
 
 public record AccountRequestDTO(
         String email,
-        String password,
         String name,
         String phone,
         String image,

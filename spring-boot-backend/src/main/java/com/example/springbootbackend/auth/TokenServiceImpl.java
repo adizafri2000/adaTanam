@@ -1,6 +1,7 @@
 package com.example.springbootbackend.auth;
 
 import com.example.springbootbackend.dto.account.AccountResponseDTO;
+import com.example.springbootbackend.dto.auth.*;
 import com.example.springbootbackend.mapper.AccountMapper;
 import com.example.springbootbackend.model.Account;
 import io.jsonwebtoken.Jwts;
@@ -40,7 +41,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Map<String, String> generateTokens(Account account) {
+    public TokenRefreshDTO generateTokens(Account account) {
         String accessToken = Jwts.builder()
                 .setSubject(account.getEmail())
                 .setIssuedAt(new Date())
@@ -55,14 +56,14 @@ public class TokenServiceImpl implements TokenService {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
 
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
+        TokenRefreshDTO tokens = new TokenRefreshDTO(accessToken, refreshToken);
+        // tokens.put("accessToken", accessToken);
+        // tokens.put("refreshToken", refreshToken);
         return tokens;
     }
 
     @Override
-    public Map<String, String> generateTokens(AccountResponseDTO accountResponseDTO) {
+    public TokenRefreshDTO generateTokens(AccountResponseDTO accountResponseDTO) {
         String accessToken = Jwts.builder()
                 .setSubject(accountResponseDTO.email())
                 .setIssuedAt(new Date())
@@ -77,9 +78,9 @@ public class TokenServiceImpl implements TokenService {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
 
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
+        TokenRefreshDTO tokens = new TokenRefreshDTO(accessToken, refreshToken);
+        // tokens.put("accessToken", accessToken);
+        // tokens.put("refreshToken", refreshToken);
         return tokens;
     }
 
