@@ -1,7 +1,7 @@
 package com.example.springbootbackend.controller;
 
 import com.example.springbootbackend.auth.TokenService;
-import com.example.springbootbackend.dto.account.AccountLoginDTO;
+import com.example.springbootbackend.dto.auth.LoginRequestDTO;
 import com.example.springbootbackend.dto.account.AccountRequestDTO;
 import com.example.springbootbackend.dto.account.AccountResponseDTO;
 import com.example.springbootbackend.service.account.AccountService;
@@ -41,12 +41,12 @@ public class AuthController {
 
     // User account login endpoint
     @PostMapping("/login")
-    public ResponseEntity<?> loginAccount(@RequestBody AccountLoginDTO accountLoginDTO) {
+    public ResponseEntity<?> loginAccount(@RequestBody LoginRequestDTO loginRequestDTO) {
         log.info("Handling POST /auth/login request");
-        Map<String, String> tokens = accountService.loginAccount(accountLoginDTO);
+        Map<String, String> tokens = accountService.loginAccount(loginRequestDTO);
         String accessToken = tokens.get("accessToken");
         String refreshToken = tokens.get("refreshToken");
-        AccountResponseDTO accountResponseDto = accountService.getAccountByEmail(accountLoginDTO.email());
+        AccountResponseDTO accountResponseDto = accountService.getAccountByEmail(loginRequestDTO.email());
         String accountId = accountResponseDto.id().toString();
         String accountType = accountResponseDto.type();
         String accountName = accountResponseDto.name();

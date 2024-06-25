@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ProfileCard from '../components/ProfileCard';
+import ProfileMainCard from '../components/ProfileMainCard.jsx';
 import accountService from '../services/account.jsx';
 import UserContext from '../contexts/UserContext'; // Import UserContext
 import CircularProgress from "@mui/material/CircularProgress";
@@ -45,7 +45,7 @@ const ProfilePage = () => {
     return (
         <div>
             <h1>Profile Page</h1>
-            {user && <ProfileCard user={user} />}
+            {user && <ProfileMainCard user={user} />}
         </div>
     );
 };

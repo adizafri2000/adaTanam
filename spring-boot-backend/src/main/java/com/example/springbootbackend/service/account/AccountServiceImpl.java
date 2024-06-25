@@ -2,7 +2,7 @@ package com.example.springbootbackend.service.account;
 
 import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.account.AccountResponseDTO;
-import com.example.springbootbackend.dto.account.AccountLoginDTO;
+import com.example.springbootbackend.dto.auth.LoginRequestDTO;
 import com.example.springbootbackend.dto.account.AccountRequestDTO;
 import com.example.springbootbackend.exception.DuplicateUniqueResourceException;
 import com.example.springbootbackend.exception.InvalidCredentialsException;
@@ -62,16 +62,6 @@ public class AccountServiceImpl implements AccountService{
                 .map(accountMapper::toResponseDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found with email " + email));
     }
-
-//    @Override
-//    public AccountResponseDTO createAccount(AccountRequestDTO account) {
-//        log.info("Creating account: {}", account);
-//        Account newAccount = accountMapper.toEntity(account);
-//        if(accountRepository.findByEmail(newAccount.getEmail()).isPresent())
-//            throw new DuplicateUniqueResourceException("Account with email " + newAccount.getEmail() + " already exists");
-//        newAccount.setPasswordHash(passwordEncoder.encode(newAccount.getPasswordHash()));
-//        return accountMapper.toResponseDTO(accountRepository.save(newAccount));
-//    }
 
     @Override
     public AccountResponseDTO createAccount(AccountRequestDTO accountRequestDTO, MultipartFile image) {
@@ -133,11 +123,11 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public Map<String, String> loginAccount(AccountLoginDTO accountLoginDTO) {
-        Optional<Account> optionalAccount = accountRepository.findByEmail(accountLoginDTO.email());
+    public Map<String, String> loginAccount(LoginRequestDTO loginRequestDTO) {
+        Optional<Account> optionalAccount = accountRepository.findByEmail(loginRequestDTO.email());
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            if (passwordEncoder.matches(accountLoginDTO.password(), account.getPasswordHash())) {
+            if (passwordEncoder.matches(loginRequestDTO.password(), account.getPasswordHash())) {
                 return tokenService.generateTokens(account);
             }
         }

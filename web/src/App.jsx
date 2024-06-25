@@ -10,7 +10,6 @@ import { UserProvider } from './contexts/UserContext';
 import ProfilePage from "./pages/ProfilePage.jsx";
 import StorePage from "./pages/StorePage.jsx";
 import CreateProducePage from "./pages/CreateProducePage.jsx";
-import ProfileEditForm from './components/ProfileEditForm.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -19,38 +18,40 @@ const App = () => {
     const theme = createTheme({
         components: {
             MuiCssBaseline: {
-              styleOverrides: {
-                body: {
-                  margin: 0,
-                  padding: 0,
+                styleOverrides: {
+                    body: {
+                        margin: 0,
+                        padding: 0,
+                        // background: 'yellow',
+                        overflowY: 'scroll',
+                    },
                 },
-              },
             },
         },
         palette: {
-          primary: {
-            main: green[500],//'#4CAF50',
-          },
-          secondary: {
-            main: brown[400],
-          },
-          accent: {
-            main: yellow[400],
-          },
-          error: {
-            main: '#f44336',
-          },
-          warning: {
-            main: '#ff9800',
-          },
-          info: {
-            main: '#2196f3',
-          },
-          success: {
-            main: '#4caf50',
-          },
+            primary: {
+                main: green[500],//'#4CAF50',
+            },
+            secondary: {
+                main: brown[400],
+            },
+            accent: {
+                main: yellow[400],
+            },
+            error: {
+                main: '#f44336',
+            },
+            warning: {
+                main: '#ff9800',
+            },
+            info: {
+                main: '#2196f3',
+            },
+            success: {
+                main: '#4caf50',
+            },
         },
-      });
+    });
 
     const NotFound = () => {
       return <div>Not found</div>
@@ -77,7 +78,7 @@ const App = () => {
             </ThemeProvider>
         </UserProvider>
     )
-  
+
 }
 
 export default App

@@ -12,17 +12,22 @@ const getById = async (id) => {
 
 const update = async (id, data, token, imageFile) => {
     try {
+        const formData = new FormData();
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        formData.append('account', blob, 'account.json');
+        formData.append('image', imageFile);
         const config = {
+            method: 'put',
+            url: `${baseUrl}/${id}`,
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data',
             },
+            data: formData
         };
-        const formData = new FormData();
-        formData.append('data', JSON.stringify(data));
-        formData.append('image', imageFile);
-        return await api.put(`${baseUrl}/${id}`, formData, config);
+        return await api(config);
     } catch (error) {
+        console.log('error updating acount: ', error)
         throw error.response.data;
     }
 }
