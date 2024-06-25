@@ -2,7 +2,7 @@ package com.example.springbootbackend.service.account;
 
 import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.account.AccountResponseDTO;
-import com.example.springbootbackend.dto.auth.LoginRequestDTO;
+import com.example.springbootbackend.dto.auth.*;
 import com.example.springbootbackend.dto.account.AccountRequestDTO;
 import com.example.springbootbackend.exception.DuplicateUniqueResourceException;
 import com.example.springbootbackend.exception.InvalidCredentialsException;
@@ -121,18 +121,4 @@ public class AccountServiceImpl implements AccountService{
 
         accountRepository.deleteById(id);
     }
-
-    @Override
-    public Map<String, String> loginAccount(LoginRequestDTO loginRequestDTO) {
-        Optional<Account> optionalAccount = accountRepository.findByEmail(loginRequestDTO.email());
-        if (optionalAccount.isPresent()) {
-            Account account = optionalAccount.get();
-            if (passwordEncoder.matches(loginRequestDTO.password(), account.getPasswordHash())) {
-                return tokenService.generateTokens(account);
-            }
-        }
-        throw new InvalidCredentialsException("Invalid email or password");
-    }
-
-
 }

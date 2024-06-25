@@ -18,5 +18,4 @@ public interface AccountService {
     AccountResponseDTO createAccount(AccountRequestDTO accountRequestDTO, MultipartFile image);
     AccountResponseDTO updateAccount(Integer id, AccountRequestDTO accountRequestDTO, String token, MultipartFile image);
     void deleteAccount(Integer id, String token);
-    Map<String, String> loginAccount(LoginRequestDTO loginRequestDTO);
 }
