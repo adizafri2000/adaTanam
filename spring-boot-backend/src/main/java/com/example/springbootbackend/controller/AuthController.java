@@ -50,7 +50,7 @@ public class AuthController {
         // String accessToken = tokens.get("accessToken");
         // String refreshToken = tokens.get("refreshToken");
         AccountResponseDTO accountResponseDto = accountService.getAccountByEmail(loginRequestDTO.email());
-        String accountId = accountResponseDto.id().toString();
+        Integer accountId = accountResponseDto.id();
         String accountType = accountResponseDto.type();
         String accountName = accountResponseDto.name();
         // Map<String, String> response = new HashMap<>();
