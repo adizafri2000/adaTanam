@@ -65,7 +65,7 @@ public class AuthController {
             accountId,
             accountType,
             accountName
-        ;
+        );
         // return new ResponseEntity<>(response, HttpStatus.OK);
         return loginResponseDTO;
     }
