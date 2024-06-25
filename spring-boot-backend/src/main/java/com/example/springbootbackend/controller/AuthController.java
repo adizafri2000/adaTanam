@@ -33,13 +33,13 @@ public class AuthController {
 
     // User account sign up/registration endpoint
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createAccount(
+    public AccountResponseDTO createAccount(
             @RequestPart(value = "image", required = false) MultipartFile image,
             @RequestPart("account") SignupRequestDTO signupRequestDTO
     ) {
         log.info("Handling POST /auth/signup request");
         AccountResponseDTO createdAccount = authService.signup(signupRequestDTO, image);
-        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
+        return createdAccount;//new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
     }
 
     // User account login endpoint
@@ -65,7 +65,7 @@ public class AuthController {
             accountId,
             accountType,
             accountName
-        )
+        ;
         // return new ResponseEntity<>(response, HttpStatus.OK);
         return loginResponseDTO;
     }
