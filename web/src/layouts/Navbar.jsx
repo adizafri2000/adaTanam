@@ -47,14 +47,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const navLinks = [
-  { name: 'Home', route: '/store' },
-  { name: 'Profile', route: '/profile' },
+  { name: 'Store', route: '/store' },
+  { name: 'Produce List', route: '/produce' },
+  { name: 'Orders', route: '/orders' },
+  { name: 'Cart', route: '/cart' },
 ];
 
 const dropdownLinks = [
   { name: 'Profile', route: '/profile' },
   { name: 'Logout', route: '/logout' },
-  { name: 'Store', route: '/store' },
+  // { name: 'Store', route: '/store' },
 ];
 
 const Navbar = () => {
@@ -62,6 +64,7 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -75,58 +78,71 @@ const Navbar = () => {
     event.preventDefault(); // Prevent the default action
     logout();
     handleMenuClose();
-    toast.success('Logged out successfully')
+    toast.success('Logged out successfully');
     navigate("/");
   };
 
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    if (event.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/search?query=${searchQuery}`);
+    }
+  };
+
   return (
-      <AppBar position="static" color="primary">
-        <Toolbar>
-          <NavLink to="/" end>
-            <img src={logo} alt="logo" style={{ marginRight: theme.spacing(2), width: '100px', height: '100px' }} />
-          </NavLink>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
-          <div style={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
-            {navLinks.map((link, index) => (
-                <NavLink key={index} to={link.route} style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
-                  {link.name}
-                </NavLink>
-            ))}
-            <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              <Avatar style={{ marginRight: theme.spacing(1) }} />
-              {user && <Typography variant="body1" style={{ color: 'white' }}>{user.name}</Typography>}
-            </div>
+    <AppBar position="static" color="primary">
+      <Toolbar>
+        <NavLink to="/" end>
+          <img src={logo} alt="logo" style={{ marginRight: theme.spacing(2), width: '100px', height: '100px' }} />
+        </NavLink>
+        <Search>
+          <SearchIconWrapper>
+            <SearchIcon />
+          </SearchIconWrapper>
+          <StyledInputBase
+            placeholder="Search…"
+            inputProps={{ 'aria-label': 'search' }}
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onKeyDown={handleSearchSubmit}
+          />
+        </Search>
+        <div style={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
+          {navLinks.map((link, index) => (
+            <NavLink key={index} to={link.route} style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
+              {link.name}
+            </NavLink>
+          ))}
+          <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+            <Avatar style={{ marginRight: theme.spacing(1) }} />
+            {user && <Typography variant="body1" style={{ color: 'white' }}>{user.name}</Typography>}
           </div>
-          <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-          >
-            {user ? dropdownLinks.map((link, index) => (
-                <NavLink to={link.route} style={{ color: 'black', textDecoration: 'none' }} key={index}>
-                  <MenuItem onClick={link.route === '/logout' ? handleLogout : handleMenuClose}>
-                    {link.name}
-                  </MenuItem>
-                </NavLink>
-            )) : [
-              <NavLink to="/login" style={{ color: 'black', textDecoration: 'none' }} key="login">
-                <MenuItem onClick={handleMenuClose}>Login</MenuItem>
-              </NavLink>,
-              <NavLink to="/signup" style={{ color: 'black', textDecoration: 'none' }} key="signup">
-                <MenuItem onClick={handleMenuClose}>Signup</MenuItem>
-              </NavLink>
-            ]}
-          </Menu>
-        </Toolbar>
-      </AppBar>
+        </div>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          {user ? dropdownLinks.map((link, index) => (
+            <NavLink to={link.route} style={{ color: 'black', textDecoration: 'none' }} key={index}>
+              <MenuItem onClick={link.route === '/logout' ? handleLogout : handleMenuClose}>
+                {link.name}
+              </MenuItem>
+            </NavLink>
+          )) : [
+            <NavLink to="/login" style={{ color: 'black', textDecoration: 'none' }} key="login">
+              <MenuItem onClick={handleMenuClose}>Login</MenuItem>
+            </NavLink>,
+            <NavLink to="/signup" style={{ color: 'black', textDecoration: 'none' }} key="signup">
+              <MenuItem onClick={handleMenuClose}>Signup</MenuItem>
+            </NavLink>
+          ]}
+        </Menu>
+      </Toolbar>
+    </AppBar>
   );
 };
 

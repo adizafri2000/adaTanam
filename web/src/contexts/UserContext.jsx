@@ -9,6 +9,8 @@ const host = import.meta.env.VITE_API_URL
 const UserContext = React.createContext(null);
 
 export const UserProvider = ({ children }) => {
+
+    // TODO create method specifically for updating the user in the state
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
