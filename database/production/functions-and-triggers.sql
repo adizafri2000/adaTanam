@@ -1,7 +1,7 @@
 -- Begin function declarations
 
 -- Create a utility function to reset all sequences
-CREATE OR REPLACE FUNCTION public.reset_all_sequences(reset_value integer DEFAULT 1)
+CREATE OR REPLACE FUNCTION production.reset_all_sequences(reset_value integer DEFAULT 1)
     RETURNS void AS $$
 DECLARE
     table_name text;
@@ -22,7 +22,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- timestamp updates for all tables.current_timestamp
-create or replace function public.update_timestamp_function() returns trigger
+create or replace function production.update_timestamp_function() returns trigger
     language plpgsql
 as
 $$
@@ -33,7 +33,7 @@ END;
 $$;
 
 -- Create a function to update is_completed and completed_timestamp
-CREATE OR REPLACE FUNCTION public.update_order_status()
+CREATE OR REPLACE FUNCTION production.update_order_status()
     RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.status = 'completed' THEN
@@ -53,7 +53,7 @@ $$ LANGUAGE plpgsql;
 CREATE or replace TRIGGER order_status_update
     BEFORE UPDATE OF status ON staging.order
     FOR EACH ROW
-EXECUTE PROCEDURE public.update_order_status();
+EXECUTE PROCEDURE production.update_order_status();
 
 
 -- create or replace triggers for all tables
@@ -61,41 +61,41 @@ create or replace trigger update_account
     before update
     on staging.account
     for each row
-execute procedure public.update_timestamp_function();
+execute procedure production.update_timestamp_function();
 
 create or replace trigger update_store
     before update
     on staging.store
     for each row
-execute procedure public.update_timestamp_function();
+execute procedure production.update_timestamp_function();
 
 create or replace trigger update_produce
     before update
     on staging.produce
     for each row
-execute procedure public.update_timestamp_function();
+execute procedure production.update_timestamp_function();
 
 create or replace trigger update_cart
     before update
     on staging.cart
     for each row
-execute procedure public.update_timestamp_function();
+execute procedure production.update_timestamp_function();
 
 create or replace trigger update_cart_item
     before update
     on staging.cart_item
     for each row
-execute procedure public.update_timestamp_function();
+execute procedure production.update_timestamp_function();
 
 create or replace trigger update_order
     before update
     on staging.order
     for each row
-execute procedure public.update_timestamp_function();
+execute procedure production.update_timestamp_function();
 
 create or replace trigger update_payment
     before update
     on staging.payment
     for each row
-execute procedure public.update_timestamp_function();
+execute procedure production.update_timestamp_function();
 
