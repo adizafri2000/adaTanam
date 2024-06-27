@@ -39,7 +39,7 @@ const LoginForm = () => {
                 image: response.data.accountImage
             }
             console.log('logged in user: ', user);
-            await login(user.email, user.name, user.type, user.id, user.accessToken, user.refreshToken);
+            await login(user.email, user.name, user.type, user.id, user.accessToken, user.refreshToken, user.image);
             toast.success('Logged in successfully!');  // Add this line
             navigate('/')
         } catch (error) {

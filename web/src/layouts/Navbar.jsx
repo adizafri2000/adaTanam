@@ -5,6 +5,7 @@ import logo from '../assets/logonobg.png';
 import { InputBase, Menu, MenuItem, Typography } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import Avatar from "@mui/material/Avatar";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useState, useContext } from "react";
 import UserContext from "../contexts/UserContext.jsx";
 import { styled, useTheme } from '@mui/material/styles';
@@ -50,7 +51,7 @@ const navLinks = [
   { name: 'Store', route: '/store', for: 'Farmer' },
   { name: 'Produce List', route: '/produce' },
   { name: 'Orders', route: '/orders' },
-  { name: 'Cart', route: '/cart', for: 'Consumer' },
+  // { name: 'Cart', route: '/cart', for: 'Consumer' },
 ];
 
 const dropdownLinks = [
@@ -74,7 +75,7 @@ const Navbar = () => {
   };
 
   const handleLogout = (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Prevent the default action
     logout();
     handleMenuClose();
     toast.success('Logged out successfully');
@@ -91,12 +92,9 @@ const Navbar = () => {
     }
   };
 
-  const filteredNavLinks = navLinks.filter(link => {
-    if (!user) return link.for !== 'Farmer';
-    if (user.type === 'Farmer') return link.for !== 'Consumer';
-    if (user.type === 'Consumer') return link.for !== 'Farmer';
-    return true;
-  });
+  const handleCartClick = () => {
+    navigate('/cart');
+  };
 
   return (
     <AppBar position="static" color="primary">
@@ -117,17 +115,21 @@ const Navbar = () => {
           />
         </Search>
         <div style={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
-          {filteredNavLinks.map((link, index) => (
-            <NavLink key={index} to={link.route} style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
-              {link.name}
-            </NavLink>
-          ))}
+          {navLinks.map((link, index) => {
+            if (!user || user.type !== link.for) {
+              return (
+                <NavLink key={index} to={link.route} style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
+                  {link.name}
+                </NavLink>
+              );
+            }
+            return null;
+          })}
+          {(!user || user.type !== 'Farmer') && (
+            <ShoppingCartIcon onClick={handleCartClick} style={{ cursor: 'pointer', marginRight: theme.spacing(1), color: 'white' }} />
+          )}
           <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-            {user && user.image ? (
-              <Avatar src={user.image} style={{ marginRight: theme.spacing(1) }} />
-            ) : (
-              <Avatar style={{ marginRight: theme.spacing(1) }} />
-            )}
+            <Avatar src={user?.image || undefined} style={{ marginRight: theme.spacing(1) }} />
             {user && <Typography variant="body1" style={{ color: 'white' }}>{user.name}</Typography>}
           </div>
         </div>

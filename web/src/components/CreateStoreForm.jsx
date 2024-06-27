@@ -41,7 +41,7 @@ const CreateStoreForm = ({ userDetails }) => {
             setIsLoading(true) // Set isLoading to true when the form is being submitted
             const response = await storeService.create(user.accessToken, data);
             console.log('response from creating new store: ', response)
-            await updateUserDetails();
+            await updateUserDetails(user);
             toast.success('Store successfully created!');
             navigate('/store'); // Redirect to the store page
         } catch (error) {

@@ -9,7 +9,7 @@ import {useUserCheck} from '../hooks/useUserCheck';
 
 const ProfilePage = () => {
     const navigate = useNavigate(); // Get the navigate function
-    const { user: currentUser, loading: userContextLoading } = useContext(UserContext); // Use UserContext
+    const { user: currentUser, loading: userContextLoading, updateUserDetails } = useContext(UserContext); // Use UserContext
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -50,7 +50,7 @@ const ProfilePage = () => {
     return (
         <div>
             <h1>Profile Page</h1>
-            {user && <ProfileMainCard user={user} userFromContext={currentUser} />}
+            {user && <ProfileMainCard user={user} userFromContext={currentUser} updateUserContext={updateUserDetails} />}
         </div>
     );
 };

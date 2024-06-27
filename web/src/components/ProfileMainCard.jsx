@@ -200,7 +200,7 @@ const ThirdRow = (({ isEditing, formValid, handleCancelSubmit, setIsEditing, han
     </Grid>
 ));
 
-const ProfileMainCard = ({ user, userFromContext }) => {
+const ProfileMainCard = ({ user, userFromContext, updateUserContext }) => {
     const [currentUser, setCurrentUser] = useState(user);
     const [isEditing, setIsEditing] = useState(false);
     const [name, setName] = useState(currentUser.name);
@@ -299,12 +299,15 @@ const ProfileMainCard = ({ user, userFromContext }) => {
             const response = await accountService.update(currentUser.id, data, token, imageFile);
             if (response.status === 200) {
                 toast.success('User updated successfully');
-                setCurrentUser(data);
+                setCurrentUser(response.data);
                 setIsEditing(false);
                 setImageFile(null);
             } else {
                 toast.error('Failed to update user');
             }
+            const updatedUser = { ...userFromContext, image: response.data.image, email: data.email, name: data.name}
+            console.log('profilemaincard component, will update user on context to: ', updatedUser)
+            updateUserContext(updatedUser)
         } catch (error) {
             console.error('Error updating user:', error);
             toast.error('Failed to update user');

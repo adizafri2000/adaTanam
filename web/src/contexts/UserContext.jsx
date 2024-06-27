@@ -78,6 +78,10 @@ export const UserProvider = ({ children }) => {
         fetchUserData();
     }, []);
 
+    useEffect(() => {
+        console.log('triggering re-render on user update')
+    }, [user])
+
     const login = async (email, name, type, id, accessToken, refreshToken, image) => {
         const userDetails = {email, name, type, id, accessToken, refreshToken, image};
         const extraDetails = await getExtraUserDetails(userDetails);
@@ -88,11 +92,15 @@ export const UserProvider = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(fullDetails));
     };
 
-    const updateUserDetails = async () => {
-        const extraDetails = await getExtraUserDetails(user);
-        const fullDetails = { ...user, ...extraDetails };
+    const updateUserDetails = async (updatedUser) => {
+        console.log('user context will update user details with: ', updatedUser)
+        const updatedUserDetails = { ...user, ...updatedUser };
+        console.log('basic user update: ', updatedUserDetails)
+        const extraDetails = await getExtraUserDetails(updatedUserDetails);
+        const fullDetails = { ...updatedUserDetails, ...extraDetails };
         console.log('updating user in global context to: ', fullDetails);
         setUser(fullDetails)
+        localStorage.setItem('user', JSON.stringify(fullDetails));
     }
 
     const logout = () => {
