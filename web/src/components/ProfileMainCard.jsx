@@ -87,13 +87,14 @@ const SecondRow = ({ isEditing, email, phone, bankNumber, bankName, type, isActi
                         required={true}
                     />
                 </GridItem>
-                <GridItem item xs={12} sm={6} md={4}>
+                {/* <GridItem item xs={12} sm={6} md={4}>
                     <TextField
                         label="Type"
                         variant="outlined"
                         value={type}
                         onChange={(e) => handleInputChange(e, 'type')}
                         required={true}
+                        disabled
                     />
                 </GridItem>
                 <GridItem item xs={12} sm={6} md={4}>
@@ -103,8 +104,9 @@ const SecondRow = ({ isEditing, email, phone, bankNumber, bankName, type, isActi
                         value={isActive}
                         onChange={(e) => handleInputChange(e, 'isActive')}
                         required={true}
+                        disabled
                     />
-                </GridItem>
+                </GridItem> */}
                 <GridItem item xs={12} sm={6} md={4}>
                     <Grid container direction="column">
                         <GridItem item xs={12}>
