@@ -78,15 +78,14 @@ export const UserProvider = ({ children }) => {
         fetchUserData();
     }, []);
 
-    const login = async (email, name, type, id, accessToken, refreshToken) => {
-        const userDetails = {email, name, type, id, accessToken, refreshToken};
+    const login = async (email, name, type, id, accessToken, refreshToken, image) => {
+        const userDetails = {email, name, type, id, accessToken, refreshToken, image};
         const extraDetails = await getExtraUserDetails(userDetails);
         console.log('extraDetails: ', extraDetails)
         const fullDetails = { ...userDetails, ...extraDetails }; // Merge userDetails and extraDetails
         setUser(fullDetails);
         console.log('setting user to context after login: ', fullDetails);
         localStorage.setItem('user', JSON.stringify(fullDetails));
-        // setRefreshTokenInApi(refreshAccessToken); // Set the refreshAccessToken function in the api module
     };
 
     const updateUserDetails = async () => {

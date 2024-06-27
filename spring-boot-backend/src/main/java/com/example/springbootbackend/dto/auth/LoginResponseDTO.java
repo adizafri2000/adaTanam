@@ -5,6 +5,7 @@ public record LoginResponseDTO(
         String refreshToken,
         Integer accountId,
         String accountType,
-        String accountName
+        String accountName,
+        String accountImage
 ) {
 }

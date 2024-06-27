@@ -35,7 +35,8 @@ const LoginForm = () => {
                 type: response.data.accountType,
                 id: response.data.accountId,
                 accessToken: response.data.accessToken,
-                refreshToken: response.data.refreshToken
+                refreshToken: response.data.refreshToken,
+                image: response.data.accountImage
             }
             console.log('logged in user: ', user);
             await login(user.email, user.name, user.type, user.id, user.accessToken, user.refreshToken);

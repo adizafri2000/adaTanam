@@ -47,16 +47,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const navLinks = [
-  { name: 'Store', route: '/store' },
+  { name: 'Store', route: '/store', for: 'Farmer' },
   { name: 'Produce List', route: '/produce' },
   { name: 'Orders', route: '/orders' },
-  { name: 'Cart', route: '/cart' },
+  { name: 'Cart', route: '/cart', for: 'Consumer' },
 ];
 
 const dropdownLinks = [
   { name: 'Profile', route: '/profile' },
   { name: 'Logout', route: '/logout' },
-  // { name: 'Store', route: '/store' },
 ];
 
 const Navbar = () => {
@@ -75,7 +74,7 @@ const Navbar = () => {
   };
 
   const handleLogout = (event) => {
-    event.preventDefault(); // Prevent the default action
+    event.preventDefault();
     logout();
     handleMenuClose();
     toast.success('Logged out successfully');
@@ -91,6 +90,13 @@ const Navbar = () => {
       navigate(`/search?query=${searchQuery}`);
     }
   };
+
+  const filteredNavLinks = navLinks.filter(link => {
+    if (!user) return link.for !== 'Farmer';
+    if (user.type === 'Farmer') return link.for !== 'Consumer';
+    if (user.type === 'Consumer') return link.for !== 'Farmer';
+    return true;
+  });
 
   return (
     <AppBar position="static" color="primary">
@@ -111,13 +117,17 @@ const Navbar = () => {
           />
         </Search>
         <div style={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
-          {navLinks.map((link, index) => (
+          {filteredNavLinks.map((link, index) => (
             <NavLink key={index} to={link.route} style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
               {link.name}
             </NavLink>
           ))}
           <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-            <Avatar style={{ marginRight: theme.spacing(1) }} />
+            {user && user.image ? (
+              <Avatar src={user.image} style={{ marginRight: theme.spacing(1) }} />
+            ) : (
+              <Avatar style={{ marginRight: theme.spacing(1) }} />
+            )}
             {user && <Typography variant="body1" style={{ color: 'white' }}>{user.name}</Typography>}
           </div>
         </div>

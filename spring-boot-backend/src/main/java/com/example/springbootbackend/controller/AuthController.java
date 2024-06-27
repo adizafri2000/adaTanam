@@ -53,6 +53,7 @@ public class AuthController {
         Integer accountId = accountResponseDto.id();
         String accountType = accountResponseDto.type();
         String accountName = accountResponseDto.name();
+        String accountImage = accountResponseDto.image();
         // Map<String, String> response = new HashMap<>();
         // response.put("accessToken", tokens.accessToken());
         // response.put("refreshToken", tokens.refreshToken());
@@ -64,7 +65,8 @@ public class AuthController {
             tokens.refreshToken(),
             accountId,
             accountType,
-            accountName
+            accountName,
+            accountImage
         );
         // return new ResponseEntity<>(response, HttpStatus.OK);
         return loginResponseDTO;
