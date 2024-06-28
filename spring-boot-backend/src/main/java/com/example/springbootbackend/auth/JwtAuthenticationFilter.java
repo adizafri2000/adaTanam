@@ -20,6 +20,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.equals("/auth/signup") ||
                 path.equals("auth/refresh") ||
                 path.equals("auth/sendmail") ||
+                path.equals("auth/forgot-password") ||
+                path.equals("auth/reset-password") ||
                 path.equals("/swagger-ui")
         ) {
             return true;
@@ -90,7 +92,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String path = request.getRequestURI();
-        if (!path.equals("/auth/login") && !path.equals("/auth/signup") && !path.equals("/auth/refresh") && !path.equals("/auth/sendmail") && !path.equals("/swagger-ui") ){
+        if (!path.equals("/auth/login") &&
+                !path.equals("/auth/signup") &&
+                !path.equals("/auth/refresh") &&
+                !path.equals("/auth/sendmail") &&
+                !path.equals("/swagger-ui") &&
+                !path.equals("/auth/forgot-password") &&
+                !path.equals("/auth/reset-password")
+        ){
             String header = request.getHeader("Authorization");
 
             if (header == null || !header.startsWith("Bearer ")) {

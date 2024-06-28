@@ -35,10 +35,21 @@
         b. Word comment
         c. both a & b are mandatory to submit for ratings
 11. the footer. add logo in the middle, and subject code and subject name, and best viewed on wide screens
-12. implement password change functionality. 
-    12.1 add forgot password in login, and reset password in account profile
-    12.2 when clicked, implement the password thing as suggested by ChatGPT
-    12.3 create a landing page for password-resets
+12. implement password change functionality and account confirmation
+    12.1 backend probably done
+    12.2 frontend
+        a. create a PasswordResetRequestForm component accessible via /change-password
+        b. login page, add Forgot Password button that navigates to /change-password
+        c. in Profile page, add a Change Password button that goes to /change-password
+        d. create a landing page accessible via /reset-password?token. render a reset password form with two fields, new password and password confirmation
+        e. upon submit, make necessary API requests (API/auth/reset-password) and toast.success for successully changed password. navigate user to '/'
+    12.3 account confirmation
+        a. upon successful signup, add message to tell user to check their email
+        b. create a landing page accessible via /confirm-account?token. automatically confirm via useEffect to send API request to API/confirm-account?token
+        c. upon successful confirmation, toast.success for successully confirmed account. navigate user to '/login'
+        d. if URL (token) expired, inform user that token has expired and ask them if they want to resend confirmation link
+        e. if yes, show email input field and button to resend confirmation link to API/resend-confirmation
+        f. if account already been confirmed, inform user that account has already been confirmed and ask them to login
 13. implement store edit details functionality
 14. Add store ratings to StoreDetailsCard in the Store Page, as well as the storeCard.
     14.1 available ratings = total score of ratings out of 5 across all produce sold / total ratings

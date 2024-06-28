@@ -29,6 +29,9 @@ public class Account {
     private String bankName;
     private String image;
 
+    @Column(name = "is_activated", insertable = false)
+    private Boolean isActivated;
+
     @Column(nullable = false)
     private String type;
 

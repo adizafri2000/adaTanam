@@ -26,6 +26,12 @@ public class TokenServiceImpl implements TokenService {
     @Value("${security.jwt.refresh-expiration-time}")
     private int jwtRefreshExpirationInMs;
 
+    @Value("${security.jwt.password-reset-expiration-time}")
+    private int jwtPasswordResetExpirationInMs;
+
+    @Value("${security.jwt.confirmation-expiration-time}")
+    private int jwtConfirmationExpirationInMs;
+
     @Override
     public boolean validateToken(String token) {
         try {
@@ -56,10 +62,7 @@ public class TokenServiceImpl implements TokenService {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
 
-        TokenRefreshDTO tokens = new TokenRefreshDTO(accessToken, refreshToken);
-        // tokens.put("accessToken", accessToken);
-        // tokens.put("refreshToken", refreshToken);
-        return tokens;
+        return new TokenRefreshDTO(accessToken, refreshToken);
     }
 
     @Override
@@ -78,11 +81,29 @@ public class TokenServiceImpl implements TokenService {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
 
-        TokenRefreshDTO tokens = new TokenRefreshDTO(accessToken, refreshToken);
-        // tokens.put("accessToken", accessToken);
-        // tokens.put("refreshToken", refreshToken);
-        return tokens;
+        return new TokenRefreshDTO(accessToken, refreshToken);
     }
+
+    @Override
+    public String generateResetToken(AccountResponseDTO accountResponseDTO) {
+        return Jwts.builder()
+                .setSubject(accountResponseDTO.email())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtPasswordResetExpirationInMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+
+    @Override
+    public boolean validateResetToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     @Override
     public String getEmailFromToken(String token) {
@@ -95,5 +116,25 @@ public class TokenServiceImpl implements TokenService {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    @Override
+    public String generateConfirmationToken(Account account){
+        return Jwts.builder()
+                .setSubject(account.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtConfirmationExpirationInMs)) // 24-hour expiration
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+
+    @Override
+    public boolean validateConfirmationToken(String token){
+        try {
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

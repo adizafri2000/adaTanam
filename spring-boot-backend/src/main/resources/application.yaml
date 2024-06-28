@@ -62,3 +62,5 @@ security:
     secret-key: ${JWT_SECRET}
     expiration-time: ${JWT_EXPIRATION}
     refresh-expiration-time: ${JWT_REFRESH_EXPIRATION}
+    password-reset-expiration-time: ${JWT_PASSWORD_RESET_EXPIRATION}
+    confirmation-expiration-time: ${JWT_CONFIRMATION_EXPIRATION}

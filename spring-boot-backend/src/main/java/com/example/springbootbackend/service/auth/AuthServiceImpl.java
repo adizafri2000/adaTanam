@@ -8,6 +8,7 @@ import com.example.springbootbackend.mapper.AccountMapper;
 import com.example.springbootbackend.model.Account;
 import com.example.springbootbackend.repository.AccountRepository;
 import com.example.springbootbackend.service.BlobStorageService;
+import com.example.springbootbackend.service.EmailService;
 import com.example.springbootbackend.service.account.AccountService;
 import com.example.springbootbackend.auth.TokenService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,13 +26,15 @@ public class AuthServiceImpl implements AuthService {
     private final TokenService tokenService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final BlobStorageService blobStorageService;
+    private final EmailService emailService;
     private final AccountMapper accountMapper = AccountMapper.INSTANCE;
 
-    public AuthServiceImpl(AccountRepository accountRepository, TokenService tokenService, BCryptPasswordEncoder passwordEncoder, BlobStorageService blobStorageService) {
+    public AuthServiceImpl(AccountRepository accountRepository, TokenService tokenService, BCryptPasswordEncoder passwordEncoder, BlobStorageService blobStorageService, EmailService emailService) {
         this.accountRepository = accountRepository;
         this.tokenService = tokenService;
         this.passwordEncoder = passwordEncoder;
         this.blobStorageService = blobStorageService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -46,8 +49,14 @@ public class AuthServiceImpl implements AuthService {
         if (image != null) {
             String imageUrl = blobStorageService.uploadImage(image, createdAccount.getId(), AccountService.ACCOUNT_FOLDER_NAME);
             createdAccount.setImage(imageUrl);
-            accountRepository.save(createdAccount);
+            createdAccount = accountRepository.save(createdAccount);
         }
+        if(createdAccount.getIsActivated() == null)
+            createdAccount.setIsActivated(false);
+        log.info("Account created: {}", createdAccount);
+        String token = tokenService.generateConfirmationToken(createdAccount);
+        String confirmationLink = WEB_URL + "/confirm-account?token=" + token;
+        emailService.sendAccountConfirmationEmail(createdAccount.getEmail(), createdAccount.getName(), confirmationLink);
         return accountMapper.toResponseDTO(createdAccount);
     }
 
@@ -56,6 +65,8 @@ public class AuthServiceImpl implements AuthService {
         Optional<Account> optionalAccount = accountRepository.findByEmail(loginRequestDTO.email());
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
+            if (!account.getIsActivated())
+                throw new InvalidCredentialsException("Account not activated. Please check registered email for activation link");
             if (passwordEncoder.matches(loginRequestDTO.password(), account.getPasswordHash())) {
                 return tokenService.generateTokens(account);
             }
@@ -64,7 +75,28 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AccountResponseDTO updatePassword(String token, Integer id, PasswordUpdateRequestDTO passwordUpdateRequestDTO) {
-        return null;
+    public AccountResponseDTO updatePassword(String email, PasswordUpdateRequestDTO passwordUpdateRequestDTO){
+        log.info("Updating password for account with email: {}", email);
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            account.setPasswordHash(passwordEncoder.encode(passwordUpdateRequestDTO.newPassword()));
+            accountRepository.save(account);
+            return accountMapper.toResponseDTO(account);
+        }
+        throw new InvalidCredentialsException("Invalid email");
+    }
+
+    @Override
+    public boolean confirmAccount(String email) {
+        log.info("Confirming account with email: {}", email);
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            account.setIsActivated(true);
+            accountRepository.save(account);
+            return true;
+        }
+        return false;
     }
 }
