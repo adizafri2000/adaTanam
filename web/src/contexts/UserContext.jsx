@@ -67,7 +67,7 @@ export const UserProvider = ({ children }) => {
                         console.error('Failed to refresh token', error);
                         setUser(null);
                         localStorage.removeItem('user');
-                        window.location.href = '/login';
+                        // window.location.href = '/login';
                     }
                 } else {
                     console.log('Token is valid');
