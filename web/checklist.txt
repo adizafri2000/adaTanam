@@ -2,6 +2,7 @@
 2. store preview card navigates to /store:id
 3. ensure all list renders include object key via id
 4. design store details page to contain the store details, the farmer details, the produce list, and the available ratings
+    4.1 available ratings = total score of ratings out of 5 across all produce sold / total ratings
 5. update backend API
     5.1 implement properly for user may have only one active cart. this means that until that cart undergoes checkout, the user may not create another cart
     5.2 implement search API. return stores and produce that match
@@ -37,5 +38,23 @@
     9.1 show all of user's orders in history
     9.2 each row should show the store name, produce name, quantity, price, total price, pickup date and time, and status
     9.3 show button to cancel order
-    9.4 ratings
-
+    9.4 if order completed, show ratings option
+        a. Stars
+        b. Word comment
+        c. both a & b are mandatory to submit for ratings
+10. in db schema, move the ratings and reviews field from Order to cart_item instead
+11. the footer. add logo in the middle, and subject code and subject name, and best viewed on wide screens
+12. implement password change functionality. 
+    12.1 add forgot password in login, and reset password in account profile
+    12.2 when clicked, implement the password thing as suggested by ChatGPT
+    12.3 create a landing page for password-resets
+13. implement store edit details functionality
+14. for every produce based card, ensure last updated shown
+    14.1 if greater than 5 days since last update (assuming added to store), add text to warn produce has been added to store 5 or more days
+    14.2 if user decides to add to cart, warn them. upon proceeding, then only remove the warning and proceed normally
+    14.3 no need to implement in cart page
+15. integration with Azure maps
+    14.1 fetch credentials from Azure
+    14.2 create sample map component on frontend
+    14.3 implement necessary backend APIs
+    14.4 integrate
