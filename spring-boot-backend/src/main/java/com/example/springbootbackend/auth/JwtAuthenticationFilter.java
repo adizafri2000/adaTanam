@@ -19,6 +19,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if ( path.equals("/auth/login") ||
                 path.equals("/auth/signup") ||
                 path.equals("auth/refresh") ||
+                path.equals("auth/sendmail") ||
                 path.equals("/swagger-ui")
         ) {
             return true;
@@ -89,7 +90,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String path = request.getRequestURI();
-        if (!path.equals("/auth/login") && !path.equals("/auth/signup") && !path.equals("/auth/refresh")) {
+        if (!path.equals("/auth/login") && !path.equals("/auth/signup") && !path.equals("/auth/refresh") && !path.equals("/auth/sendmail") && !path.equals("/swagger-ui") ){
             String header = request.getHeader("Authorization");
 
             if (header == null || !header.startsWith("Bearer ")) {

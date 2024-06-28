@@ -4,6 +4,7 @@ import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.auth.*;
 import com.example.springbootbackend.dto.account.AccountRequestDTO;
 import com.example.springbootbackend.dto.account.AccountResponseDTO;
+import com.example.springbootbackend.service.EmailService;
 import com.example.springbootbackend.service.account.AccountService;
 import com.example.springbootbackend.service.auth.AuthService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +25,16 @@ public class AuthController {
     private final AccountService accountService;
     private final TokenService tokenService;
     private final AuthService authService;
+    private final EmailService emailService;
 
-    public AuthController(AccountService accountService, TokenService tokenService, AuthService authService) {
+    public AuthController(AccountService accountService, TokenService tokenService, AuthService authService, EmailService emailService) {
         this.accountService = accountService;
         this.tokenService = tokenService;
         this.authService = authService;
+        this.emailService = emailService;
     }
+
+    public record EmailRequest(String to, String subject, String text) {}
 
     // User account sign up/registration endpoint
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -38,8 +43,7 @@ public class AuthController {
             @RequestPart("account") SignupRequestDTO signupRequestDTO
     ) {
         log.info("Handling POST /auth/signup request");
-        AccountResponseDTO createdAccount = authService.signup(signupRequestDTO, image);
-        return createdAccount;//new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
+        return authService.signup(signupRequestDTO, image);
     }
 
     // User account login endpoint
@@ -47,20 +51,12 @@ public class AuthController {
     public LoginResponseDTO loginAccount(@RequestBody LoginRequestDTO loginRequestDTO) {
         log.info("Handling POST /auth/login request");
         TokenRefreshDTO tokens = authService.login(loginRequestDTO);
-        // String accessToken = tokens.get("accessToken");
-        // String refreshToken = tokens.get("refreshToken");
         AccountResponseDTO accountResponseDto = accountService.getAccountByEmail(loginRequestDTO.email());
         Integer accountId = accountResponseDto.id();
         String accountType = accountResponseDto.type();
         String accountName = accountResponseDto.name();
         String accountImage = accountResponseDto.image();
-        // Map<String, String> response = new HashMap<>();
-        // response.put("accessToken", tokens.accessToken());
-        // response.put("refreshToken", tokens.refreshToken());
-        // response.put("accountId", accountId);
-        // response.put("accountType", accountType);
-        // response.put("accountName", accountName);
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(
+        return new LoginResponseDTO(
             tokens.accessToken(),
             tokens.refreshToken(),
             accountId,
@@ -68,8 +64,6 @@ public class AuthController {
             accountName,
             accountImage
         );
-        // return new ResponseEntity<>(response, HttpStatus.OK);
-        return loginResponseDTO;
     }
 
     @PostMapping("/refresh")
@@ -84,5 +78,11 @@ public class AuthController {
         } else {
             return new ResponseEntity<>("Invalid refresh token", HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @PostMapping("/sendmail")
+    public String sendEmail(@RequestBody EmailRequest request) {
+        emailService.sendEmail(request.to(), request.subject(), request.text());
+        return "Email sent successfully!";
     }
 }
