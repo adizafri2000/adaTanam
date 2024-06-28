@@ -24,8 +24,6 @@ public class Store {
     @Column(nullable = false)
     private String name;
 
-    // https://houarinourreddine.medium.com/integrate-spring-boot-and-postgis-to-manage-spatial-data-272edacf2cb
-
     private double longitude;
     private double latitude;
     private String bankName;

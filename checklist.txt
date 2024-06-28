@@ -4,11 +4,6 @@
 4. design store details page to contain the store details, the farmer details, the produce list
 5. update backend API
     5.1 implement properly for user may have only one active cart. this means that until that cart undergoes checkout, the user may not create another cart
-    5.2 implement search API. return stores and produce that match
-        a. endpoint: /search?q=string
-        b. update repo and services layer of store and produce to getByName
-        c. search controller passes query to store and produce services
-        d. return: {stores: [store], produce: [produce]}
 6. implement add to cart functionality
     6.1 if no active cart exists for current user, create new cart then only add the item
     6.2 if active cart exists, add item to cart

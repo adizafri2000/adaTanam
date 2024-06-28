@@ -10,6 +10,8 @@ import java.util.List;
 public interface CartService {
     List<CartResponseDTO> getCarts();
     CartResponseDTO getCartById(Integer id);
+    List<CartResponseDTO> getCartByConsumer(Integer userId);
+    CartResponseDTO getConsumerActiveCart(Integer userId);
     CartResponseDTO createCart(CartRequestDTO cart);
     CartResponseDTO updateCart(Integer id, CartRequestDTO cart, String token);
     void deleteCart(Integer id, String token);

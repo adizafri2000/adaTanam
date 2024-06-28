@@ -25,10 +25,28 @@ public class CartController {
     }
 
     @GetMapping("")
-    public List<CartResponseDTO> getAllCarts(){
+    public List<CartResponseDTO> getAllCarts() {
         log.info("Handling GET /carts request");
         return cartService.getCarts();
     }
+
+//    @GetMapping("")
+//    public ResponseEntity<?> getAllCarts(@RequestParam(required = false) Integer userId, @RequestParam(required = false) Boolean isActive) {
+//        log.info("Handling GET /carts request with consumer ID: {}, isActive: {}", userId, isActive);
+//        if (userId != null) {
+//            List<CartResponseDTO> carts = cartService.getCartByConsumer(userId);
+//            if (isActive != null) {
+//                // stream carts and filter by isActive=true
+//                List<CartResponseDTO> activeCarts = carts.stream().filter(CartResponseDTO::isActive).toList();
+//                return new ResponseEntity<>(activeCarts.get(0), HttpStatus.OK);
+//            } else {
+//                return new ResponseEntity<>(carts, HttpStatus.OK);
+//            }
+//        } else {
+//            List<CartResponseDTO> carts = cartService.getCarts();
+//            return new ResponseEntity<>(carts, HttpStatus.OK);
+//        }
+//    }
 
     @GetMapping("/{id}")
     public CartResponseDTO getCartById(@PathVariable int id) {

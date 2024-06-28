@@ -4,7 +4,9 @@ import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.RequestErrorDTO;
 import com.example.springbootbackend.dto.account.AccountResponseDTO;
 import com.example.springbootbackend.dto.account.AccountRequestDTO;
+import com.example.springbootbackend.dto.cart.CartResponseDTO;
 import com.example.springbootbackend.service.account.AccountService;
+import com.example.springbootbackend.service.cart.CartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,10 +25,12 @@ public class AccountController {
 
     private final AccountService accountService;
     private final TokenService tokenService;
+    private final CartService cartService;
 
-    public AccountController(AccountService accountService, TokenService tokenService) {
+    public AccountController(AccountService accountService, TokenService tokenService, CartService cartService) {
         this.accountService = accountService;
         this.tokenService = tokenService;
+        this.cartService = cartService;
     }
 
     @GetMapping("")
@@ -43,16 +47,6 @@ public class AccountController {
         log.info("Handling GET /accounts/{} request", id);
         return accountService.getAccountById(id);
     }
-
-//    @PutMapping("/{id}")
-//    public ResponseEntity<?> updateAccount(@PathVariable Integer id, @RequestBody AccountRequestDTO accountRequestDTO, @RequestHeader("Authorization") String token){
-//        log.info("Handling PUT /accounts/{} request", id);
-//        if (!tokenService.validateToken(token)) {
-//            RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
-//            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-//        }
-//        return new ResponseEntity<>(accountService.updateAccount(id, accountRequestDTO, token), HttpStatus.OK);
-//    }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateAccount(
@@ -78,6 +72,19 @@ public class AccountController {
         }
         accountService.deleteAccount(id, token);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // cart nested mappings
+    @GetMapping("/{id}/carts")
+    public List<CartResponseDTO> getAccountCarts(@PathVariable Integer id) {
+        log.info("Handling GET /accounts/{}/carts request", id);
+        return cartService.getCartByConsumer(id);
+    }
+
+    @GetMapping("/{id}/carts/active")
+    public CartResponseDTO getActiveCart(@PathVariable Integer id) {
+        log.info("Handling GET /accounts/{}/carts/active request", id);
+        return cartService.getConsumerActiveCart(id);
     }
 
 }
