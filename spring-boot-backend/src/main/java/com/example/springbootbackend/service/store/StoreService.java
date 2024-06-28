@@ -11,6 +11,7 @@ public interface StoreService {
     List<StoreResponseDTO> getStores();
     StoreResponseDTO getStoreById(Integer id);
     StoreResponseDTO getStoreByFarmer(Integer farmerId);
+    List<StoreResponseDTO> getStoresByName(String query);
     StoreResponseDTO createStore(StoreRequestDTO store);
     StoreResponseDTO updateStore(Integer id, StoreRequestDTO store, String token);
     void deleteStore(Integer id, String token);

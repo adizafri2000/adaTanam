@@ -11,4 +11,6 @@ public interface ProduceRepository extends JpaRepository<Produce, Integer> {
 
     List<Produce> findByStore(Integer storeId);
 
+    // to get all produce by name
+    List<Produce> findByProduceContaining(String produce);
 }

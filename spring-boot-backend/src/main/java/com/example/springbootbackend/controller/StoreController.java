@@ -25,12 +25,6 @@ public class StoreController {
         this.tokenService = tokenService;
     }
 
-    // @GetMapping(value = "")
-    // public List<StoreResponseDTO> getStores() {
-    //     log.info("Handling GET /stores request");
-    //     return storeService.getStores();
-    // }
-
     @GetMapping
     public ResponseEntity<?> getStores(@RequestParam(required = false) Integer farmerId) {
         log.info("Handling GET /stores request with farmerId: {}", farmerId);

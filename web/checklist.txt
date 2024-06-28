@@ -65,3 +65,22 @@
     16.2 create sample map component on frontend
     16.3 implement necessary backend APIs
     16.4 integrate
+17. add ratings score similar to 14 for produce. Show in DetailedProduceCard and ProduceCard
+    17.1 available ratings = total score of ratings out of 5 every sold produce / total ratings
+    17.2 update produce model & table to contain ratingScore (decimal) and ratingCumulative and ratingCount (integer) and totalSold. set default to 0
+    17.3 create trigger: on update to cart_item especially rating field, update produce such that (for same id):
+        a. produce.ratingCount += 1 and produce.totalSold += cart_item.quantity
+        b. produce.ratingCumulative += cart_item.rating
+        c. produce.ratingScore = produce.ratingCumulative/produce.ratingCount (ensure 2dp)
+    17.4 If the ratingScore is 0 on API response, display 'No ratings yet' for store
+    17.5 display '{totalSold} unit(s) sold'
+    17.6 via produce API, expose '/toprated?limit' and implement:
+        - select * from produce order by ratingScore DESC LIMIT limit
+17. Implement home page
+    a. Top rated stores - give 5 producecard
+    b. New arrivals - give 5 produceCard maximum, where today timestamp is less than 2 days from createdAt
+    c. Top rated produce - give 5 producecard
+    c. Categories
+        i. Fruits - give 5 ProduceCard
+        ii. Veggies - Give 5 ProduceCard
+    

@@ -18,4 +18,6 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
     @Query("SELECT a FROM Account a WHERE a.id = :farmer")
     Optional<Account> findAccountByFarmer(@Param("farmer") Integer farmer);
 
+    // to get all stores by name
+    List<Store> findByNameContaining(String name);
 }

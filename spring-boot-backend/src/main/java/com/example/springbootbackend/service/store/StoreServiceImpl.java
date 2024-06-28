@@ -42,6 +42,12 @@ public class StoreServiceImpl implements StoreService{
     }
 
     @Override
+    public List<StoreResponseDTO> getStoresByName(String query){
+        log.info("Getting all stores with name: {}", query);
+        return storeRepository.findByNameContaining(query).stream().map(storeMapper::toResponseDTO).toList();
+    }
+
+    @Override
     public StoreResponseDTO getStoreByFarmer(Integer farmerId) {
         log.info("Getting store with farmer id: {}", farmerId);
         return storeRepository.findByFarmer(farmerId).map(storeMapper::toResponseDTO)

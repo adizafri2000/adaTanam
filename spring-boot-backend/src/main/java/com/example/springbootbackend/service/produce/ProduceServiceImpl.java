@@ -47,6 +47,12 @@ public class ProduceServiceImpl implements ProduceService {
     }
 
     @Override
+    public List<ProduceResponseDTO> getProducesByName(String produce){
+        log.info("Getting produce by name: {}", produce);
+        return produceRepository.findByProduceContaining(produce).stream().map(produceMapper::toResponseDTO).toList();
+    }
+
+    @Override
     public ProduceResponseDTO getProduceById(Integer id) {
         log.info("Getting produce with id: {}", id);
         return produceRepository.findById(id).map(produceMapper::toResponseDTO)
