@@ -1,12 +1,12 @@
 import React from 'react';
 import { Card, CardContent, Typography, CardActionArea } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const StorePreviewCard = ({ store }) => {
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleCardClick = () => {
-        history.push(`/stores/${store.id}`);
+        navigate(`/stores/${store.id}`);
     };
 
     return (
