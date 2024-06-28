@@ -10,9 +10,7 @@ public record OrderRequestDTO(
         Timestamp pickup,
         Boolean isCompleted,
         Timestamp completedTimestamp,
-        String status,
-        Integer rating,
-        String review
+        String status
 ) {
 
 }

@@ -16,17 +16,16 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CartItem {
     @Id
-//    @ManyToOne
-//    @JoinColumn(name = "cart", nullable = false)
     private Integer cart;
 
     @Id
-//    @ManyToOne
-//    @JoinColumn(name = "produce", nullable = false)
     private Integer produce;
 
     @Column(nullable = false)
     private Integer quantity;
+
+    private Integer rating;
+    private String review;
 
     private Timestamp createdAt;
     private Timestamp updatedAt;

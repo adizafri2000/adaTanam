@@ -7,6 +7,8 @@ public record CartItemResponseDTO(
         Integer produce,
         Integer quantity,
         Timestamp createdAt,
-        Timestamp updatedAt
+        Timestamp updatedAt,
+        Integer rating,
+        String review
 ) {
 }

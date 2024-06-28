@@ -46,9 +46,6 @@ public class Order {
     @Column(nullable = false)
     private String status;
 
-    private Integer rating;
-    private String review;
-
     @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
 

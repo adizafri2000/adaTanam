@@ -78,6 +78,8 @@ public class CartItemServiceImpl implements CartItemService{
         }
 
         cartItemToUpdate.setQuantity(cartItemRequestDTO.quantity());
+        cartItemToUpdate.setRating(cartItemRequestDTO.rating());
+        cartItemToUpdate.setReview(cartItemRequestDTO.review());
         return cartItemMapper.toResponseDTO(cartItemRepository.save(cartItemToUpdate));
     }
 

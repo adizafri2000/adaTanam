@@ -66,8 +66,6 @@ public class OrderServiceImpl implements OrderService {
         orderToUpdate.setIsCompleted(orderRequestDTO.isCompleted());
         orderToUpdate.setCompletedTimestamp(orderRequestDTO.completedTimestamp());
         orderToUpdate.setStatus(orderRequestDTO.status());
-        orderToUpdate.setRating(orderRequestDTO.rating());
-        orderToUpdate.setReview(orderRequestDTO.review());
 
         return orderMapper.toResponseDTO(orderRepository.save(orderToUpdate));
     }
