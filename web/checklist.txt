@@ -1,8 +1,7 @@
 1. ensure store preview card shows below detailed produce card in detailed produce page. should show just the store name and location
 2. store preview card navigates to /store:id
 3. ensure all list renders include object key via id
-4. design store details page to contain the store details, the farmer details, the produce list, and the available ratings
-    4.1 available ratings = total score of ratings out of 5 across all produce sold / total ratings
+4. design store details page to contain the store details, the farmer details, the produce list
 5. update backend API
     5.1 implement properly for user may have only one active cart. this means that until that cart undergoes checkout, the user may not create another cart
     5.2 implement search API. return stores and produce that match
@@ -49,12 +48,20 @@
     12.2 when clicked, implement the password thing as suggested by ChatGPT
     12.3 create a landing page for password-resets
 13. implement store edit details functionality
-14. for every produce based card, ensure last updated shown
-    14.1 if greater than 5 days since last update (assuming added to store), add text to warn produce has been added to store 5 or more days
-    14.2 if user decides to add to cart, warn them. upon proceeding, then only remove the warning and proceed normally
-    14.3 no need to implement in cart page
-15. integration with Azure maps
-    14.1 fetch credentials from Azure
-    14.2 create sample map component on frontend
-    14.3 implement necessary backend APIs
-    14.4 integrate
+14. Add store ratings to StoreDetailsCard in the Store Page, as well as the storeCard.
+    14.1 available ratings = total score of ratings out of 5 across all produce sold / total ratings
+    14.2 update store model & table to contain ratingScore (decimal) and ratingCumulative and ratingCount (integer). set default to 0
+    14.3 create trigger: on update to cart_item especially rating field, update store such that:
+        a. store.ratingCount += 1
+        b. store.ratingCumulative += cart_item.rating
+        c. store.ratingScore = store.ratingCumulative/store.ratingCount (ensure 2dp)
+    14.4 If the ratingScore is 0 on API response, display 'No ratings yet' for store
+15. for every produce based card, ensure last updated shown
+    15.1 if greater than 5 days since last update (assuming added to store), add text to warn produce has been added to store 5 or more days
+    15.2 if user decides to add to cart, warn them. upon proceeding, then only remove the warning and proceed normally. just do component-level state checks on DetailedProduceCard
+    15.3 no need to implement in cart page
+16. integration with Azure maps
+    16.1 fetch credentials from Azure
+    16.2 create sample map component on frontend
+    16.3 implement necessary backend APIs
+    16.4 integrate
