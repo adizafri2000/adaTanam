@@ -1,8 +1,8 @@
 package com.example.springbootbackend.controller;
 
 import com.example.springbootbackend.dto.SearchResponseDTO;
-import com.example.springbootbackend.dto.ProduceResponseDTO;
-import com.example.springbootbackend.dto.StoreResponseDTO;
+import com.example.springbootbackend.dto.produce.ProduceResponseDTO;
+import com.example.springbootbackend.dto.store.StoreResponseDTO;
 import com.example.springbootbackend.service.produce.ProduceService;
 import com.example.springbootbackend.service.store.StoreService;
 import lombok.extern.slf4j.Slf4j;
