@@ -55,7 +55,11 @@ public class CartItemServiceImpl implements CartItemService{
     @Override
     public List<CartItemDetailsResponseDTO> getCartItemDetailsByAccountId(Integer accountId) {
         log.info("Getting cart item details by account id: {}", accountId);
-        return cartItemRepository.findCartItemDetailsByAccountId(accountId);
+        List<CartItemDetailsResponseDTO> results = cartItemRepository.findCartItemDetailsByAccountId(accountId);
+        log.info("Found {} cart items", results.size());
+        if(results.size() > 0)
+            log.info("1st cart item: {}", results.get(0));
+        return results;
     }
 
     @Override

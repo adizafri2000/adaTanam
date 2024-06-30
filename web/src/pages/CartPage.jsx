@@ -14,7 +14,6 @@ const CartPage = () => {
   useEffect(() => {
     console.log('cart page useeffect')
     const initialCartChecking = async () => {
-      console.log('user lancau: ', user)
       if (!user.cart){
         console.log('no active cart found for user, creating new one')
         try{
@@ -61,6 +60,7 @@ const CartPage = () => {
           <p>quantity: {item.quantity}</p>
         </div>
       ))}
+      {cartItems.length === 0 && <p>No items in cart</p>}
     </>
   )
 }
