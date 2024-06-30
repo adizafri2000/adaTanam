@@ -18,11 +18,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         if ( path.equals("/auth/login") ||
                 path.equals("/auth/signup") ||
-                path.equals("auth/refresh") ||
-                path.equals("auth/sendmail") ||
-                path.equals("auth/forgot-password") ||
-                path.equals("auth/reset-password") ||
-                path.equals("auth/resend-confirmation") ||
+                path.equals("/auth/refresh") ||
+                path.equals("/auth/sendmail") ||
+                path.equals("/auth/forgot-password") ||
+                path.equals("/auth/reset-password") ||
+                path.equals("/auth/resend-confirmation") ||
                 path.equals("/swagger-ui")
         ) {
             return true;
@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 !path.equals("/auth/sendmail") &&
                 !path.equals("/swagger-ui") &&
                 !path.equals("/auth/forgot-password") &&
-                !path.equals("auth/resend-confirmation") &&
+                !path.equals("/auth/resend-confirmation") &&
                 !path.equals("/auth/reset-password")
         ){
             String header = request.getHeader("Authorization");

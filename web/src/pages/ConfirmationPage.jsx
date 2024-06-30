@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import authService from '../services/auth';
 import CircularProgress from '@mui/material/CircularProgress';
 import { toast } from 'react-toastify';
@@ -10,11 +10,19 @@ const ConfirmationPage = () => {
     const [success, setSuccess] = useState(false);
     const [showResendForm, setShowResendForm] = useState(false);
     const [email, setEmail] = useState('');
-    const { token } = useParams();
     const navigate = useNavigate();
     const theme = useTheme();
+    const location = useLocation();
 
     useEffect(() => {
+        const query = new URLSearchParams(location.search);
+        const token = query.get('token');
+
+        if (!token) {
+            toast.error('Invalid confirmation link.');
+            return;
+        }
+
         const confirmAccount = async (token) => {
             try {
                 setIsLoading(true);
@@ -24,14 +32,15 @@ const ConfirmationPage = () => {
                 navigate('/login');
             } catch (error) {
                 console.error('Failed to confirm account:', error);
-                toast.error('Failed to confirm account: ', error);
+                toast.error(`Failed to confirm account: ${error}`);
                 setSuccess(false);
             } finally {
                 setIsLoading(false);
             }
         };
+
         confirmAccount(token);
-    }, [token, navigate]);
+    }, [location, navigate]);
 
     const handleResendEmail = () => {
         setShowResendForm(true);
@@ -41,6 +50,7 @@ const ConfirmationPage = () => {
         try {
             setIsLoading(true);
             const data = { email };
+            console.log('resend confirm email data: ', data)
             await authService.resendConfirmationEmail(data);
             toast.success('Confirmation email sent, please check your email.');
             setShowResendForm(false);
