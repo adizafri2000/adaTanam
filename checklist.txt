@@ -2,8 +2,6 @@
 2. store preview card navigates to /store:id
 3. ensure all list renders include object key via id
 4. design store details page to contain the store details, the farmer details, the produce list
-5. update backend API
-    5.1 implement properly for user may have only one active cart. this means that until that cart undergoes checkout, the user may not create another cart
 6. implement add to cart functionality
     6.1 if no active cart exists for current user, create new cart then only add the item
     6.2 if active cart exists, add item to cart
@@ -36,20 +34,24 @@
         a. Stars
         b. Word comment
         c. both a & b are mandatory to submit for ratings
-10. in db schema, move the ratings and reviews field from Order to cart_item instead
 11. the footer. add logo in the middle, and subject code and subject name, and best viewed on wide screens
-12. implement password change functionality. 
-    12.1 add forgot password in login, and reset password in account profile
-    12.2 when clicked, implement the password thing as suggested by ChatGPT
-    12.3 create a landing page for password-resets
+12. implement password change functionality and account confirmation
+    12.1 backend probably done
+    12.2 frontend
+        a. create a PasswordResetRequestForm component accessible via /change-password
+        b. login page, add Forgot Password button that navigates to /change-password
+        c. in Profile page, add a Change Password button that goes to /change-password
+        d. create a landing page accessible via /reset-password?token. render a reset password form with two fields, new password and password confirmation
+        e. upon submit, make necessary API requests (API/auth/reset-password) and toast.success for successully changed password. navigate user to '/'
+    12.3 account confirmation
+        a. upon successful signup, add message to tell user to check their email
+        b. create a landing page accessible via /confirm-account?token. automatically confirm via useEffect to send API request to API/confirm-account?token
+        c. upon successful confirmation, toast.success for successully confirmed account. navigate user to '/login'
+        d. if URL (token) expired, inform user that token has expired and ask them if they want to resend confirmation link
+        e. if yes, show email input field and button to resend confirmation link to API/resend-confirmation
+        f. if account already been confirmed, inform user that account has already been confirmed and ask them to login
 13. implement store edit details functionality
 14. Add store ratings to StoreDetailsCard in the Store Page, as well as the storeCard.
-    14.1 available ratings = total score of ratings out of 5 across all produce sold / total ratings
-    14.2 update store model & table to contain ratingScore (decimal) and ratingCumulative and ratingCount (integer). set default to 0
-    14.3 create trigger: on update to cart_item especially rating field, update store such that:
-        a. store.ratingCount += 1
-        b. store.ratingCumulative += cart_item.rating
-        c. store.ratingScore = store.ratingCumulative/store.ratingCount (ensure 2dp)
     14.4 If the ratingScore is 0 on API response, display 'No ratings yet' for store
 15. for every produce based card, ensure last updated shown
     15.1 if greater than 5 days since last update (assuming added to store), add text to warn produce has been added to store 5 or more days
@@ -61,16 +63,8 @@
     16.3 implement necessary backend APIs
     16.4 integrate
 17. add ratings score similar to 14 for produce. Show in DetailedProduceCard and ProduceCard
-    17.1 available ratings = total score of ratings out of 5 every sold produce / total ratings
-    17.2 update produce model & table to contain ratingScore (decimal) and ratingCumulative and ratingCount (integer) and totalSold. set default to 0
-    17.3 create trigger: on update to cart_item especially rating field, update produce such that (for same id):
-        a. produce.ratingCount += 1 and produce.totalSold += cart_item.quantity
-        b. produce.ratingCumulative += cart_item.rating
-        c. produce.ratingScore = produce.ratingCumulative/produce.ratingCount (ensure 2dp)
     17.4 If the ratingScore is 0 on API response, display 'No ratings yet' for store
     17.5 display '{totalSold} unit(s) sold'
-    17.6 via produce API, expose '/toprated?limit' and implement:
-        - select * from produce order by ratingScore DESC LIMIT limit
 17. Implement home page
     a. Top rated stores - give 5 producecard
     b. New arrivals - give 5 produceCard maximum, where today timestamp is less than 2 days from createdAt

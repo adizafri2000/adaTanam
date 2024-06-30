@@ -41,7 +41,7 @@ const SignUpForm = ({style}) => {
                 throw new Error(response.data.message);
             }
             setIsLoading(false)
-            window.alert('Signup successful! Navigating to login')
+            window.alert('Signup successful! Please check your email for account confirmation link.')
             clearForm()
             navigate("/login")
         } catch (error) {

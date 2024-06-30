@@ -91,7 +91,7 @@ const App = () => {
                         </Route>
                     </Routes>
                 </Router>
-                <ToastContainer autoClose={1000} />
+                <ToastContainer autoClose={1800} />
             </ThemeProvider>
         </UserProvider>
     );
