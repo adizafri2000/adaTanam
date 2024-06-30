@@ -24,6 +24,7 @@ import DetailedProducePage from './pages/DetailedProducePage.jsx';
 import PaymentPage from './pages/PaymentPage.jsx';
 import ProduceListPage from './pages/ProduceListPage.jsx';
 import ConfirmationPage from "./pages/ConfirmationPage.jsx";
+import StoreOrdersPage from "./pages/StoreOrdersPage.jsx";
 
 const App = () => {
     const theme = createTheme({
@@ -83,6 +84,7 @@ const App = () => {
                             <Route path="store" element={<StorePage />} />
                             <Route path="store/create-store" element={<CreateStorePage />} />
                             <Route path="store/create-produce" element={<CreateProducePage />} />
+                            <Route path="store/orders" element={<StoreOrdersPage />} />
                             <Route path="produce" element={<ProduceListPage />} />
                             <Route path="produce/:id" element={<DetailedProducePage />} />
                             <Route path="cart" element={<CartPage />} />

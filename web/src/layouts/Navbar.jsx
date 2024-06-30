@@ -51,6 +51,7 @@ const navLinks = [
   { name: 'Store', route: '/store', for: 'Farmer' },
   { name: 'Produce List', route: '/produce' },
   { name: 'Orders', route: '/orders' },
+  { name: 'Store Orders', route: '/store/orders', for: 'Farmer' },
   // { name: 'Cart', route: '/cart', for: 'Consumer' },
 ];
 

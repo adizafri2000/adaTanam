@@ -43,13 +43,6 @@
         c. in Profile page, add a Change Password button that goes to /change-password
         d. create a landing page accessible via /reset-password?token. render a reset password form with two fields, new password and password confirmation
         e. upon submit, make necessary API requests (API/auth/reset-password) and toast.success for successully changed password. navigate user to '/'
-    12.3 account confirmation
-        a. upon successful signup, add message to tell user to check their email
-        b. create a landing page accessible via /confirm-account?token. automatically confirm via useEffect to send API request to API/confirm-account?token
-        c. upon successful confirmation, toast.success for successully confirmed account. navigate user to '/login'
-        d. if URL (token) expired, inform user that token has expired and ask them if they want to resend confirmation link
-        e. if yes, show email input field and button to resend confirmation link to API/resend-confirmation
-        f. if account already been confirmed, inform user that account has already been confirmed and ask them to login
 13. implement store edit details functionality
 14. Add store ratings to StoreDetailsCard in the Store Page, as well as the storeCard.
     14.4 If the ratingScore is 0 on API response, display 'No ratings yet' for store

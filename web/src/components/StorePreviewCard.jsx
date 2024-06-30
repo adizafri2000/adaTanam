@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, Typography, CardActionArea } from '@mui/material';
+import { Card, CardContent, Typography, CardActionArea, Box, Rating } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const StorePreviewCard = ({ store }) => {
@@ -7,6 +7,11 @@ const StorePreviewCard = ({ store }) => {
 
     const handleCardClick = () => {
         navigate(`/stores/${store.id}`);
+    };
+
+    const formatDate = (dateString) => {
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
     return (
@@ -20,20 +25,28 @@ const StorePreviewCard = ({ store }) => {
                         Location: ({store.latitude}, {store.longitude})
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Bank: {store.bankName}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Bank Number: {store.bankNumber}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
                         Farmer ID: {store.farmer}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Created At: {new Date(store.createdAt).toLocaleString()}
+                        Created At: {formatDate(store.createdAt)}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Updated At: {new Date(store.updatedAt).toLocaleString()}
+                        Updated At: {formatDate(store.updatedAt)}
                     </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Store Rating: {store.ratingScore.toFixed(2)}/5.00 ({store.ratingCount} reviews)
+                    </Typography>
+                    {store.ratingScore !== 0 && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                            <Rating
+                                name="store-rating"
+                                value={parseFloat(store.ratingScore)}
+                                precision={0.1}
+                                readOnly
+                                sx={{ ml: 1 }}
+                            />
+                        </Box>
+                    )}
                 </CardContent>
             </CardActionArea>
         </Card>
