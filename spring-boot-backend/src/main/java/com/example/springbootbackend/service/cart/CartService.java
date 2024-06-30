@@ -11,6 +11,7 @@ public interface CartService {
     List<CartResponseDTO> getCarts();
     CartResponseDTO getCartById(Integer id);
     List<CartResponseDTO> getCartByConsumer(Integer userId);
+    List<CartResponseDTO> getCartItemsInCart(Integer id);
     CartResponseDTO getConsumerActiveCart(Integer userId);
     CartResponseDTO createCart(CartRequestDTO cart);
     CartResponseDTO updateCart(Integer id, CartRequestDTO cart, String token);

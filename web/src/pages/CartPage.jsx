@@ -1,7 +1,8 @@
 import {useUserCheck} from '../hooks/useUserCheck';
+import {useConsumerCheck} from "../hooks/useConsumerCheck.jsx";
 
 const CartPage = () => {
-  useUserCheck();
+  useConsumerCheck();
   
   return <h2>Cart Page</h2>
 }

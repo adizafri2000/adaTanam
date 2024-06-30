@@ -104,13 +104,14 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
     }
 
     const addToCart = async () => {
+        setIsLoading(true)
         let cartId;
         //check if user has an active cart
         try{
             let cartId = await fetchAccountActiveCart();
             let response;
             if(cartId < 0){
-                response = await cartService.createCart(user.accessToken, {isActive:true, accountId: user.id})
+                response = await cartService.createCart(user.accessToken, {isActive:true, account: user.id})
                 console.log('created new active cart for user: ', response)
                 if(response.data)
                     cartId = response.data.id
@@ -123,9 +124,10 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
                 rating: 0,
                 review: ""
             }
+
             const flag = await produceAlreadyInCart(cartId)
             if(flag){
-                response = await cartService.updateCart(user.token, cartId, data)
+                response = await cartService.updateCartItem(user.accessToken, cartId, produce.id, data)
                 console.log('updated cart item: ', response)
             } else {
                 response = await cartService.addCartItem(user.accessToken, data)
@@ -136,6 +138,8 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
         } catch (error) {
             console.log('error in addToCart: ', error)
             toast.error('Failed to add produce to cart')
+        } finally {
+            setIsLoading(false)
         }
     };
 
@@ -153,10 +157,10 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
 
     const daysSinceUpdate = (new Date() - new Date(produce.updatedAt)) / (1000 * 60 * 60 * 24);
 
-    if(isLoading)
-        return <CircularProgress/>
-
-    return (
+    // if(isLoading)
+    //     return <CircularProgress/>
+    // else
+    return  (
         <Card>
             <CardMedia
                 component="img"
@@ -191,7 +195,7 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
                 <Typography variant="body2" color="text.secondary">
                     Updated At: {formatDate(produce.updatedAt)}
                 </Typography>
-                {produce.ratingScore !== 0 && (
+                {(produce.ratingScore !== 0) && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                         <Typography variant="body2" color="text.secondary">
                             Rating: {parseFloat(produce.ratingScore).toFixed(2)} ({produce.ratingCount} reviews)
@@ -204,6 +208,11 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
                             sx={{ ml: 1 }}
                         />
                     </Box>
+                )}
+                {!(produce.ratingScore !== 0) && (
+                    <Typography variant="body2" color="text.secondary">
+                        Rating: {produce.ratingScore}/5.00 ({produce.ratingCount} reviews)
+                    </Typography>
                 )}
                 {(!user || user.type !== 'Farmer') && (
                     <Grid container spacing={1} alignItems="center" style={{ marginTop: '10px' }}>
@@ -239,9 +248,9 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
                         color="primary"
                         onClick={handleAddToCart}
                         style={{ marginTop: '10px' }}
-                        disabled={produce.status && produce.status.toLowerCase() === 'not available'}
+                        disabled={(produce.status && produce.status.toLowerCase() === 'not available') || isLoading}
                     >
-                        Add to Cart
+                        {isLoading ? <CircularProgress size={24} /> : 'Add to Cart'}
                     </Button>
                 )}
                 {daysSinceUpdate > 5 && (

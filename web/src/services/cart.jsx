@@ -1,6 +1,6 @@
 import api from './api.jsx';
 const baseUrl = `/carts`;
-const cartItemUrl = `/cart-items`;
+const cartItemUrl = `/cartitems`;
 
 const getAll = async () => {
     try {
@@ -72,12 +72,14 @@ const getCartItem = async (cartId, produceId) => {
 
 const updateCartItem = async (token, cartId, produceId, data) => {
     try {
-        return await api.put(`${cartItemUrl}?cartId=${cartItemId}&produceId=${produceId}`, data, {
+        console.log('data debug updateCartItem: ', data)
+        return await api.put(`${cartItemUrl}?cartId=${cartId}&produceId=${produceId}`, data, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
     } catch (error) {
+        console.log(error)
         throw error.response.data;
     }
 }

@@ -42,6 +42,13 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
+    public List<CartResponseDTO> getCartItemsInCart(Integer id){
+        log.info("Getting items in cart with id: {}", id);
+        return cartRepository.findById(id).map(cartMapper::toResponseDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + id)).getCartItems();
+    }
+
+    @Override
     public List<CartResponseDTO> getCartByConsumer(Integer userId){
         log.info("Getting cart with consumer ID: {}", userId);
         return cartRepository.findByAccount(userId).stream().map(cartMapper::toResponseDTO).toList();

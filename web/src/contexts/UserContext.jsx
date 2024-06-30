@@ -72,6 +72,7 @@ export const UserProvider = ({ children }) => {
                         console.error('Failed to refresh token', error);
                         setUser(null);
                         localStorage.removeItem('user');
+                        console.log('removed user from local storage')
                         // window.location.href = '/login';
                     }
                 } else {
@@ -116,6 +117,7 @@ export const UserProvider = ({ children }) => {
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
+        console.log('removed user from local storage')
     };
 
     const isAuthenticated = () => {

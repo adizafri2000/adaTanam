@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import UserContext from '../contexts/UserContext';
 import cartService from '../services/cart';
 import {useUserCheck} from "./useUserCheck.jsx";
+import {toast} from "react-toastify";
 
 /**
  * Custom hook to check if user is a Consumer. Use this to authorize component access to consumer users.
@@ -27,9 +28,12 @@ export const useConsumerCheck = () => {
         }
         const handleUseEffect = async () => {
             if (!loading && (!user)) {
-                useUserCheck();
+                console.log('no user found in global context, redirecting to login')
+                toast.info('Login required')
+                navigate('/login');
             } else if(user.type !== 'Consumer') {
-                console.log('User is not a consumer')
+                console.log('User is not a consumer, navigating to home')
+                navigate('/')
             } else if(!user.cart){
                 await handleNoActiveCart()
             }
