@@ -41,12 +41,12 @@ public class CartServiceImpl implements CartService{
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + id));
     }
 
-    @Override
-    public List<CartResponseDTO> getCartItemsInCart(Integer id){
-        log.info("Getting items in cart with id: {}", id);
-        return cartRepository.findById(id).map(cartMapper::toResponseDTO)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + id)).getCartItems();
-    }
+//    @Override
+//    public List<CartResponseDTO> getCartItemsInCart(Integer id){
+//        log.info("Getting items in cart with id: {}", id);
+//        return cartRepository.findById(id).map(cartMapper::toResponseDTO)
+//                .orElseThrow(() -> new ResourceNotFoundException("Cart not found with id " + id)).getCartItems();
+//    }
 
     @Override
     public List<CartResponseDTO> getCartByConsumer(Integer userId){
