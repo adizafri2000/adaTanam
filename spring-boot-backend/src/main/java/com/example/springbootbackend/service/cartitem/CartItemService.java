@@ -3,7 +3,7 @@ package com.example.springbootbackend.service.cartitem;
 
 import com.example.springbootbackend.dto.cartitem.CartItemRequestDTO;
 import com.example.springbootbackend.dto.cartitem.CartItemResponseDTO;
-import com.example.sprinbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
+import com.example.springbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
 import com.example.springbootbackend.model.CartItem;
 import org.springframework.stereotype.Service;
 

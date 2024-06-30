@@ -3,7 +3,7 @@ package com.example.springbootbackend.repository;
 import com.example.springbootbackend.model.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.example.sprinbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
+import com.example.springbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
 
 import java.util.Optional;
 import java.util.List;

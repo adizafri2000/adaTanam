@@ -3,7 +3,7 @@ package com.example.springbootbackend.service.cartitem;
 import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.cartitem.CartItemRequestDTO;
 import com.example.springbootbackend.dto.cartitem.CartItemResponseDTO;
-import com.example.sprinbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
+import com.example.springbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
 import com.example.springbootbackend.exception.ResourceNotFoundException;
 import com.example.springbootbackend.mapper.CartItemMapper;
 import com.example.springbootbackend.model.CartItem;

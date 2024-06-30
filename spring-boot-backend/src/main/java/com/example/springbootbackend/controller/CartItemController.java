@@ -16,7 +16,7 @@ import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.RequestErrorDTO;
 import com.example.springbootbackend.dto.cartitem.CartItemRequestDTO;
 import com.example.springbootbackend.service.cartitem.CartItemService;
-import com.example.sprinbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
+import com.example.springbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
