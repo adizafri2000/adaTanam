@@ -17,7 +17,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer>{
 
     // retrieves all cart items in cart by account id, containing the necessary produce details
     @Query("select new com.example.springbootbackend.dto.cartitem.CartItemDetailsResponseDTO(" +
-            "c.id, c.account, p.id, p.name, p.unitPrice, p.sellingUnit, p.store, ci.quantity, s.id, s.name) " +
+            "c.id, c.account, p.id, p.name, p.unitPrice, p.sellingUnit, p.store, ci.quantity, s.name) " +
             "from CartItem ci " +
             "left join Cart c on c.id = ci.cart " +
             "left join Produce p on p.id = ci.produce " +

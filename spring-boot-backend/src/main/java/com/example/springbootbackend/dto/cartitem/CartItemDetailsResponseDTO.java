@@ -9,9 +9,8 @@ public record CartItemDetailsResponseDTO(
         String produceName,
         BigDecimal produceUnitPrice,
         String produceSellingUnit,
-        Integer produceStore,
-        Integer cartItemQuantity,
         Integer storeId,
+        Integer cartItemQuantity,
         String storeName
 ) {
 }
