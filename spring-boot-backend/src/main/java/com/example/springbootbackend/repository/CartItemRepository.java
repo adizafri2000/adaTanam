@@ -4,6 +4,7 @@ import com.example.springbootbackend.model.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import com.example.springbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 import java.util.List;
