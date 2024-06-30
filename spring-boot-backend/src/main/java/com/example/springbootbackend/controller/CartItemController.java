@@ -46,7 +46,7 @@ public class CartItemController {
             }
             else if (produceId == null) {
                 log.info("Getting cart items by cart id: {}", cartId);
-                return new ResponseEntity<>(cartItemService.getCartItemDetailsByAccountId(cartId), HttpStatus.OK);
+                return new ResponseEntity<>(cartItemService.getCartItemDetailsByCartId(cartId), HttpStatus.OK);
             }
             else {
                 log.info("Getting cart item by cart id: {} and produce id: {}", cartId, produceId);

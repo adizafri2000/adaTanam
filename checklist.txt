@@ -1,11 +1,8 @@
 3. ensure all list renders include object key via id
 4. design store details page to contain the store details, the farmer details, the produce list
 6. implement add to cart functionality
-    6.1 if no active cart exists for current user, create new cart then only add the item
-    6.2 if active cart exists, add item to cart
     6.3 show icon on top of cart icon to show number of items in cart
 7. implement cart page
-    7.1 when user clicks on cart icon, navigate to /cart
     7.2 show all items in user's cart
         a. in table form
         b. each row should show the produce name, quantity, price, and total price

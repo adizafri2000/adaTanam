@@ -21,6 +21,6 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer>{
             "from CartItem ci " +
             "left join Cart c on c.id = ci.cart " +
             "left join Produce p on p.id = ci.produce " +
-            "where c.account = :accountId")
-    List<CartItemDetailsResponseDTO> findCartItemDetailsByAccountId(Integer accountId);
+            "where ci.cart = :cartId")
+    List<CartItemDetailsResponseDTO> findCartItemDetailsByCartId(Integer cartId);
 }
