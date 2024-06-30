@@ -58,6 +58,7 @@ export const UserProvider = ({ children }) => {
         console.log('User Context, useEffect');
         const fetchUserData = async () => {
             const storedUser = localStorage.getItem('user');
+            console.log('useeffect of usercontext, just pulled user from local storage: ', storedUser)
             if (storedUser) {
                 const parsedUser = JSON.parse(storedUser);
                 setUser(parsedUser);

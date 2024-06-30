@@ -2,14 +2,14 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import logo from '../assets/logonobg.png';
-import { InputBase, Menu, MenuItem, Typography } from "@mui/material";
+import { InputBase, Menu, MenuItem, Typography, Badge, Avatar } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import Avatar from "@mui/material/Avatar";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import UserContext from "../contexts/UserContext.jsx";
 import { styled, useTheme } from '@mui/material/styles';
 import { toast } from 'react-toastify';
+import cartService from "../services/cart.jsx";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -66,6 +66,21 @@ const Navbar = () => {
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [cartItemCount, setCartItemCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCartItemCount = async () => {
+      if (user && user.type === 'Consumer' && user.cart) {
+        try {
+          const response = await cartService.getCartItems(user.cart);
+          setCartItemCount(response.data.length); // Assuming response.data is an array
+        } catch (error) {
+          console.log('Error fetching cart items:', error);
+        }
+      }
+    };
+    fetchCartItemCount();
+  }, [user]);
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -95,6 +110,14 @@ const Navbar = () => {
 
   const handleCartClick = () => {
     navigate('/cart');
+  };
+
+  const formatCartItemCount = () => {
+    if (cartItemCount > 9) {
+      return '9+';
+    } else {
+      return cartItemCount;
+    }
   };
 
   return (
@@ -139,9 +162,16 @@ const Navbar = () => {
               return null;
             })}
             {(!user || user.type !== 'Farmer') && (
-                <ShoppingCartIcon onClick={handleCartClick} style={{ cursor: 'pointer', marginRight: theme.spacing(1), color: 'white' }} />
+                <Badge
+                    badgeContent={formatCartItemCount()}
+                    color="secondary"
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    sx={{ marginRight: theme.spacing(1), marginTop: theme.spacing(0.5) }}
+                >
+                  <ShoppingCartIcon onClick={handleCartClick} style={{ cursor: 'pointer', color: 'white' }} />
+                </Badge>
             )}
-            <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+            <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginLeft: theme.spacing(1) }}>
               <Avatar src={user?.image || undefined} style={{ marginRight: theme.spacing(1) }} />
               {user && <Typography variant="body1" style={{ color: 'white' }}>{user.name}</Typography>}
             </div>
