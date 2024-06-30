@@ -24,7 +24,7 @@ const ConfirmationPage = () => {
                 navigate('/login');
             } catch (error) {
                 console.error('Failed to confirm account:', error);
-                toast.error('Failed to confirm account.');
+                toast.error('Failed to confirm account: ', error);
                 setSuccess(false);
             } finally {
                 setIsLoading(false);

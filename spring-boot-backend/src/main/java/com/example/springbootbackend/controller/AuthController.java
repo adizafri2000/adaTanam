@@ -46,6 +46,7 @@ public class AuthController {
 
     @GetMapping("/confirm-account")
     public ResponseEntity<String> confirmAccount(@RequestParam("token") String token) {
+        log.info("Handling GET /auth/confirm-account request with token: {}", token);
         if (!tokenService.validateConfirmationToken(token)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token.");
         }
