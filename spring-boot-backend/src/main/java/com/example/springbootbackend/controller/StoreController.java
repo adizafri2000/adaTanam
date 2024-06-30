@@ -51,8 +51,12 @@ public class StoreController {
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<?> createStore(@RequestBody StoreRequestDTO store) {
+    public ResponseEntity<?> createStore(@RequestHeader("Authorization") String token, @RequestBody StoreRequestDTO store) {
         log.info("Handling POST /stores request");
+        if (!tokenService.validateToken(token)) {
+            RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<>(storeService.createStore(store), HttpStatus.CREATED);
     }
 

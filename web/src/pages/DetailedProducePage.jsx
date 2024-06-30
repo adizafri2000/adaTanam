@@ -62,7 +62,7 @@ const DetailedProducePage = () => {
 
   return (
       <Box>
-        <Typography variant="h2">Viewing Produce</Typography>
+        <h2>Viewing Produce</h2>
         <Box mt={2}>
           <DetailedProduceCard produce={produce} />
         </Box>

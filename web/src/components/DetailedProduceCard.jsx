@@ -3,14 +3,19 @@ import UserContext from "../contexts/UserContext.jsx";
 import { Card, CardContent, Typography, CardMedia, Button, TextField, IconButton, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box, Rating } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import cartService from '../services/cart';
-import {useUserCheck} from "../hooks/useUserCheck.jsx";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
+import cartService from "../services/cart";
+import accountService from "../services/account";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
-    const { user } = useContext(UserContext);
+    const { user, updateUserDetails } = useContext(UserContext);
     const [quantity, setQuantity] = useState(1);
     const [error, setError] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
+    const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleIncrement = () => {
         if (quantity < produce.stock) {
@@ -42,37 +47,102 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
         }
     };
 
-    const handleAddToCart = () => {
-        useUserCheck()
-
-        if (produce.status && produce.status.toLowerCase() === 'pending harvest') {
-            handlePendingHarvest().then((proceed) => {
-                if (proceed) {
-                    checkProduceFreshnessAndProceed();
-                }
-            });
-        } else {
-            checkProduceFreshnessAndProceed();
+    const handleAddToCart = async () => {
+        let flag = true
+        if(!user){
+            toast.info('Login required')
+            navigate('/login')
+            flag = false
+        }
+        if(flag){
+            if (produce.status && produce.status.toLowerCase() === 'pending harvest') {
+                handlePendingHarvest().then(async (proceed) => {
+                    if (proceed) {
+                        await checkProduceFreshnessAndProceed();
+                    }
+                });
+            } else {
+                await checkProduceFreshnessAndProceed();
+            }
         }
     };
 
-    const checkProduceFreshnessAndProceed = () => {
+    const checkProduceFreshnessAndProceed = async () => {
         const daysSinceUpdate = (new Date() - new Date(produce.updatedAt)) / (1000 * 60 * 60 * 24);
         if (daysSinceUpdate > 5) {
             setOpenDialog(true);
         } else {
-            addToCart();
+            await addToCart();
         }
     };
 
-    const addToCart = () => {
-        console.log(`Added ${quantity} of ${produce.name} to cart.`);
+    const fetchAccountActiveCart = async () => {
+        let cartId = -1;
+        try{
+            let response = await accountService.getAccountActiveCart(user.id)
+            console.log('checking if user has an active cart: ', response);
+            if(response.data)
+                cartId = response.data.id
+        }catch (error) {
+            console.log('account has no active carts: ', error)
+        }
+        return cartId
+    }
+
+    const produceAlreadyInCart = async (cartId) => {
+        // check if produce already exists in cart for update instead of create
+        let result = false;
+        try{
+            let response = await cartService.getCartItem(cartId, produce.id)
+            console.log('checking if produce already in cart:', response)
+            if(response.status !== 404)
+                result = true;
+        } catch (error) {
+            console.log('no cart containing produce exists yet')
+        }
+        return result;
+    }
+
+    const addToCart = async () => {
+        let cartId;
+        //check if user has an active cart
+        try{
+            let cartId = await fetchAccountActiveCart();
+            let response;
+            if(cartId < 0){
+                response = await cartService.createCart(user.accessToken, {isActive:true, accountId: user.id})
+                console.log('created new active cart for user: ', response)
+                if(response.data)
+                    cartId = response.data.id
+            }
+
+            const data = {
+                cart: cartId,
+                produce: produce.id,
+                quantity: quantity,
+                rating: 0,
+                review: ""
+            }
+            const flag = await produceAlreadyInCart(cartId)
+            if(flag){
+                response = await cartService.updateCart(user.token, cartId, data)
+                console.log('updated cart item: ', response)
+            } else {
+                response = await cartService.addCartItem(user.accessToken, data)
+                console.log('created new cart_item: ', response)
+            }
+            toast.success('Successfully updated cart!')
+            updateUserDetails({...user, cart: cartId})
+        } catch (error) {
+            console.log('error in addToCart: ', error)
+            toast.error('Failed to add produce to cart')
+        }
     };
 
-    const handleDialogClose = (confirm) => {
+    const handleDialogClose = async (confirm) => {
         setOpenDialog(false);
         if (confirm) {
-            addToCart();
+            await addToCart();
         }
     };
 
@@ -82,6 +152,9 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
     };
 
     const daysSinceUpdate = (new Date() - new Date(produce.updatedAt)) / (1000 * 60 * 60 * 24);
+
+    if(isLoading)
+        return <CircularProgress/>
 
     return (
         <Card>
@@ -118,7 +191,7 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
                 <Typography variant="body2" color="text.secondary">
                     Updated At: {formatDate(produce.updatedAt)}
                 </Typography>
-                {(produce.ratingScore !== 0) && (
+                {produce.ratingScore !== 0 && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                         <Typography variant="body2" color="text.secondary">
                             Rating: {parseFloat(produce.ratingScore).toFixed(2)} ({produce.ratingCount} reviews)
@@ -132,46 +205,45 @@ const DetailedProduceCard = ({ produce, handlePendingHarvest }) => {
                         />
                     </Box>
                 )}
-                {!(produce.ratingScore !== 0) && (
-                    <Typography variant="body2" color="text.secondary">
-                        Rating: {produce.ratingScore}/5.00 ({produce.ratingCount} reviews)
-                    </Typography>
+                {(!user || user.type !== 'Farmer') && (
+                    <Grid container spacing={1} alignItems="center" style={{ marginTop: '10px' }}>
+                        <Grid item>
+                            <IconButton onClick={handleDecrement} disabled={quantity <= 1}>
+                                <RemoveIcon />
+                            </IconButton>
+                        </Grid>
+                        <Grid item>
+                            <TextField
+                                type="number"
+                                value={quantity}
+                                onChange={handleChange}
+                                error={!!error}
+                                helperText={error}
+                                inputProps={{ min: 1, max: produce.stock, style: { textAlign: 'center' } }}
+                                style={{ width: '60px' }}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <IconButton onClick={handleIncrement} disabled={quantity >= produce.stock}>
+                                <AddIcon />
+                            </IconButton>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body2">{produce.sellingUnit}</Typography>
+                        </Grid>
+                    </Grid>
                 )}
-                <Grid container spacing={1} alignItems="center" style={{ marginTop: '10px' }}>
-                    <Grid item>
-                        <IconButton onClick={handleDecrement} disabled={quantity <= 1}>
-                            <RemoveIcon />
-                        </IconButton>
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            type="number"
-                            value={quantity}
-                            onChange={handleChange}
-                            error={!!error}
-                            helperText={error}
-                            inputProps={{ min: 1, max: produce.stock, style: { textAlign: 'center' } }}
-                            style={{ width: '60px' }}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <IconButton onClick={handleIncrement} disabled={quantity >= produce.stock}>
-                            <AddIcon />
-                        </IconButton>
-                    </Grid>
-                    <Grid item>
-                        <Typography variant="body2">{produce.sellingUnit}</Typography>
-                    </Grid>
-                </Grid>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleAddToCart}
-                    style={{ marginTop: '10px' }}
-                    disabled={produce.status && produce.status.toLowerCase() === 'not available'}
-                >
-                    Add to Cart
-                </Button>
+                {(!user || user.type !== 'Farmer') && (
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleAddToCart}
+                        style={{ marginTop: '10px' }}
+                        disabled={produce.status && produce.status.toLowerCase() === 'not available'}
+                    >
+                        Add to Cart
+                    </Button>
+                )}
                 {daysSinceUpdate > 5 && (
                     <Typography variant="body2" color="error" style={{ marginTop: '10px' }}>
                         This produce has been in the system for {Math.floor(daysSinceUpdate)} days.

@@ -10,29 +10,14 @@ const getById = async (id) => {
     }
 };
 
-const updateOld = async (id, data, token, imageFile) => {
-    try {
-        const formData = new FormData();
-        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-        formData.append('account', blob, 'account.json');
-        formData.append('image', imageFile);
-        const config = {
-            method: 'put',
-            url: `${baseUrl}/${id}`,
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data',
-            },
-            data: formData
-        };
-        console.log('config setup: ', config)
-        return await api(config);
-    } catch (error) {
-        console.log('error updating account: ', error)
-        throw error.response.data;
-    }
-}
-
+/**
+ * Update account details
+ * @param id
+ * @param data
+ * @param token
+ * @param imageFile
+ * @returns {Promise<axios.AxiosResponse<any>>}
+ */
 const update = async (id, data, token, imageFile) => {
     try {
         const formData = new FormData();
@@ -61,5 +46,30 @@ const update = async (id, data, token, imageFile) => {
     }
 };
 
+/**
+ * Get all carts for the account
+ * @param accountId
+ * @returns {Promise<axios.AxiosResponse<any>>}
+ */
+const getAccountCarts = async (accountId) => {
+    try {
+        return await api.get(`${baseUrl}/${accountId}/carts`);
+    } catch (error) {
+        throw error.response.data;
+    }
+};
 
-export default {  getById, update };
+/**
+ * Get the active cart for the account
+ * @param accountId
+ * @returns {Promise<axios.AxiosResponse<any>>}
+ */
+const getAccountActiveCart = async (accountId) => {
+    try {
+        return await api.get(`${baseUrl}/${accountId}/carts/active`);
+    } catch (error) {
+        throw error.response.data;
+    }
+}
+
+export default {  getById, update, getAccountCarts, getAccountActiveCart };

@@ -37,8 +37,12 @@ public class OrderController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createOrder(@RequestBody OrderRequestDTO order) {
+    public ResponseEntity<?> createOrder(@RequestHeader("Authorization") String token, @RequestBody OrderRequestDTO order) {
         log.info("Handling POST /orders request");
+        if (!tokenService.validateToken(token)) {
+            RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<>(orderService.createOrder(order), HttpStatus.CREATED);
     }
 

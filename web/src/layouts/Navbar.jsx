@@ -50,7 +50,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const navLinks = [
   { name: 'Store', route: '/store', for: 'Farmer' },
   { name: 'Produce List', route: '/produce' },
-  { name: 'Orders', route: '/orders' },
+  { name: 'Orders', route: '/orders', for: 'Consumer' },
   { name: 'Store Orders', route: '/store/orders', for: 'Farmer' },
   // { name: 'Cart', route: '/cart', for: 'Consumer' },
 ];

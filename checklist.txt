@@ -1,5 +1,3 @@
-1. ensure store preview card shows below detailed produce card in detailed produce page. should show just the store name and location
-2. store preview card navigates to /store:id
 3. ensure all list renders include object key via id
 4. design store details page to contain the store details, the farmer details, the produce list
 6. implement add to cart functionality

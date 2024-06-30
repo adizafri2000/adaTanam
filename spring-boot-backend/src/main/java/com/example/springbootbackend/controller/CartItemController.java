@@ -55,8 +55,12 @@ public class CartItemController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createCartItem(@RequestBody CartItemRequestDTO cartItemRequestDTO) {
+    public ResponseEntity<?> createCartItem(@RequestHeader("Authorization") String token, @RequestBody CartItemRequestDTO cartItemRequestDTO) {
         log.info("Handling POST /cartitems request");
+        if (!tokenService.validateToken(token)) {
+            RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<>(cartItemService.createCartItem(cartItemRequestDTO), HttpStatus.CREATED);
     }
 

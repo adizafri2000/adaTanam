@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import storeService from '../services/store.jsx';
 import cartService from '../services/cart.jsx';
-// import { setRefreshToken as setRefreshTokenInApi } from '../services/api.jsx';
+import accountService from '../services/account.jsx';
+
 import {jwtDecode} from 'jwt-decode';
 const host = import.meta.env.VITE_API_URL
 
@@ -10,10 +11,14 @@ const UserContext = React.createContext(null);
 
 export const UserProvider = ({ children }) => {
 
-    // TODO create method specifically for updating the user in the state
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    /**
+     * Retrieves store id for farmers and active cart id for consumers
+     * @param user
+     * @returns {Promise<{}>}
+     */
     const getExtraUserDetails = async (user) => {
         const result = {}
         try {
@@ -23,7 +28,7 @@ export const UserProvider = ({ children }) => {
                 result.store = response.data.id ? response.data.id : null;
             } else {
                 console.log('non-farmer user detected')
-                const response = await cartService.getByAccount(user.id);
+                const response = await accountService.getAccountActiveCart(user.id);
                 result.cart = response.data.id ? response.data.id : null;
             }
         } catch (error) {
@@ -92,6 +97,11 @@ export const UserProvider = ({ children }) => {
         localStorage.setItem('user', JSON.stringify(fullDetails));
     };
 
+    /**
+     * Update user details in global context to the state and local storage
+     * @param updatedUser
+     * @returns {Promise<void>}
+     */
     const updateUserDetails = async (updatedUser) => {
         console.log('user context will update user details with: ', updatedUser)
         const updatedUserDetails = { ...user, ...updatedUser };

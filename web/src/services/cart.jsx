@@ -18,14 +18,6 @@ const getById = async (id) => {
     }
 };
 
-const getByAccount = async (consumerId) => {
-    try {
-        return await api.get(`${baseUrl}?accountId=${consumerId}`);
-    } catch (error) {
-        throw error.response.data;
-    }
-};
-
 const createCart = async (token, data) => {
     try {
         return await api.post(`${baseUrl}`, data, {
@@ -70,6 +62,14 @@ const addCartItem = async (token, data) => {
     }
 }
 
+const getCartItem = async (cartId, produceId) => {
+    try {
+        return await api.get(`${cartItemUrl}?cartId=${cartId}&produceId=${produceId}`);
+    } catch (error) {
+        throw error.response.data;
+    }
+}
+
 const updateCartItem = async (token, cartId, produceId, data) => {
     try {
         return await api.put(`${cartItemUrl}?cartId=${cartItemId}&produceId=${produceId}`, data, {
@@ -82,4 +82,16 @@ const updateCartItem = async (token, cartId, produceId, data) => {
     }
 }
 
-export default { getAll, getById, getByAccount, createCart, updateCartItem, addCartItem, getCartItems,updateCart };
+const deleteCartItem = async (token, cartId, produceId) => {
+    try {
+        return await api.delete(`${cartItemUrl}?cartId=${cartId}&produceId=${produceId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    } catch (error) {
+        throw error.response.data;
+    }
+}
+
+export default { getAll, getById, createCart, updateCartItem, addCartItem, getCartItems,updateCart, deleteCartItem, getCartItem };

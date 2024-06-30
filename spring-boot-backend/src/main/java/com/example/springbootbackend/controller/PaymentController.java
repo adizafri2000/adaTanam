@@ -47,8 +47,12 @@ public class PaymentController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createPayment(@RequestBody PaymentRequestDTO payment) {
+    public ResponseEntity<?> createPayment(@RequestHeader("Authorization") String token, @RequestBody PaymentRequestDTO payment) {
         log.info("Handling POST /payments request");
+        if (!tokenService.validateToken(token)) {
+            RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<>(paymentService.createPayment(payment), HttpStatus.CREATED);
     }
 
