@@ -16,6 +16,7 @@ import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.RequestErrorDTO;
 import com.example.springbootbackend.dto.cartitem.CartItemRequestDTO;
 import com.example.springbootbackend.service.cartitem.CartItemService;
+import com.example.sprinbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,7 +46,7 @@ public class CartItemController {
             }
             else if (produceId == null) {
                 log.info("Getting cart items by cart id: {}", cartId);
-                return new ResponseEntity<>(cartItemService.getCartItemByCart(cartId), HttpStatus.OK);
+                return new ResponseEntity<>(cartItemService.getCartItemDetailsByAccountId(cartId), HttpStatus.OK);
             }
             else {
                 log.info("Getting cart item by cart id: {} and produce id: {}", cartId, produceId);

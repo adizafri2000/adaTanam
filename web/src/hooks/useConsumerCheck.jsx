@@ -31,10 +31,10 @@ export const useConsumerCheck = () => {
                 console.log('no user found in global context, redirecting to login')
                 toast.info('Login required')
                 navigate('/login');
-            } else if(user.type !== 'Consumer') {
+            } else if(!loading && user.type !== 'Consumer') {
                 console.log('User is not a consumer, navigating to home')
                 navigate('/')
-            } else if(!user.cart){
+            } else if(!loading && !user.cart){
                 await handleNoActiveCart()
             }
         }

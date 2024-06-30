@@ -3,6 +3,7 @@ package com.example.springbootbackend.service.cartitem;
 import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.cartitem.CartItemRequestDTO;
 import com.example.springbootbackend.dto.cartitem.CartItemResponseDTO;
+import com.example.sprinbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
 import com.example.springbootbackend.exception.ResourceNotFoundException;
 import com.example.springbootbackend.mapper.CartItemMapper;
 import com.example.springbootbackend.model.CartItem;
@@ -49,6 +50,12 @@ public class CartItemServiceImpl implements CartItemService{
         log.info("Getting cart item by cart id: {} and produce id: {}", cartId, produceId);
         return cartItemRepository.findByCartAndProduce(cartId, produceId).map(cartItemMapper::toResponseDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found with cart id " + cartId + " and produce id " + produceId));
+    }
+
+    @Override
+    public List<CartItemDetailsResponseDTO> getCartItemDetailsByAccountId(Integer accountId) {
+        log.info("Getting cart item details by account id: {}", accountId);
+        return cartItemRepository.findCartItemDetailsByAccountId(accountId);
     }
 
     @Override
