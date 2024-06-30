@@ -23,6 +23,7 @@ import SearchResultsPage from './pages/SearchResultsPage.jsx';
 import DetailedProducePage from './pages/DetailedProducePage.jsx';
 import PaymentPage from './pages/PaymentPage.jsx';
 import ProduceListPage from './pages/ProduceListPage.jsx';
+import ConfirmationPage from "./pages/ConfirmationPage.jsx";
 
 const App = () => {
     const theme = createTheme({
@@ -87,6 +88,7 @@ const App = () => {
                             <Route path="cart" element={<CartPage />} />
                             <Route path="orders" element={<OrderHistoryPage />} />
                             <Route path="payment" element={<PaymentPage />} />
+                            <Route path="confirm-account" element={<ConfirmationPage />} />
                             <Route path='*' element={<NotFound />} />
                         </Route>
                     </Routes>
