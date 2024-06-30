@@ -52,12 +52,6 @@
         f. if account already been confirmed, inform user that account has already been confirmed and ask them to login
 13. implement store edit details functionality
 14. Add store ratings to StoreDetailsCard in the Store Page, as well as the storeCard.
-    14.1 available ratings = total score of ratings out of 5 across all produce sold / total ratings
-    14.2 update store model & table to contain ratingScore (decimal) and ratingCumulative and ratingCount (integer). set default to 0
-    14.3 create trigger: on update to cart_item especially rating field, update store such that:
-        a. store.ratingCount += 1
-        b. store.ratingCumulative += cart_item.rating
-        c. store.ratingScore = store.ratingCumulative/store.ratingCount (ensure 2dp)
     14.4 If the ratingScore is 0 on API response, display 'No ratings yet' for store
 15. for every produce based card, ensure last updated shown
     15.1 if greater than 5 days since last update (assuming added to store), add text to warn produce has been added to store 5 or more days
@@ -69,16 +63,8 @@
     16.3 implement necessary backend APIs
     16.4 integrate
 17. add ratings score similar to 14 for produce. Show in DetailedProduceCard and ProduceCard
-    17.1 available ratings = total score of ratings out of 5 every sold produce / total ratings
-    17.2 update produce model & table to contain ratingScore (decimal) and ratingCumulative and ratingCount (integer) and totalSold. set default to 0
-    17.3 create trigger: on update to cart_item especially rating field, update produce such that (for same id):
-        a. produce.ratingCount += 1 and produce.totalSold += cart_item.quantity
-        b. produce.ratingCumulative += cart_item.rating
-        c. produce.ratingScore = produce.ratingCumulative/produce.ratingCount (ensure 2dp)
     17.4 If the ratingScore is 0 on API response, display 'No ratings yet' for store
     17.5 display '{totalSold} unit(s) sold'
-    17.6 via produce API, expose '/toprated?limit' and implement:
-        - select * from produce order by ratingScore DESC LIMIT limit
 17. Implement home page
     a. Top rated stores - give 5 producecard
     b. New arrivals - give 5 produceCard maximum, where today timestamp is less than 2 days from createdAt

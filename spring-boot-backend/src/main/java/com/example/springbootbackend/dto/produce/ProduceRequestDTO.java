@@ -11,6 +11,9 @@ public record ProduceRequestDTO(
         String description,
         String status,
         String image,
+        BigDecimal ratingScore,
+        Integer ratingCumulative,
+        Integer ratingCount,
         Integer store
 ) {
 }

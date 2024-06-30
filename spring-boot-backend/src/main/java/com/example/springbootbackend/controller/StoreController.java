@@ -26,12 +26,18 @@ public class StoreController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getStores(@RequestParam(required = false) Integer farmerId) {
+    public ResponseEntity<?> getStores(
+            @RequestParam(required = false) Integer farmerId,
+            @RequestParam(required = false) Boolean topRated
+    ) {
         log.info("Handling GET /stores request with farmerId: {}", farmerId);
 
         if (farmerId != null) {
             StoreResponseDTO store = storeService.getStoreByFarmer(farmerId);
             return new ResponseEntity<>(store, HttpStatus.OK);
+        } else if(topRated != null && topRated){
+            List<StoreResponseDTO> stores = storeService.getTopStores();
+            return new ResponseEntity<>(stores, HttpStatus.OK);
         } else {
             List<StoreResponseDTO> stores = storeService.getStores();
             return new ResponseEntity<>(stores, HttpStatus.OK);

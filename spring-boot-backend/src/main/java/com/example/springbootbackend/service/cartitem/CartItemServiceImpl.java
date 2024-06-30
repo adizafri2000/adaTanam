@@ -7,7 +7,6 @@ import com.example.springbootbackend.exception.ResourceNotFoundException;
 import com.example.springbootbackend.mapper.CartItemMapper;
 import com.example.springbootbackend.model.CartItem;
 import com.example.springbootbackend.repository.CartItemRepository;
-import com.example.springbootbackend.utilities.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -56,12 +55,12 @@ public class CartItemServiceImpl implements CartItemService{
     public CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO) {
         log.info("Creating cart item: {}", cartItemRequestDTO);
         CartItem newCartItem = cartItemMapper.toEntity(cartItemRequestDTO);
-        if (newCartItem.getCreatedAt() == null) {
-            newCartItem.setCreatedAt(Utils.setCurrentTimestamp());
-        }
-        if (newCartItem.getUpdatedAt() == null) {
-            newCartItem.setUpdatedAt(Utils.setCurrentTimestamp());
-        }
+//        if (newCartItem.getCreatedAt() == null) {
+//            newCartItem.setCreatedAt(Utils.setCurrentTimestamp());
+//        }
+//        if (newCartItem.getUpdatedAt() == null) {
+//            newCartItem.setUpdatedAt(Utils.setCurrentTimestamp());
+//        }
         return cartItemMapper.toResponseDTO(cartItemRepository.save(newCartItem));
     }
 

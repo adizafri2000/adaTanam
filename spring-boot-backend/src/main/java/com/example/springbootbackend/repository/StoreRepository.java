@@ -21,4 +21,6 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
 
     // to get all stores by name
     List<Store> findByNameContaining(String name);
+
+    List<Store> findTop5ByOrderByRatingScoreDesc();
 }
