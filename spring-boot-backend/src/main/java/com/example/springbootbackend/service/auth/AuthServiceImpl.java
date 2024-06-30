@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AccountResponseDTO signup(SignupRequestDTO signupRequestDTO, MultipartFile image) {
+    public AccountResponseDTO signup(SignupRequestDTO signupRequestDTO) {
         log.info("Creating account: {}", signupRequestDTO);
         Account newAccount = accountMapper.toEntity(signupRequestDTO);
         if (accountRepository.findByEmail(newAccount.getEmail()).isPresent()) {
@@ -46,11 +46,11 @@ public class AuthServiceImpl implements AuthService {
         }
         newAccount.setPasswordHash(passwordEncoder.encode(newAccount.getPasswordHash()));
         Account createdAccount = accountRepository.save(newAccount);
-        if (image != null) {
-            String imageUrl = blobStorageService.uploadImage(image, createdAccount.getId(), AccountService.ACCOUNT_FOLDER_NAME);
-            createdAccount.setImage(imageUrl);
-            createdAccount = accountRepository.save(createdAccount);
-        }
+//        if (image != null) {
+//            String imageUrl = blobStorageService.uploadImage(image, createdAccount.getId(), AccountService.ACCOUNT_FOLDER_NAME);
+//            createdAccount.setImage(imageUrl);
+//            createdAccount = accountRepository.save(createdAccount);
+//        }
         if(createdAccount.getIsActivated() == null)
             createdAccount.setIsActivated(false);
         log.info("Account created: {}", createdAccount);

@@ -1,6 +1,5 @@
 package com.example.springbootbackend.dto.auth;
 
-// equivalent response is AccountResponseDTO
 public record SignupRequestDTO(
         String email,
         String password,

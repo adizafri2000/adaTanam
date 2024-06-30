@@ -3,22 +3,17 @@ package com.example.springbootbackend.controller;
 import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.RequestErrorDTO;
 import com.example.springbootbackend.dto.auth.*;
-import com.example.springbootbackend.dto.account.AccountRequestDTO;
 import com.example.springbootbackend.dto.account.AccountResponseDTO;
 import com.example.springbootbackend.model.Account;
 import com.example.springbootbackend.service.EmailService;
 import com.example.springbootbackend.service.account.AccountService;
 import com.example.springbootbackend.service.auth.AuthService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -43,13 +38,10 @@ public class AuthController {
     public record ResendConfirmationRequestDTO(String email){}
 
     // User account sign up/registration endpoint
-    @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public AccountResponseDTO createAccount(
-            @RequestPart(value = "image", required = false) MultipartFile image,
-            @RequestPart("account") SignupRequestDTO signupRequestDTO
-    ) {
+    @PostMapping(value = "/signup")
+    public AccountResponseDTO createAccount(@RequestBody SignupRequestDTO signupRequestDTO) {
         log.info("Handling POST /auth/signup request");
-        return authService.signup(signupRequestDTO, image);
+        return authService.signup(signupRequestDTO);
     }
 
     @GetMapping("/confirm-account")
