@@ -22,7 +22,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="order_id")
+    @Column(name = "order_id")
     private Integer order;
 
     @Column(name = "total_price", nullable = false)
@@ -41,6 +41,6 @@ public class Payment {
     private Timestamp updatedAt;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "order_id", nullable = false, insertable = false, updatable = false)
     private Order paymentOrder;
 }

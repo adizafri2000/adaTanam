@@ -1,10 +1,10 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import { TextField, Button, Box, Typography, useTheme } from '@mui/material';
-import auth from '../services/auth';
-import UserContext from "../contexts/UserContext.jsx";
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Importing Link and useNavigate for React Router v6
 import { toast } from 'react-toastify';
 import CircularProgress from "@mui/material/CircularProgress";
+import UserContext from "../contexts/UserContext";
+import auth from '../services/auth';
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
@@ -15,20 +15,18 @@ const LoginForm = () => {
     const navigate = useNavigate();
 
     const clearInput = () => {
-        setEmail('')
-        setPassword('')
-    }
+        setEmail('');
+        setPassword('');
+    };
 
     const loginHandler = async (event) => {
         event.preventDefault();
         setLoading(true);
         try {
-            console.log('accessing API')
             const response = await auth.login({
                 email,
                 password,
             });
-            console.log('response: ', response)
             const user = {
                 email: email,
                 name: response.data.accountName,
@@ -37,19 +35,18 @@ const LoginForm = () => {
                 accessToken: response.data.accessToken,
                 refreshToken: response.data.refreshToken,
                 image: response.data.accountImage
-            }
-            console.log('logged in user: ', user);
+            };
             await login(user.email, user.name, user.type, user.id, user.accessToken, user.refreshToken, user.image);
-            toast.success('Logged in successfully!');  // Add this line
-            navigate('/')
+            toast.success('Logged in successfully!');
+            navigate('/');
         } catch (error) {
-            console.log(error)
+            console.error(error);
             toast.error(error.message);
-            clearInput()
+            clearInput();
         } finally {
-            setLoading(false); // Set loading to false when the request is complete
+            setLoading(false);
         }
-    }
+    };
 
     return (
         <Box
@@ -87,16 +84,29 @@ const LoginForm = () => {
             <Button
                 variant="contained"
                 type="submit"
-                disabled={loading} // Disable the button when loading
+                disabled={loading}
                 sx={{
-                    backgroundColor: theme.palette.primary.main, // primary color for button
-                    color: '#FFFFFF', // white color for button text
-                    padding: '10px 20px', // Adjust padding to make the button design decent
-                    borderRadius: '10px', // Adjust border radius for a softer look
+                    backgroundColor: theme.palette.primary.main,
+                    color: '#FFFFFF',
+                    padding: '10px 20px',
+                    borderRadius: '10px',
                 }}
             >
                 {loading ? <CircularProgress size={24} /> : 'Login'}
             </Button>
+            <Button
+                component={RouterLink}
+                to="/change-password"
+                variant="text"
+                sx={{
+                    textDecoration: 'underline',
+                    alignSelf: 'center', // Align text to the middle vertically
+                    color: theme.palette.primary.main,
+                }}
+            >
+                Forgot Password?
+            </Button>
+
         </Box>
     );
 };

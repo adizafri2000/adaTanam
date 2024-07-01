@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, memo} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, Typography, Grid, Button, TextField, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import accountService from '../services/account';
@@ -164,7 +164,7 @@ const SecondRow = ({ isEditing, email, phone, bankNumber, bankName, type, isActi
     </Grid>
 );
 
-const ThirdRow = (({ isEditing, formValid, handleCancelSubmit, setIsEditing, handleSubmit, fileError }) => (
+const ThirdRow = ({ isEditing, formValid, handleCancelSubmit, setIsEditing, handleSubmit, fileError }) => (
     <Grid container spacing={2} direction="row" wrap="wrap" sx={{ padding: '10px', width: '100%' }}>
         <GridItem item xs={12}>
             {isEditing ? (
@@ -187,6 +187,16 @@ const ThirdRow = (({ isEditing, formValid, handleCancelSubmit, setIsEditing, han
                     >
                         Cancel
                     </Button>
+                    <Button
+                        variant="contained"
+                        component='a'
+                        href='/forgot-password'
+                        sx={{
+                            marginLeft: '10px'
+                        }}
+                    >
+                        Edit Password
+                    </Button>
                 </>
             ) : (
                 <Button
@@ -200,7 +210,7 @@ const ThirdRow = (({ isEditing, formValid, handleCancelSubmit, setIsEditing, han
             )}
         </GridItem>
     </Grid>
-));
+);
 
 const ProfileMainCard = ({ user, userFromContext, updateUserContext }) => {
     const [currentUser, setCurrentUser] = useState(user);
@@ -249,7 +259,6 @@ const ProfileMainCard = ({ user, userFromContext, updateUserContext }) => {
             }
         }
     }, []);
-
 
     const handleInputChange = useCallback((event, field) => {
         const value = event.target.value;
@@ -358,6 +367,7 @@ const ProfileMainCard = ({ user, userFromContext, updateUserContext }) => {
                         handleCancelSubmit={handleCancelSubmit}
                         setIsEditing={setIsEditing}
                         handleSubmit={handleSubmit}
+                        fileError={fileError}
                     />
                 </Grid>
             </CardContent>
@@ -366,4 +376,3 @@ const ProfileMainCard = ({ user, userFromContext, updateUserContext }) => {
 };
 
 export default ProfileMainCard;
-

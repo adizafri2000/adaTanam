@@ -27,6 +27,8 @@ import ConfirmationPage from "./pages/ConfirmationPage.jsx";
 import StoreOrdersPage from "./pages/StoreOrdersPage.jsx";
 import StoreListPage from "./pages/StoreListPage.jsx";
 import DetailedStorePage from "./pages/DetailedStorePage.jsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 
 const App = () => {
     const theme = createTheme({
@@ -85,6 +87,8 @@ const App = () => {
                             <Route path="profile/update-password" element={<UpdatePasswordPage />} />
                             <Route path="search" element={<SearchResultsPage />} />
                             <Route path="confirm-account" element={<ConfirmationPage />} />
+                            <Route path="change-password" element={<ForgotPasswordPage />} />
+                            <Route path="reset-password" element={<ResetPasswordPage />} />
 
                             {/*farmer routes*/}
                             <Route path="store" element={<StorePage />} />
