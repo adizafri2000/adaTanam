@@ -50,7 +50,7 @@ public class ProduceServiceImpl implements ProduceService {
     @Override
     public List<ProduceResponseDTO> getProducesByName(String query){
         log.info("Getting produce by name: {}", query);
-        return produceRepository.findByNameContaining(query).stream().map(produceMapper::toResponseDTO).toList();
+        return produceRepository.findByNameContainingIgnoreCase(query).stream().map(produceMapper::toResponseDTO).toList();
     }
 
     @Override
