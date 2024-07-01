@@ -190,7 +190,7 @@ const ThirdRow = ({ isEditing, formValid, handleCancelSubmit, setIsEditing, hand
                     <Button
                         variant="contained"
                         component='a'
-                        href='/forgot-password'
+                        href='/change-password'
                         sx={{
                             marginLeft: '10px'
                         }}

@@ -50,7 +50,7 @@ const resetPassword = async (token, data) => {
     try {
         return await api.post(`${baseURL}/reset-password`, data, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `${token}`
             }
         });
     } catch (error) {

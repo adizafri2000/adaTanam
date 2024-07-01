@@ -17,14 +17,6 @@
         a. Stars
         b. Word comment
         c. both a & b are mandatory to submit for ratings
-12. implement password change functionality and account confirmation
-    12.1 backend probably done
-    12.2 frontend
-        a. create a PasswordResetRequestForm component accessible via /change-password
-        b. login page, add Forgot Password button that navigates to /change-password
-        c. in Profile page, add a Change Password button that goes to /change-password
-        d. create a landing page accessible via /reset-password?token. render a reset password form with two fields, new password and password confirmation
-        e. upon submit, make necessary API requests (API/auth/reset-password) and toast.success for successully changed password. navigate user to '/'
 13. implement store edit details functionality (tak sempat)
 16. integration with Azure maps
     16.1 fetch credentials from Azure

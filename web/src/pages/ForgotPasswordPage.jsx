@@ -50,7 +50,7 @@ const ForgotPasswordPage = () => {
             }}
         >
             <Typography variant="h4" component="h2" align='center'>
-                Forgot Password
+                Password Change Request
             </Typography>
             <Typography variant="body1" align='center'>
                 Please enter your registered email address
