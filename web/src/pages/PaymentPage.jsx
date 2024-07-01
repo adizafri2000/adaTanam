@@ -1,5 +1,5 @@
-import React, {useContext, useEffect, useState} from "react";
-import {useNavigate} from 'react-router-dom';
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import UserContext from "../contexts/UserContext.jsx";
 import CircularProgress from "@mui/material/CircularProgress";
 import {
@@ -9,7 +9,7 @@ import {
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle, Divider,
+    DialogTitle,
     Paper,
     Table,
     TableBody,
@@ -21,15 +21,22 @@ import {
     Typography,
     List,
     ListItem,
-    ListItemText
+    ListItemText,
+    MenuItem,
+    Select,
+    FormControl,
+    InputLabel,
+    Divider
 } from '@mui/material';
 import cartService from "../services/cart.jsx";
-import {useConsumerCheck} from "../hooks/useConsumerCheck.jsx";
-import {toast} from "react-toastify";
+import { useConsumerCheck } from "../hooks/useConsumerCheck.jsx";
+import { toast } from "react-toastify";
 import storeService from "../services/store.jsx";
 import accountService from "../services/account.jsx";
+import orderService from "../services/order.jsx";
+import paymentService from "../services/payment.jsx";
 
-const StoreInformation = ({ storeList }) => (
+const StoreInformation = ({ storeList, farmerList }) => (
     <Box mt={3}>
         <Typography variant="h6">Store Information</Typography>
         {storeList.length > 0 ? (
@@ -40,7 +47,7 @@ const StoreInformation = ({ storeList }) => (
                             <ListItemText primary={`Store Name: ${store.name}`} />
                         </ListItem>
                         <ListItem>
-                            <ListItemText secondary={`Farmer Phone Number: ${store.phone}`} />
+                            <ListItemText secondary={`Farmer Phone Number: ${farmerList[index].phone}`} />
                         </ListItem>
                         <ListItem>
                             <ListItemText secondary={`Location: ${store.latitude}, ${store.longitude}`} />
@@ -68,23 +75,23 @@ const PaymentPage = () => {
     const [pickupDateTime, setPickupDateTime] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('');
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const [processingOrder, setProcessingOrder] = useState(false); // State to manage processing order
     const navigate = useNavigate();
     useConsumerCheck();
 
     useEffect(() => {
         const fetchCartItems = async () => {
-            // setIsLoading(true);
             let results;
             try {
                 const response = await cartService.getCartItems(user.cart);
                 setCartItems(response.data);
-                results = response.data
+                results = response.data;
             } catch (error) {
                 console.log("Error fetching cart items:", error);
-            } finally {
-                return results;
             }
+            return results;
         };
+
         const getDistinctStoreIds = (cartItems) => {
             const storeIds = cartItems.reduce((ids, item) => {
                 if (!ids.includes(item.storeId)) {
@@ -98,7 +105,6 @@ const PaymentPage = () => {
 
         const getRelevantStoreDetails = async (cartitems) => {
             const storeIds = getDistinctStoreIds(cartitems);
-            console.log('all distinct store IDs: ', storeIds)
             return await Promise.all(
                 storeIds.map(async (storeId) => {
                     const response = await storeService.getById(storeId);
@@ -109,10 +115,10 @@ const PaymentPage = () => {
 
         const setStoreDetails = async (cartitems) => {
             const details = await getRelevantStoreDetails(cartitems);
-            console.log('all disticnt stores: ', details)
             setStoreList(details);
             return details;
-        }
+        };
+
         const fetchFarmerDetails = async (stores) => {
             return await Promise.all(
                 stores.map(async (store) => {
@@ -120,33 +126,88 @@ const PaymentPage = () => {
                     return response.data;
                 })
             );
-        }
+        };
 
         const setFarmerDetails = async (stores) => {
             const details = await fetchFarmerDetails(stores);
-            console.log('all distinct farmers: ', details)
             setFarmerList(details);
             return details;
-        }
+        };
 
         const fetchAllDetails = async () => {
-            setIsLoading(true)
+            setIsLoading(true);
             const cartItemList = await fetchCartItems();
             const storeDetailsList = await setStoreDetails(cartItemList);
             const farmerDetailsList = await setFarmerDetails(storeDetailsList);
-            setIsLoading(false)
-        }
+            setIsLoading(false);
+        };
 
         if (!loading) {
             fetchAllDetails();
         }
     }, [loading, user]);
 
-    const handleConfirmPayment = () => {
-        // Placeholder function for confirming payment
-        // Implement your payment confirmation logic here
-        toast.success('Payment confirmed!');
-        navigate('/confirmation'); // Assuming '/confirmation' is the path for the confirmation page
+    const handleConfirmPayment = async () => {
+        if (!pickupDateTime || !paymentMethod) {
+            toast.error('Please fill in all required fields.');
+            return;
+        }
+
+        try {
+            setProcessingOrder(true); // Show processing order dialog
+
+            // Iterate over each store to create individual order records
+            for (const store of storeList) {
+                // Prepare order data
+                const orderData = {
+                    account: user.id,
+                    store: store.id,
+                    cart: user.cart,
+                    orderTimestamp: new Date().toISOString(),
+                    pickup: new Date(pickupDateTime).toISOString(),
+                    isCompleted: false,
+                    completedTimestamp: null,
+                    status: "Pending"
+                };
+
+                const orderResponse = await orderService.create(user.accessToken, orderData);
+                const orderResult = orderResponse.data;
+                const orderId = orderResult.id;
+
+                // Prepare payment data
+                const paymentData = {
+                    orderId: orderId,
+                    totalPrice: cartItems.reduce((total, item) => {
+                        if (item.storeId === store.id) {
+                            return total + (item.produceUnitPrice * item.cartItemQuantity);
+                        }
+                        return total;
+                    }, 0),
+                    paymentTimestamp: new Date().toISOString(),
+                    method: paymentMethod
+                };
+
+                const paymentResponse = await paymentService.create(user.accessToken, paymentData);
+
+                // Update cart to set isActive to false
+                const cartUpdateData = {
+                    isActive: false,
+                    account: user.id
+                };
+
+                await cartService.update(user.accessToken, user.cart, cartUpdateData);
+            }
+
+            toast.success('Payment confirmed!');
+            navigate('/'); // Navigate to confirmation page
+
+            setConfirmDialogOpen(false); // Close confirmation dialog after successful payment
+        } catch (error) {
+            console.error('Error confirming payment:', error);
+            toast.error('Failed to confirm payment. Please try again later.');
+        } finally {
+            setProcessingOrder(false); // Hide processing order dialog after processing
+        }
     };
 
     if (isLoading || loading) return <CircularProgress />;
@@ -199,28 +260,7 @@ const PaymentPage = () => {
             </TableContainer>
 
             {/* Store location, farmer's name, phone no */}
-            {StoreInformation({ storeList })}
-            {/*<Box mt={3}>*/}
-            {/*    <Typography variant="h6">Store Information</Typography>*/}
-            {/*    {storeList.map((store, index) => (*/}
-            {/*        <div key={index}>*/}
-            {/*            <Typography variant="body1">Store's Name: {store.name}</Typography>*/}
-            {/*            <Typography variant="body1">Farmer Phone Number: {farmerList[index].phone}</Typography>*/}
-            {/*            <Typography variant="body1">Location: {`${store.latitude}, ${store.longitude}`}</Typography>*/}
-            {/*            {index !== storeList.length - 1 && <Divider />} /!* Add a divider between items *!/*/}
-            {/*        </div>*/}
-            {/*    ))}*/}
-            {/*    {storeList.length === 0 && (*/}
-            {/*        <>*/}
-            {/*            <Typography variant="body1">Store's Name: Loading...</Typography>*/}
-            {/*            <Typography variant="body1">Farmer Phone Number: Loading...</Typography>*/}
-            {/*            <Typography variant="body1">Location: Loading...</Typography>*/}
-            {/*        </>*/}
-            {/*    )}*/}
-            {/*</Box>*/}
-
-
-
+            {storeList.length > 0 && <StoreInformation storeList={storeList} farmerList={farmerList} />}
 
             {/* Input for pickup date and time */}
             <Box mt={3}>
@@ -230,6 +270,7 @@ const PaymentPage = () => {
                     type="datetime-local"
                     value={pickupDateTime}
                     onChange={(e) => setPickupDateTime(e.target.value)}
+                    required
                     InputLabelProps={{
                         shrink: true,
                     }}
@@ -239,13 +280,19 @@ const PaymentPage = () => {
 
             {/* Input for payment method */}
             <Box mt={3}>
-                <TextField
-                    id="payment-method"
-                    label="Payment Method"
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    fullWidth
-                />
+                <FormControl fullWidth>
+                    <InputLabel id="payment-method-label">Payment Method</InputLabel>
+                    <Select
+                        labelId="payment-method-label"
+                        id="payment-method"
+                        value={paymentMethod}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        required
+                    >
+                        <MenuItem value="cash">Cash</MenuItem>
+                        <MenuItem value="online">Online Transfer</MenuItem>
+                    </Select>
+                </FormControl>
             </Box>
 
             {/* Button to confirm payment */}
@@ -254,10 +301,30 @@ const PaymentPage = () => {
                     variant="contained"
                     color="primary"
                     onClick={() => setConfirmDialogOpen(true)}
+                    disabled={!pickupDateTime || !paymentMethod}
                 >
                     Confirm Payment
                 </Button>
             </Box>
+
+            {/* Processing Order Dialog */}
+            <Dialog
+                open={processingOrder}
+                disableBackdropClick
+                disableEscapeKeyDown
+                aria-labelledby="processing-order-dialog-title"
+                aria-describedby="processing-order-dialog-description"
+            >
+                <DialogTitle id="processing-order-dialog-title">Processing Order...</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="processing-order-dialog-description">
+                        Please wait while we process your order.
+                    </DialogContentText>
+                    <Box display="flex" justifyContent="center">
+                        <CircularProgress />
+                    </Box>
+                </DialogContent>
+            </Dialog>
 
             {/* Confirmation Dialog */}
             <Dialog

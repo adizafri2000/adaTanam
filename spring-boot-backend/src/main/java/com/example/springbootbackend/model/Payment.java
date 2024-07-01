@@ -21,7 +21,8 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
+    @Column(name="order_id")
     private Integer order;
 
     @Column(name = "total_price", nullable = false)
