@@ -16,6 +16,7 @@
     "@mui/material": "^5.15.19",
     "@mui/system": "^5.15.20",
     "axios": "^1.6.8",
+    "azure-maps-control": "^3.1.2",
     "dotenv": "^16.4.5",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",

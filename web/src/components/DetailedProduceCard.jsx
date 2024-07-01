@@ -15,6 +15,8 @@ const DetailedProduceCard = ({ produce }) => {
     const [error, setError] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [outOfStock, setOutOfStock] = useState(false)
     const navigate = useNavigate();
 
     const handleIncrement = () => {
@@ -202,6 +204,11 @@ const DetailedProduceCard = ({ produce }) => {
                         />
                     </Box>
                 )}
+                {!(produce.ratingScore !== 0) && (
+                    <Typography variant="body2" color="text.secondary">
+                        Rating: {produce.ratingScore}/5.00 ({produce.ratingCount} reviews)
+                    </Typography>
+                )}
                 {(!user || user.type !== 'Farmer') && (
                     <Grid container spacing={1} alignItems="center" style={{ marginTop: '10px' }}>
                         <Grid item>
@@ -236,10 +243,13 @@ const DetailedProduceCard = ({ produce }) => {
                         color="primary"
                         onClick={handleAddToCart}
                         style={{ marginTop: '10px' }}
-                        disabled={(produce.status && produce.status.toLowerCase() === 'not available') || isLoading}
+                        disabled={(produce.status && produce.status.toLowerCase() === 'out of stock') || isLoading}
                     >
                         {isLoading ? <CircularProgress size={24} /> : 'Add to Cart'}
                     </Button>
+                )}
+                {produce.status === 'out of stock' && (
+                    <p style={{ color: 'red', marginLeft: '5px' }}> (Produce is out of stock)</p>
                 )}
                 {daysSinceUpdate > 5 && (
                     <Typography variant="body2" color="error" style={{ marginTop: '10px' }}>
@@ -258,8 +268,8 @@ const DetailedProduceCard = ({ produce }) => {
                         {daysSinceUpdate > 5 &&
                             `This produce has been in the system for ${Math.floor(daysSinceUpdate)} days.`
                         }
-                        {produce.status && produce.status.toLowerCase() === 'pending for harvest' &&
-                            `This produce is marked as 'Pending for Harvest'. While the farmer may had predicted the 
+                        {produce.status && produce.status.toLowerCase() === 'pending harvest' &&
+                            `This produce is marked as 'Pending Harvest'. While the farmer may had predicted the 
                             produce total upon harvest, there may still be risks such as produce becoming bad and 
                             unfit for sale.`
                         }

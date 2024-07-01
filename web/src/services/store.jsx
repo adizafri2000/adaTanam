@@ -37,7 +37,14 @@ const create = async (token, data) => {
     } catch (error) {
         throw error.response.data;
     }
-
 }
 
-export default { getAll, getById, getByFarmer, create };
+const getTopStores = async () => {
+    try {
+        return await api.get(`${baseUrl}?topRated=true`);
+    } catch (error) {
+        throw error.response.data;
+    }
+}
+
+export default { getAll, getById, getByFarmer, create, getTopStores };

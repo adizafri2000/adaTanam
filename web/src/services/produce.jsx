@@ -50,4 +50,31 @@ const create = async (token, data, imageFile) => {
     }
 }
 
-export default { getAll, getById, getByStore, create };
+const getTopProduce = async () => {
+    try {
+        return await api.get(`${baseURL}?topRated=true`);
+    } catch (error) {
+        console.error('Error fetching top produce:', error);
+        throw error.response.data;
+    }
+};
+
+const getLatestProduce = async () => {
+    try {
+        return await api.get(`${baseURL}?latestUpdated=true`);
+    } catch (error) {
+        console.error('Error fetching latest produce:', error);
+        throw error.response.data;
+    }
+};
+
+const getLatestCreatedProduce = async () => {
+    try {
+        return await api.get(`${baseURL}?latestCreated=true`);
+    } catch (error) {
+        console.error('Error fetching latest produce:', error);
+        throw error.response.data;
+    }
+};
+
+export default { getAll, getById, getByStore, create,getTopProduce,getLatestProduce, getLatestCreatedProduce };

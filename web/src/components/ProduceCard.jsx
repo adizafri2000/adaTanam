@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, CardContent, Typography, CardMedia } from '@mui/material';
+import { Card, CardContent, Typography, CardMedia, Box } from '@mui/material';
 import { NavLink } from 'react-router-dom';
+import Rating from '@mui/material/Rating';
 
 const ProduceCard = ({ produce }) => {
     return (
@@ -31,6 +32,25 @@ const ProduceCard = ({ produce }) => {
                     {produce.description && (
                         <Typography variant="body2" color="text.secondary">
                             Description: {produce.description}
+                        </Typography>
+                    )}
+                    {(produce.ratingScore !== 0) && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                Rating: {parseFloat(produce.ratingScore).toFixed(2)} ({produce.ratingCount} reviews)
+                            </Typography>
+                            <Rating
+                                name={`rating-${produce.id}`}
+                                value={parseFloat(produce.ratingScore)}
+                                precision={0.1}
+                                readOnly
+                                sx={{ ml: 1 }}
+                            />
+                        </Box>
+                    )}
+                    {!(produce.ratingScore !== 0) && (
+                        <Typography variant="body2" color="text.secondary">
+                            Rating: {produce.ratingScore}/5.00 ({produce.ratingCount} reviews)
                         </Typography>
                     )}
                 </CardContent>

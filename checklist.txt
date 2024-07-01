@@ -1,5 +1,4 @@
 3. ensure all list renders include object key via id
-4. design store details page to contain the store details, the farmer details, the produce list
 8. implement payment page
     8.1 when user clicks on checkout button, navigate to /payment
     8.2 show all items in user's cart
@@ -26,26 +25,13 @@
         c. in Profile page, add a Change Password button that goes to /change-password
         d. create a landing page accessible via /reset-password?token. render a reset password form with two fields, new password and password confirmation
         e. upon submit, make necessary API requests (API/auth/reset-password) and toast.success for successully changed password. navigate user to '/'
-13. implement store edit details functionality
-14. Add store ratings to StoreDetailsCard in the Store Page, as well as the storeCard.
-    14.4 If the ratingScore is 0 on API response, display 'No ratings yet' for store
-15. for every produce based card, ensure last updated shown
-    15.1 if greater than 5 days since last update (assuming added to store), add text to warn produce has been added to store 5 or more days
-    15.2 if user decides to add to cart, warn them. upon proceeding, then only remove the warning and proceed normally. just do component-level state checks on DetailedProduceCard
-    15.3 no need to implement in cart page
+13. implement store edit details functionality (tak sempat)
 16. integration with Azure maps
     16.1 fetch credentials from Azure
     16.2 create sample map component on frontend
     16.3 implement necessary backend APIs
     16.4 integrate
-17. add ratings score similar to 14 for produce. Show in DetailedProduceCard and ProduceCard
-    17.4 If the ratingScore is 0 on API response, display 'No ratings yet' for store
+17. add ratings score similar to 14 for produce. Show in DetailedProduceCard and ProduceCard (tak sempat)
     17.5 display '{totalSold} unit(s) sold'
-17. Implement home page
-    a. Top rated stores - give 5 producecard
-    b. New arrivals - give 5 produceCard maximum, where today timestamp is less than 2 days from createdAt
-    c. Top rated produce - give 5 producecard
-    c. Categories
-        i. Fruits - give 5 ProduceCard
-        ii. Veggies - Give 5 ProduceCard
+
     

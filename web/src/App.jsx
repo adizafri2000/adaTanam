@@ -25,6 +25,8 @@ import PaymentPage from './pages/PaymentPage.jsx';
 import ProduceListPage from './pages/ProduceListPage.jsx';
 import ConfirmationPage from "./pages/ConfirmationPage.jsx";
 import StoreOrdersPage from "./pages/StoreOrdersPage.jsx";
+import StoreListPage from "./pages/StoreListPage.jsx";
+import DetailedStorePage from "./pages/DetailedStorePage.jsx";
 
 const App = () => {
     const theme = createTheme({
@@ -75,22 +77,30 @@ const App = () => {
                 <Router>
                     <Routes>
                         <Route element={<Layout />}>
+                            {/*general routes*/}
                             <Route index element={<HomePage />} />
                             <Route path="login" element={<LoginPage />} />
                             <Route path="signup" element={<SignUpPage />} />
                             <Route path="profile" element={<ProfilePage />} />
                             <Route path="profile/update-password" element={<UpdatePasswordPage />} />
                             <Route path="search" element={<SearchResultsPage />} />
+                            <Route path="confirm-account" element={<ConfirmationPage />} />
+
+                            {/*farmer routes*/}
                             <Route path="store" element={<StorePage />} />
                             <Route path="store/create-store" element={<CreateStorePage />} />
                             <Route path="store/create-produce" element={<CreateProducePage />} />
                             <Route path="store/orders" element={<StoreOrdersPage />} />
+
+                            {/*consumer routes*/}
                             <Route path="produce" element={<ProduceListPage />} />
                             <Route path="produce/:id" element={<DetailedProducePage />} />
+                            <Route path="stores" element={<StoreListPage />} />
+                            <Route path="stores/:id" element={<DetailedStorePage />} />
                             <Route path="cart" element={<CartPage />} />
                             <Route path="orders" element={<OrderHistoryPage />} />
                             <Route path="payment" element={<PaymentPage />} />
-                            <Route path="confirm-account" element={<ConfirmationPage />} />
+
                             <Route path='*' element={<NotFound />} />
                         </Route>
                     </Routes>
