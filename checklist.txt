@@ -1,14 +1,3 @@
-3. ensure all list renders include object key via id
-8. implement payment page
-    8.1 when user clicks on checkout button, navigate to /payment
-    8.2 show all items in user's cart
-        a. in table form
-        b. each row should show the produce name, quantity, price, and total price
-        c. show total price of all items in cart
-    8.3 show the store location, farmer's name, phone no
-    8.4 input for user to set pickup date and time
-    8.5 input for user to set payment method
-    8.x show button to confirm payment, after click, make necessary API requests and some loading time, then navigate to /orders and toast.success for successully placed order
 9. implement orders page
     9.1 show all of user's orders in history
     9.2 each row should show the store name, produce name, quantity, price, total price, pickup date and time, and status
