@@ -9,5 +9,6 @@ public record AccountResponseDTO(
         String bankName,
         String image,
         String type,
-        Boolean isActive
+        Boolean isActive,
+        Boolean isActivated
 ) {}

@@ -1,33 +1,34 @@
-import React, {useContext, useState, useEffect} from 'react';
-import produceService from '../services/produce';
-import {Button} from '@mui/material';
-import CircularIndeterminate from '../components/CircularIndeterminate';
+import React, { useContext } from 'react';
+import {Box, Divider, Typography} from '@mui/material';
 import UserContext from "../contexts/UserContext.jsx";
+import TopStoresSection from '../components/TopStoresSection.jsx';
+import TopProduceSection from "../components/TopProduceSection.jsx";
+import NewArrivalsSection from "../components/NewArrivalsSection.jsx";
 
 const HomePage = () => {
-    const [produceList, setProduceList] = useState([]);
-    const [isButtonClicked, setIsButtonClicked] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const { user } = useContext(UserContext);
 
-    const handleClick = async () => {
-        setIsButtonClicked(true);
-        setIsLoading(true);
-        const result = await produceService.getAll();console.log('debug homepage: ', result);
-        setProduceList(result.data);
-        setIsLoading(false);
-    };
-
-    useEffect(() => {
-        console.log('Homepage debug, User: ', user);
-    }, [user]);
-
     return (
-        <>
-            {user && <div>Welcome, {user.name}!</div>}
-            <Button variant='contained' color='secondary' size='small' onClick={handleClick}>Load Produce</Button>
-            {isLoading ? <CircularIndeterminate/> : isButtonClicked && produceList.map(produce => <div key={produce.id}>{produce.name}</div>)}
-        </>
+        <Box>
+            {user && (
+                <Typography variant="h6" gutterBottom>
+                    Welcome, {user.name}!
+                </Typography>
+            )}
+
+            <Box mt={4} mb={4}>
+                <TopStoresSection />
+            </Box>
+            <Divider sx={{ my: 2 }} />
+            <Box mt={4} mb={4}>
+                <TopProduceSection />
+            </Box>
+            <Divider sx={{ my: 2 }} />
+            <Box mt={4} mb={4}>
+                <NewArrivalsSection />
+            </Box>
+            <Divider sx={{ my: 2 }} />
+        </Box>
     );
 };
 

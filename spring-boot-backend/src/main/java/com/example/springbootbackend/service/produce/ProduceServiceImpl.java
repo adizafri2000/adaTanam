@@ -1,6 +1,7 @@
 package com.example.springbootbackend.service.produce;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.example.springbootbackend.repository.AccountRepository;
 import com.example.springbootbackend.service.BlobStorageService;
@@ -47,11 +48,41 @@ public class ProduceServiceImpl implements ProduceService {
     }
 
     @Override
+    public List<ProduceResponseDTO> getProducesByName(String query){
+        log.info("Getting produce by name: {}", query);
+        return produceRepository.findByNameContainingIgnoreCase(query).stream().map(produceMapper::toResponseDTO).toList();
+    }
+
+    @Override
     public ProduceResponseDTO getProduceById(Integer id) {
         log.info("Getting produce with id: {}", id);
         return produceRepository.findById(id).map(produceMapper::toResponseDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Produce not found with id " + id));
     }
+
+    @Override
+    public List<ProduceResponseDTO> getTopRatedProduces() {
+        log.info("Getting top rated produce");
+
+        // Fetch the top 5 produces ordered by ratingScore in descending order
+        return produceRepository.findTop5ByOrderByRatingScoreDesc().stream()
+                // Filter out produces where ratingCount is null or 0
+                .filter(produce -> produce.getRatingCount() != null && produce.getRatingCount() > 0)
+                // Map the remaining produces to ProduceResponseDTO
+                .map(produceMapper::toResponseDTO)
+                // Collect the results into a list
+                .collect(Collectors.toList());
+    }
+
+    public List<ProduceResponseDTO> getLatestCreatedProduces(){
+        log.info("Getting latest created produce");
+        return produceRepository.findTop5ByOrderByCreatedAtDesc().stream().map(produceMapper::toResponseDTO).toList();
+    }
+    public List<ProduceResponseDTO> getLatestUpdatedProduces(){
+        log.info("Getting latest updated produce");
+        return produceRepository.findTop5ByOrderByUpdatedAtDesc().stream().map(produceMapper::toResponseDTO).toList();
+    }
+
 
     @Override
     public ProduceResponseDTO createProduce(ProduceRequestDTO produce, String token, MultipartFile image) {

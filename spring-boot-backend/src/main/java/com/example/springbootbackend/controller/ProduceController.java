@@ -29,11 +29,22 @@ public class ProduceController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ProduceResponseDTO>> getAllProduce(@RequestParam(required = false) Integer storeId) {
+    public ResponseEntity<List<ProduceResponseDTO>> getAllProduce(
+            @RequestParam(required = false) Integer storeId,
+            @RequestParam(required = false) Boolean topRated,
+            @RequestParam(required = false) Boolean latestCreated,
+            @RequestParam(required = false) Boolean latestUpdated
+    ) {
         log.info("Handling GET /produce request");
         List<ProduceResponseDTO> produceList;
         if (storeId != null) {
             produceList = produceService.getProduceByStore(storeId);
+        } else if (topRated != null && topRated){
+            produceList = produceService.getTopRatedProduces();
+        } else if (latestCreated != null && latestCreated){
+            produceList = produceService.getLatestCreatedProduces();
+        } else if (latestUpdated != null && latestUpdated){
+            produceList = produceService.getLatestUpdatedProduces();
         } else {
             produceList = produceService.getProduces();
         }

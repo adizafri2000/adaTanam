@@ -1,8 +1,6 @@
 spring:
   application:
     name: spring-boot-backend
-#  profiles:
-#    active: dev
   datasource:
     url: ${DB_JDBC}
     username: ${DB_USERNAME}
@@ -25,10 +23,27 @@ spring:
       storage:
         blob:
           account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
-#          endpoint: ${AZURE_STORAGE_ACCOUNT_ENDPOINT}
           account-key: ${AZURE_STORAGE_KEY}
           connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
           container-name:  ${AZURE_STORAGE_CONTAINER_NAME}
+  mail:
+    host: ${EMAIL_HOST}
+    port: ${EMAIL_PORT}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: ${EMAIL_HOST}
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    protocol: smtp
 management:
   server:
     port: ${ACTUATOR_PORT}
@@ -47,3 +62,5 @@ security:
     secret-key: ${JWT_SECRET}
     expiration-time: ${JWT_EXPIRATION}
     refresh-expiration-time: ${JWT_REFRESH_EXPIRATION}
+    password-reset-expiration-time: ${JWT_PASSWORD_RESET_EXPIRATION}
+    confirmation-expiration-time: ${JWT_CONFIRMATION_EXPIRATION}

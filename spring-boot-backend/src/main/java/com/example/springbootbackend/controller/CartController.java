@@ -25,7 +25,7 @@ public class CartController {
     }
 
     @GetMapping("")
-    public List<CartResponseDTO> getAllCarts(){
+    public List<CartResponseDTO> getAllCarts() {
         log.info("Handling GET /carts request");
         return cartService.getCarts();
     }
@@ -37,8 +37,12 @@ public class CartController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createCart(@RequestBody CartRequestDTO cart) {
+    public ResponseEntity<?> createCart(@RequestHeader("Authorization") String token, @RequestBody CartRequestDTO cart) {
         log.info("Handling POST /carts request");
+        if (!tokenService.validateToken(token)) {
+            RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<>(cartService.createCart(cart), HttpStatus.CREATED);
     }
 

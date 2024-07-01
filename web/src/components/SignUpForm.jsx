@@ -3,6 +3,7 @@ import auth from "../services/auth";
 import CircularIndeterminate from "./CircularIndeterminate";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography, useTheme, MenuItem } from '@mui/material';
+import {toast} from "react-toastify";
 
 const SignUpForm = ({style}) => {
 
@@ -41,13 +42,15 @@ const SignUpForm = ({style}) => {
                 throw new Error(response.data.message);
             }
             setIsLoading(false)
-            window.alert('Signup successful! Navigating to login')
+            // window.alert('Signup successful! Please check your email for account confirmation link.')
+            toast.success('Signup successful! Please check your email for account confirmation link.')
             clearForm()
             navigate("/login")
         } catch (error) {
             setIsLoading(false)
             console.log(error)
-            window.alert(error || 'Signup failed. Please try again.')
+            // window.alert(error || 'Signup failed. Please try again.')
+            toast.error(error || 'Signup failed. Please try again.')
         }
     }
 

@@ -2,16 +2,23 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import storeService from '../services/store.jsx';
 import cartService from '../services/cart.jsx';
-import { setRefreshToken as setRefreshTokenInApi } from '../services/api.jsx';
+import accountService from '../services/account.jsx';
+
 import {jwtDecode} from 'jwt-decode';
 const host = import.meta.env.VITE_API_URL
 
 const UserContext = React.createContext(null);
 
 export const UserProvider = ({ children }) => {
+
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    /**
+     * Retrieves store id for farmers and active cart id for consumers
+     * @param user
+     * @returns {Promise<{}>}
+     */
     const getExtraUserDetails = async (user) => {
         const result = {}
         try {
@@ -21,18 +28,20 @@ export const UserProvider = ({ children }) => {
                 result.store = response.data.id ? response.data.id : null;
             } else {
                 console.log('non-farmer user detected')
-                const response = await cartService.getByAccount(user.id);
+                const response = await accountService.getAccountActiveCart(user.id);
                 result.cart = response.data.id ? response.data.id : null;
             }
         } catch (error) {
-            if (error.status === 404) {
+            console.log('getExtraUserDetails encountered error: ', error)
+            if (error.status === '404') {
+                console.log('User does not have a store or cart')
                 if (user.type === 'Farmer') {
                     result.store = null;
                 } else {
                     result.cart = null;
                 }
             }
-        }
+        }console.log('returning result: ', result)
         return result;
     };
 
@@ -49,9 +58,11 @@ export const UserProvider = ({ children }) => {
         console.log('User Context, useEffect');
         const fetchUserData = async () => {
             const storedUser = localStorage.getItem('user');
+            console.log('useeffect of usercontext, just pulled user from local storage: ', storedUser)
             if (storedUser) {
                 const parsedUser = JSON.parse(storedUser);
                 setUser(parsedUser);
+                console.log('parsed user from local storage: ', parsedUser)
 
                 if (isTokenExpired(parsedUser.accessToken)) {
                     console.log('Token is expired');
@@ -62,7 +73,8 @@ export const UserProvider = ({ children }) => {
                         console.error('Failed to refresh token', error);
                         setUser(null);
                         localStorage.removeItem('user');
-                        window.location.href = '/login';
+                        console.log('removed user from local storage')
+                        // window.location.href = '/login';
                     }
                 } else {
                     console.log('Token is valid');
@@ -73,20 +85,40 @@ export const UserProvider = ({ children }) => {
         fetchUserData();
     }, []);
 
-    const login = async (email, name, type, id, accessToken, refreshToken) => {
-        const userDetails = {email, name, type, id, accessToken, refreshToken};
+    useEffect(() => {
+        console.log('triggering re-render on user update')
+    }, [user])
+
+    const login = async (email, name, type, id, accessToken, refreshToken, image) => {
+        const userDetails = {email, name, type, id, accessToken, refreshToken, image};
         const extraDetails = await getExtraUserDetails(userDetails);
         console.log('extraDetails: ', extraDetails)
         const fullDetails = { ...userDetails, ...extraDetails }; // Merge userDetails and extraDetails
         setUser(fullDetails);
         console.log('setting user to context after login: ', fullDetails);
         localStorage.setItem('user', JSON.stringify(fullDetails));
-        setRefreshTokenInApi(refreshAccessToken); // Set the refreshAccessToken function in the api module
     };
+
+    /**
+     * Update user details in global context to the state and local storage
+     * @param updatedUser
+     * @returns {Promise<void>}
+     */
+    const updateUserDetails = async (updatedUser) => {
+        console.log('user context will update user details with: ', updatedUser)
+        const updatedUserDetails = { ...user, ...updatedUser };
+        console.log('basic user update: ', updatedUserDetails)
+        const extraDetails = await getExtraUserDetails(updatedUserDetails);
+        const fullDetails = { ...updatedUserDetails, ...extraDetails };
+        console.log('updating user in global context to: ', fullDetails);
+        setUser(fullDetails)
+        localStorage.setItem('user', JSON.stringify(fullDetails));
+    }
 
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
+        console.log('removed user from local storage')
     };
 
     const isAuthenticated = () => {
@@ -107,13 +139,15 @@ export const UserProvider = ({ children }) => {
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));
             console.log('Token refreshed successfully');
+            return response.data;
         } catch (error) {
             console.error('Failed to refresh token', error);
+            throw error;
         }
     };
 
     return (
-        <UserContext.Provider value={{ user, login, logout, isAuthenticated, refreshAccessToken, loading }}>
+        <UserContext.Provider value={{ user, login, logout, isAuthenticated, refreshAccessToken, loading, getExtraUserDetails, updateUserDetails }}>
             {children}
         </UserContext.Provider>
     );

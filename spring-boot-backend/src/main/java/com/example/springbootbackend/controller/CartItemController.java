@@ -16,6 +16,7 @@ import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.RequestErrorDTO;
 import com.example.springbootbackend.dto.cartitem.CartItemRequestDTO;
 import com.example.springbootbackend.service.cartitem.CartItemService;
+import com.example.springbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +34,7 @@ public class CartItemController {
 
     @GetMapping("")
     public ResponseEntity<?> getCartItems(@RequestParam(required = false) Integer cartId, @RequestParam(required = false) Integer produceId){
-        log.info("Handling GET /cartitem request");
+        log.info("Handling GET /cartitems request");
         if (cartId == null && produceId == null) {
             log.info("Getting all cart items");
             return new ResponseEntity<>(cartItemService.getCartItems(), HttpStatus.OK);
@@ -45,7 +46,7 @@ public class CartItemController {
             }
             else if (produceId == null) {
                 log.info("Getting cart items by cart id: {}", cartId);
-                return new ResponseEntity<>(cartItemService.getCartItemByCart(cartId), HttpStatus.OK);
+                return new ResponseEntity<>(cartItemService.getCartItemDetailsByCartId(cartId), HttpStatus.OK);
             }
             else {
                 log.info("Getting cart item by cart id: {} and produce id: {}", cartId, produceId);
@@ -55,14 +56,18 @@ public class CartItemController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createCartItem(@RequestBody CartItemRequestDTO cartItemRequestDTO) {
-        log.info("Handling POST /cartitem request");
+    public ResponseEntity<?> createCartItem(@RequestHeader("Authorization") String token, @RequestBody CartItemRequestDTO cartItemRequestDTO) {
+        log.info("Handling POST /cartitems request");
+        if (!tokenService.validateToken(token)) {
+            RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<>(cartItemService.createCartItem(cartItemRequestDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("")
     public ResponseEntity<?> updateCartItem(@RequestParam Integer cartId, @RequestParam Integer produceId, @RequestBody CartItemRequestDTO cartItemRequestDTO, @RequestHeader("Authorization") String token) {
-        log.info("Handling PUT /cartitem request");
+        log.info("Handling PUT /cartitems request");
         if (!tokenService.validateToken(token)) {
             RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
@@ -72,7 +77,7 @@ public class CartItemController {
 
     @DeleteMapping("")
     public ResponseEntity<?> deleteCartItem(@RequestParam Integer cartId, @RequestParam Integer produceId, @RequestHeader("Authorization") String token) {
-        log.info("Handling DELETE /cartitem request");
+        log.info("Handling DELETE /cartitems request");
         if (!tokenService.validateToken(token)) {
             RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);

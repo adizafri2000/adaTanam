@@ -11,4 +11,13 @@ public interface ProduceRepository extends JpaRepository<Produce, Integer> {
 
     List<Produce> findByStore(Integer storeId);
 
+    // to get all produce by name
+    List<Produce> findByNameContainingIgnoreCase(String name);
+
+    List<Produce> findTop5ByOrderByRatingScoreDesc();
+
+    List<Produce> findTop5ByOrderByUpdatedAtDesc();
+
+    List<Produce> findTop5ByOrderByCreatedAtDesc();
+
 }

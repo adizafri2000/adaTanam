@@ -3,11 +3,11 @@ package com.example.springbootbackend.service.cartitem;
 import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.cartitem.CartItemRequestDTO;
 import com.example.springbootbackend.dto.cartitem.CartItemResponseDTO;
+import com.example.springbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
 import com.example.springbootbackend.exception.ResourceNotFoundException;
 import com.example.springbootbackend.mapper.CartItemMapper;
 import com.example.springbootbackend.model.CartItem;
 import com.example.springbootbackend.repository.CartItemRepository;
-import com.example.springbootbackend.utilities.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -53,15 +53,25 @@ public class CartItemServiceImpl implements CartItemService{
     }
 
     @Override
+    public List<CartItemDetailsResponseDTO> getCartItemDetailsByCartId(Integer cartId) {
+        log.info("Getting cart item details by cart id: {}", cartId);
+        List<CartItemDetailsResponseDTO> results = cartItemRepository.findCartItemDetailsByCartId(cartId);
+        log.info("Found {} cart items", results.size());
+        if(!results.isEmpty())
+            log.info("1st cart item: {}", results.get(0));
+        return results;
+    }
+
+    @Override
     public CartItemResponseDTO createCartItem(CartItemRequestDTO cartItemRequestDTO) {
         log.info("Creating cart item: {}", cartItemRequestDTO);
         CartItem newCartItem = cartItemMapper.toEntity(cartItemRequestDTO);
-        if (newCartItem.getCreatedAt() == null) {
-            newCartItem.setCreatedAt(Utils.setCurrentTimestamp());
-        }
-        if (newCartItem.getUpdatedAt() == null) {
-            newCartItem.setUpdatedAt(Utils.setCurrentTimestamp());
-        }
+//        if (newCartItem.getCreatedAt() == null) {
+//            newCartItem.setCreatedAt(Utils.setCurrentTimestamp());
+//        }
+//        if (newCartItem.getUpdatedAt() == null) {
+//            newCartItem.setUpdatedAt(Utils.setCurrentTimestamp());
+//        }
         return cartItemMapper.toResponseDTO(cartItemRepository.save(newCartItem));
     }
 
@@ -78,6 +88,8 @@ public class CartItemServiceImpl implements CartItemService{
         }
 
         cartItemToUpdate.setQuantity(cartItemRequestDTO.quantity());
+        cartItemToUpdate.setRating(cartItemRequestDTO.rating());
+        cartItemToUpdate.setReview(cartItemRequestDTO.review());
         return cartItemMapper.toResponseDTO(cartItemRepository.save(cartItemToUpdate));
     }
 

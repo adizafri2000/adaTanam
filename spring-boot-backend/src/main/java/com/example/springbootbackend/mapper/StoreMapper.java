@@ -10,18 +10,11 @@ import org.mapstruct.factory.Mappers;
 public interface StoreMapper {
     StoreMapper INSTANCE = Mappers.getMapper(StoreMapper.class);
 
-//    @Mapping(target = "location", expression = "java(new LocationDTO(store.getLocation().x, store.getLocation().y))")
     StoreResponseDTO toResponseDTO(Store store);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-//    @Mapping(target = "location", ignore = true)
     Store toEntity(StoreRequestDTO storeRequestDTORequestDTO);
 
-//    @BeforeMapping
-//    default void toEntityBeforeMapping(StoreRequestDTO storeRequestDTO, @MappingTarget Store store) {
-//        LocationDTO locationDTO = storeRequestDTO.location();
-//        store.setLocation(new PGpoint(locationDTO.x(), locationDTO.y()));
-//    }
 }

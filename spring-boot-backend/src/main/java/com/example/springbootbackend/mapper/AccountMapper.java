@@ -19,6 +19,7 @@ public interface AccountMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "passwordHash", ignore = true)
+    @Mapping(target = "isActivated", ignore = true)
     Account toEntity(AccountRequestDTO accountRequestDTO);
 
     // only for account signups
@@ -26,6 +27,7 @@ public interface AccountMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "passwordHash", source = "password")
+    @Mapping(target = "isActivated", ignore = true)
     Account toEntity(SignupRequestDTO signupRequestDTO);
 
 }

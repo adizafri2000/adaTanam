@@ -2,38 +2,17 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar.jsx';
 import { Box } from '@mui/material';
+import Footer from "./Footer.jsx";
 
 const Layout = () => {
 
-    const first = () => {
-        return(
-            <>
-                <Navbar />
-                <Box
-                    sx={{
-                        margin: '50px',
-                    }}
-                >
-                    <Outlet />
-                </Box>
-            </>
-        )
-    }
-
-    const second = () => {
-        return (
-            <>
-                <Navbar />
-                <div>
-                    <Outlet />
-                </div>
-            </>
-        )
-    }
-
     return (
         <div>
-            {first()}
+            <Navbar />
+            <Box sx={{ margin: '50px ', minHeight: 'calc(100vh - 150px)'}}>
+                <Outlet />
+            </Box>
+            <Footer />
         </div>
     );
 };

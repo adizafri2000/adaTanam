@@ -13,6 +13,10 @@ public interface ProduceService {
     public final static String PRODUCE_FOLDER_NAME = "produce-pictures";
     List<ProduceResponseDTO> getProduces();
     List<ProduceResponseDTO> getProduceByStore(Integer storeId);
+    List<ProduceResponseDTO> getProducesByName(String query);
+    List<ProduceResponseDTO> getTopRatedProduces();
+    List<ProduceResponseDTO> getLatestCreatedProduces();
+    List<ProduceResponseDTO> getLatestUpdatedProduces();
     ProduceResponseDTO getProduceById(Integer id);
     ProduceResponseDTO createProduce(ProduceRequestDTO produce, String token, MultipartFile image);
     ProduceResponseDTO updateProduce(Integer id, ProduceRequestDTO produce, String token, MultipartFile image);

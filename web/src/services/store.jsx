@@ -26,4 +26,25 @@ const getByFarmer = async (farmerId) => {
     }
 };
 
-export default { getAll, getById, getByFarmer };
+
+const create = async (token, data) => {
+    try {
+        return await api.post(`${baseUrl}`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    } catch (error) {
+        throw error.response.data;
+    }
+}
+
+const getTopStores = async () => {
+    try {
+        return await api.get(`${baseUrl}?topRated=true`);
+    } catch (error) {
+        throw error.response.data;
+    }
+}
+
+export default { getAll, getById, getByFarmer, create, getTopStores };

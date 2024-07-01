@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Integer> {
@@ -18,4 +19,8 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
     @Query("SELECT a FROM Account a WHERE a.id = :farmer")
     Optional<Account> findAccountByFarmer(@Param("farmer") Integer farmer);
 
+    // to get all stores by name
+    List<Store> findByNameContainingIgnoreCase(String name);
+
+    List<Store> findTop5ByOrderByRatingScoreDesc();
 }

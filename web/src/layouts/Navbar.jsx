@@ -2,13 +2,14 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import logo from '../assets/logonobg.png';
-import { InputBase, Menu, MenuItem, Typography } from "@mui/material";
+import { InputBase, Menu, MenuItem, Typography, Badge, Avatar } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import Avatar from "@mui/material/Avatar";
-import { useState, useContext } from "react";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { useState, useContext, useEffect } from "react";
 import UserContext from "../contexts/UserContext.jsx";
 import { styled, useTheme } from '@mui/material/styles';
 import { toast } from 'react-toastify';
+import cartService from "../services/cart.jsx";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -47,14 +48,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const navLinks = [
-  { name: 'Home', route: '/store' },
-  { name: 'Profile', route: '/profile' },
+  { name: 'My Store', route: '/store', for: 'Farmer' },
+  { name: 'Produce List', route: '/produce' },
+  { name: 'Stores List', route: '/stores' },
+  { name: 'Orders', route: '/orders', for: 'Consumer' },
+  { name: 'Store Orders', route: '/store/orders', for: 'Farmer' },
+  // { name: 'Cart', route: '/cart', for: 'Consumer' },
 ];
 
 const dropdownLinks = [
   { name: 'Profile', route: '/profile' },
   { name: 'Logout', route: '/logout' },
-  { name: 'Store', route: '/store' },
 ];
 
 const Navbar = () => {
@@ -62,6 +66,22 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [cartItemCount, setCartItemCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCartItemCount = async () => {
+      if (user && user.type === 'Consumer' && user.cart) {
+        try {
+          const response = await cartService.getCartItems(user.cart);
+          setCartItemCount(response.data.length); // Assuming response.data is an array
+        } catch (error) {
+          console.log('Error fetching cart items:', error);
+        }
+      }
+    };
+    fetchCartItemCount();
+  }, [user]);
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -75,8 +95,30 @@ const Navbar = () => {
     event.preventDefault(); // Prevent the default action
     logout();
     handleMenuClose();
-    toast.success('Logged out successfully')
+    toast.success('Logged out successfully');
     navigate("/");
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    if (event.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/search?query=${searchQuery}`);
+    }
+  };
+
+  const handleCartClick = () => {
+    navigate('/cart');
+  };
+
+  const formatCartItemCount = () => {
+    if (cartItemCount > 9) {
+      return '9+';
+    } else {
+      return cartItemCount;
+    }
   };
 
   return (
@@ -92,16 +134,46 @@ const Navbar = () => {
             <StyledInputBase
                 placeholder="Search…"
                 inputProps={{ 'aria-label': 'search' }}
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onKeyDown={handleSearchSubmit}
             />
           </Search>
           <div style={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
-            {navLinks.map((link, index) => (
-                <NavLink key={index} to={link.route} style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
-                  {link.name}
-                </NavLink>
-            ))}
-            <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              <Avatar style={{ marginRight: theme.spacing(1) }} />
+            {navLinks.map((link, index) => {
+              if (!user && link.for !== 'Farmer') {
+                return (
+                    <NavLink key={index} to={link.route} style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
+                      {link.name}
+                    </NavLink>
+                );
+              } else if (user && user.type === 'Consumer' && link.for !== 'Farmer') {
+                return (
+                    <NavLink key={index} to={link.route} style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
+                      {link.name}
+                    </NavLink>
+                );
+              } else if (user && user.type === 'Farmer' && link.for !== 'Consumer') {
+                return (
+                    <NavLink key={index} to={link.route} style={{ color: 'white', textDecoration: 'none', marginRight: theme.spacing(2) }}>
+                      {link.name}
+                    </NavLink>
+                );
+              }
+              return null;
+            })}
+            {(!user || user.type !== 'Farmer') && (
+                <Badge
+                    badgeContent={formatCartItemCount()}
+                    color="secondary"
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    sx={{ marginRight: theme.spacing(1), marginTop: theme.spacing(0.5) }}
+                >
+                  <ShoppingCartIcon onClick={handleCartClick} style={{ cursor: 'pointer', color: 'white' }} />
+                </Badge>
+            )}
+            <div onClick={handleMenuOpen} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginLeft: theme.spacing(1) }}>
+              <Avatar src={user?.image || undefined} style={{ marginRight: theme.spacing(1) }} />
               {user && <Typography variant="body1" style={{ color: 'white' }}>{user.name}</Typography>}
             </div>
           </div>

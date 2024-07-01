@@ -13,8 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -42,11 +42,32 @@ public class StoreServiceImpl implements StoreService{
     }
 
     @Override
+    public List<StoreResponseDTO> getStoresByName(String query){
+        log.info("Getting all stores with name: {}", query);
+        return storeRepository.findByNameContainingIgnoreCase(query).stream().map(storeMapper::toResponseDTO).toList();
+    }
+
+    @Override
     public StoreResponseDTO getStoreByFarmer(Integer farmerId) {
         log.info("Getting store with farmer id: {}", farmerId);
         return storeRepository.findByFarmer(farmerId).map(storeMapper::toResponseDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Store not found for farmer with id " + farmerId));
     }
+
+    @Override
+    public List<StoreResponseDTO> getTopStores() {
+        log.info("Getting top 5 stores");
+
+        // Fetch the top 5 stores ordered by ratingScore in descending order
+        return storeRepository.findTop5ByOrderByRatingScoreDesc().stream()
+                // Filter out stores where ratingCount is null or 0
+                .filter(store -> store.getRatingCount() != null && store.getRatingCount() > 0)
+                // Map the remaining stores to StoreResponseDTO
+                .map(storeMapper::toResponseDTO)
+                // Collect the results into a list
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public StoreResponseDTO createStore(StoreRequestDTO store) {
@@ -57,12 +78,12 @@ public class StoreServiceImpl implements StoreService{
                     .orElseThrow(() -> new ResourceNotFoundException("Account not found with id " + newStore.getFarmer()));
             throw new DuplicateUniqueResourceException("Farmer with email: " + farmerAccount.getEmail() + " already has a store.");
         }
-        if (newStore.getCreatedAt() == null) {
-            newStore.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        }
-        if (newStore.getUpdatedAt() == null) {
-            newStore.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-        }
+//        if (newStore.getCreatedAt() == null) {
+//            newStore.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+//        }
+//        if (newStore.getUpdatedAt() == null) {
+//            newStore.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+//        }
         return storeMapper.toResponseDTO(storeRepository.save(newStore));
     }
 

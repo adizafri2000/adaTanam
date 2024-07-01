@@ -1,12 +1,10 @@
 package com.example.springbootbackend.model;
 
-import com.example.springbootbackend.config.PointConverter;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.proxy.HibernateProxy;
-import org.postgresql.geometric.PGpoint;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Objects;
 
@@ -24,14 +22,25 @@ public class Store {
     @Column(nullable = false)
     private String name;
 
-    // https://houarinourreddine.medium.com/integrate-spring-boot-and-postgis-to-manage-spatial-data-272edacf2cb
-
     private double longitude;
     private double latitude;
     private String bankName;
     private String bankNumber;
     private Integer farmer;
+
+    @Column(name = "rating_score", insertable = false, updatable = false)
+    private BigDecimal ratingScore;
+
+    @Column(name = "rating_cumulative", insertable = false, updatable = false)
+    private Integer ratingCumulative;
+
+    @Column(name = "rating_count", insertable = false, updatable = false)
+    private Integer ratingCount;
+
+    @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
+
+    @Column(name = "updated_at", insertable = false, updatable = false)
     private Timestamp updatedAt;
 
     @OneToOne(fetch = FetchType.LAZY)

@@ -1,0 +1,18 @@
+9. implement orders page
+    9.1 show all of user's orders in history
+    9.2 each row should show the store name, produce name, quantity, price, total price, pickup date and time, and status
+    9.3 show button to cancel order
+    9.4 if order completed, show ratings option
+        a. Stars
+        b. Word comment
+        c. both a & b are mandatory to submit for ratings
+13. implement store edit details functionality (tak sempat)
+16. integration with Azure maps
+    16.1 fetch credentials from Azure
+    16.2 create sample map component on frontend
+    16.3 implement necessary backend APIs
+    16.4 integrate
+17. add ratings score similar to 14 for produce. Show in DetailedProduceCard and ProduceCard (tak sempat)
+    17.5 display '{totalSold} unit(s) sold'
+
+    

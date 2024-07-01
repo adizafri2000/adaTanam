@@ -25,19 +25,19 @@ public class StoreController {
         this.tokenService = tokenService;
     }
 
-    // @GetMapping(value = "")
-    // public List<StoreResponseDTO> getStores() {
-    //     log.info("Handling GET /stores request");
-    //     return storeService.getStores();
-    // }
-
     @GetMapping
-    public ResponseEntity<?> getStores(@RequestParam(required = false) Integer farmerId) {
+    public ResponseEntity<?> getStores(
+            @RequestParam(required = false) Integer farmerId,
+            @RequestParam(required = false) Boolean topRated
+    ) {
         log.info("Handling GET /stores request with farmerId: {}", farmerId);
 
         if (farmerId != null) {
             StoreResponseDTO store = storeService.getStoreByFarmer(farmerId);
             return new ResponseEntity<>(store, HttpStatus.OK);
+        } else if(topRated != null && topRated){
+            List<StoreResponseDTO> stores = storeService.getTopStores();
+            return new ResponseEntity<>(stores, HttpStatus.OK);
         } else {
             List<StoreResponseDTO> stores = storeService.getStores();
             return new ResponseEntity<>(stores, HttpStatus.OK);
@@ -51,8 +51,12 @@ public class StoreController {
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<?> createStore(@RequestBody StoreRequestDTO store) {
+    public ResponseEntity<?> createStore(@RequestHeader("Authorization") String token, @RequestBody StoreRequestDTO store) {
         log.info("Handling POST /stores request");
+        if (!tokenService.validateToken(token)) {
+            RequestErrorDTO response = new RequestErrorDTO("401","Invalid token");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<>(storeService.createStore(store), HttpStatus.CREATED);
     }
 

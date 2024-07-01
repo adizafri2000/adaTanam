@@ -36,10 +36,17 @@ public class Produce {
 
     private String description;
     private String status;
-
     private String image;
-
     private Integer store;
+
+    @Column(name = "rating_score", insertable = false, updatable = false)
+    private BigDecimal ratingScore;
+
+    @Column(name = "rating_cumulative", insertable = false, updatable = false)
+    private Integer ratingCumulative;
+
+    @Column(name = "rating_count", insertable = false, updatable = false)
+    private Integer ratingCount;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store", nullable = false, insertable = false, updatable = false)

@@ -16,19 +16,21 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CartItem {
     @Id
-//    @ManyToOne
-//    @JoinColumn(name = "cart", nullable = false)
     private Integer cart;
 
     @Id
-//    @ManyToOne
-//    @JoinColumn(name = "produce", nullable = false)
     private Integer produce;
 
     @Column(nullable = false)
     private Integer quantity;
 
+    private Integer rating;
+    private String review;
+
+    @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
+
+    @Column(name = "updated_at", insertable = false, updatable = false)
     private Timestamp updatedAt;
 
     @OneToOne(fetch = FetchType.LAZY)
