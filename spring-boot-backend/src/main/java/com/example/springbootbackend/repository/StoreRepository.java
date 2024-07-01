@@ -20,7 +20,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
     Optional<Account> findAccountByFarmer(@Param("farmer") Integer farmer);
 
     // to get all stores by name
-    List<Store> findByNameContaining(String name);
+    List<Store> findByNameContainingIgnoreCase(String name);
 
     List<Store> findTop5ByOrderByRatingScoreDesc();
 }

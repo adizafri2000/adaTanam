@@ -182,22 +182,24 @@ const PaymentPage = () => {
                             return total + (item.produceUnitPrice * item.cartItemQuantity);
                         }
                         return total;
-                    }, 0),
+                    }, 0).toFixed(2),
                     paymentTimestamp: new Date().toISOString(),
                     method: paymentMethod
                 };
 
+
                 const paymentResponse = await paymentService.create(user.accessToken, paymentData);
 
-                // Update cart to set isActive to false
-                const cartUpdateData = {
-                    isActive: false,
-                    account: user.id
-                };
 
-                await cartService.update(user.accessToken, user.cart, cartUpdateData);
+
+
             }
-
+            // Update cart to set isActive to false
+            const cartUpdateData = {
+                isActive: false,
+                account: user.id
+            };
+            await cartService.updateCart(user.accessToken, user.cart, cartUpdateData);
             toast.success('Payment confirmed!');
             navigate('/'); // Navigate to confirmation page
 

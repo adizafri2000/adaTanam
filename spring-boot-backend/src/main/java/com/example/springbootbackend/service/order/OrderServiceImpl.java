@@ -53,7 +53,9 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDetailsResponseDTO> results = new ArrayList<>();
         accountOrders.forEach(order -> {
             PaymentResponseDTO payment = paymentService.getPaymentByOrderId(order.id());
-            List<CartItemDetailsResponseDTO> orderItems = cartItemService.getCartItemDetailsByCartId(order.account());
+            List<CartItemDetailsResponseDTO> orderItems = cartItemService.getCartItemDetailsByCartId(order.cart()).stream()
+                    .filter(item -> item.storeId().equals(order.store()))
+                    .collect(Collectors.toList());
             results.add(new OrderDetailsResponseDTO(order, payment, orderItems));
         });
         return results;
