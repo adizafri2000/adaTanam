@@ -36,12 +36,6 @@ public class CartController {
         return cartService.getCartById(id);
     }
 
-//    @GetMapping("/{id}/items")
-//    public List<CartResponseDTO> getCartItemsInCart(@PathVariable int id) {
-//        log.info("Handling GET /carts/{}/items request", id);
-//        return cartService.getCartItemsInCart(id);
-//    }
-
     @PostMapping("")
     public ResponseEntity<?> createCart(@RequestHeader("Authorization") String token, @RequestBody CartRequestDTO cart) {
         log.info("Handling POST /carts request");

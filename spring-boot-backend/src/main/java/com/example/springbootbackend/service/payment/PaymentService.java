@@ -10,6 +10,7 @@ import com.example.springbootbackend.dto.payment.PaymentResponseDTO;
 @Service
 public interface PaymentService {
     List<PaymentResponseDTO> getPayments();
+    PaymentResponseDTO getPaymentByOrderId(Integer orderId);
     PaymentResponseDTO getPaymentById(Integer id);
     PaymentResponseDTO createPayment(PaymentRequestDTO payment);
     PaymentResponseDTO updatePayment(Integer id, PaymentRequestDTO payment, String token);

@@ -2,9 +2,10 @@ package com.example.springbootbackend.controller;
 
 import com.example.springbootbackend.auth.TokenService;
 import com.example.springbootbackend.dto.RequestErrorDTO;
+import com.example.springbootbackend.dto.order.OrderDetailsResponseDTO;
 import com.example.springbootbackend.dto.order.OrderRequestDTO;
 import com.example.springbootbackend.dto.order.OrderResponseDTO;
-import com.example.springbootbackend.service.OrderService;
+import com.example.springbootbackend.service.order.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,13 @@ public class OrderController {
     }
 
     @GetMapping("")
-    public List<OrderResponseDTO> getAllOrders(){
-        log.info("Handling GET /orders request");
-        return orderService.getOrders();
+    public ResponseEntity<?> getAllOrders(@RequestParam(required = false) Integer accountId){
+        log.info("Handling GET /orders request. accountId: {}", accountId);
+        if (accountId != null) {
+            List<OrderDetailsResponseDTO> fullOrderDetails = orderService.getOrdersByAccount(accountId);
+            return new ResponseEntity<>(fullOrderDetails, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(orderService.getOrders(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

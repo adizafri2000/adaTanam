@@ -1,7 +1,13 @@
 package com.example.springbootbackend.service.order;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.example.springbootbackend.dto.cartitem.CartItemDetailsResponseDTO;
+import com.example.springbootbackend.dto.order.OrderDetailsResponseDTO;
+import com.example.springbootbackend.dto.payment.PaymentResponseDTO;
+import com.example.springbootbackend.service.cartitem.CartItemService;
+import com.example.springbootbackend.service.payment.PaymentService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +18,7 @@ import com.example.springbootbackend.exception.ResourceNotFoundException;
 import com.example.springbootbackend.mapper.OrderMapper;
 import com.example.springbootbackend.model.Order;
 import com.example.springbootbackend.repository.OrderRepository;
-import com.example.springbootbackend.service.OrderService;
+import com.example.springbootbackend.service.order.OrderService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,18 +27,36 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final PaymentService paymentService;
     private final TokenService tokenService;
+    private final CartItemService cartItemService;
     private final OrderMapper orderMapper = OrderMapper.INSTANCE;
 
-    public OrderServiceImpl(OrderRepository orderRepository, TokenService tokenService) {
+    public OrderServiceImpl(OrderRepository orderRepository, PaymentService paymentService, TokenService tokenService, CartItemService cartItemService) {
         this.orderRepository = orderRepository;
+        this.paymentService = paymentService;
         this.tokenService = tokenService;
+        this.cartItemService = cartItemService;
     }
 
     @Override
     public List<OrderResponseDTO> getOrders() {
         log.info("Getting all orders");
         return orderRepository.findAll().stream().map(orderMapper::toResponseDTO).toList();
+    }
+
+    @Override
+    public List<OrderDetailsResponseDTO> getOrdersByAccount(Integer accountId) {
+        log.info("Getting orders by account with id: {}", accountId);
+        // fetch all orders
+        List<OrderResponseDTO> accountOrders = orderRepository.findByAccount(accountId);
+        List<OrderDetailsResponseDTO> results = new ArrayList<>();
+        accountOrders.forEach(order -> {
+            PaymentResponseDTO payment = paymentService.getPaymentByOrderId(order.id());
+            List<CartItemDetailsResponseDTO> orderItems = cartItemService.getCartItemDetailsByCartId(order.account());
+            results.add(new OrderDetailsResponseDTO(order, payment, orderItems));
+        });
+        return results;
     }
 
     @Override

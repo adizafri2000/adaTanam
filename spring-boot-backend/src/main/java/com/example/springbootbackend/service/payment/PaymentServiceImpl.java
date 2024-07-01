@@ -34,6 +34,13 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
+    public PaymentResponseDTO getPaymentByOrderId(Integer orderId) {
+        log.info("Getting payment by order id: {}", orderId);
+        return paymentRepository.findByOrder(orderId).map(paymentMapper::toResponseDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with order id " + orderId));
+    }
+
+    @Override
     public PaymentResponseDTO getPaymentById(Integer id) {
         log.info("Getting payment with id: {}", id);
         return paymentRepository.findById(id).map(paymentMapper::toResponseDTO)
